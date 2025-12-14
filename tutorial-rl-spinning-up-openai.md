@@ -12,12 +12,12 @@
 
 - [X] Overview: <https://spinningup.openai.com/en/latest/user/algorithms.html>
 - [X] Key Concepts in RL: <https://spinningup.openai.com/en/latest/spinningup/rl_intro.html>
-- [ ] Kinds of RL Algorithms: <https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html>
+- [ ] A Taxonomy of RL Algorithms: <https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html>
 - [ ] Intro to Policy Optimization: <https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html>
 
 ---
 
-## [RL Algorithms Covered](https://spinningup.openai.com/en/latest/user/algorithms.html)
+## [0. RL Algorithms Covered](https://spinningup.openai.com/en/latest/user/algorithms.html)
 
 1. Vanilla Policy Gradients (VPG)
 2. Trust Region Policy Optimization (TRPO)
@@ -26,7 +26,7 @@
 5. Twin Delayed DDPG (TD3)
 6. Soft Actor-Critic (SAC)
 
-## [Key Concepts in RL](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)
+## [1. Key Concepts in RL](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)
 
 - **State $s$**: Complete description of the world/environment. There is no information about the world which is hidden from the state.
 - **Observation $o$**: What the agent observes about the state.
@@ -81,3 +81,62 @@
     - $R : S \times A \times S \to \mathbb{R}$ is the reward function, with $r_t = R(s_t, a_t, s_{t+1})$,
     - $P : S \times A \to \mathcal{P}(S)$ is the transition probability function, with $P(s_{t+1}|s_t,a_t)$ being the probability of transitioning into state $s_{t+1} if you start in state $s_t$ and take action $a_t$,
     - $\rho_0$ is the starting state distribution, that is, $s_0 \sim \rho_0(\cdot)$.
+- **Model-Based vs Model-Free RL**:
+  - Whether the agent has access to (or learns) a model of the environment (a function which predicts state transitions and rewards).
+  - > The main upside to having a model is that it **allows the agent to plan by thinking ahead**, seeing what would happen for a range of possible choices, and explicitly deciding between its options. Agents can then distill the results from planning ahead into a learned policy. A particularly famous example of this approach is AlphaZero. When this works, it can result in a **substantial improvement in sample efficiency over methods that don’t have a model**.
+  - > The main downside is that **a ground-truth model of the environment is usually not available to the agent**. If an agent wants to use a model in this case, it has to learn the model purely from experience, which creates several challenges. The biggest challenge is that **bias in the model can be exploited by the agent, resulting in an agent which performs well with respect to the learned model, but behaves sub-optimally (or super terribly) in the real environment**. Model-learning is fundamentally hard, so even intense effort—being willing to throw lots of time and compute at it—can fail to pay off.
+
+## [2. A Taxonomy of RL Algorithms](https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html)
+
+**Axes**:
+
+1. Does the agent have access to or learn a model of the environment?
+   1. Model-Based RL
+   2. Model-Free RL
+2. What do we learn?
+   1. Policies (deterministic or stochastic)
+   2. Action-value functions (Q-functions)
+   3. Value functions
+   4. World/environment models
+
+**Taxonomy**:
+
+- **Model-Based RL**
+  - **Model Given**
+    - AlphaZero
+  - **Model Learned**
+    - World Models
+    - I2A
+    - MBMF
+    - MBVE
+- **Model-Free RL**
+  - **Policy Optimization (On-Policy)**
+    - Vanilla Policy Gradient
+    - TRPO
+    - PPO
+    - A2C / A3C
+  - **Q-Learning (Off-Policy)**
+    - DQN
+    - C51
+    - QR-DQN
+    - HER
+  - **Hybrid**
+    - DDPG
+    - TD3
+    - SAC
+
+**Model-Free RL**:
+
+- TODO
+
+**Model-Based RL**:
+
+- TODO
+
+## [3. Intro to Policy Optimization](https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html)
+
+- TODO
+
+## 4. Algorithms
+
+- TODO
