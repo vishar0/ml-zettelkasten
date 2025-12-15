@@ -1,7 +1,7 @@
 # [Spinning Up in RL, OpenAI](https://spinningup.openai.com/)
 
 - **Created**: 2025-12-13
-- **Last Updated**: 2025-12-13
+- **Last Updated**: 2025-12-15
 - **Status**: `In Progress`
 
 ---
@@ -13,7 +13,14 @@
 - [X] Overview: <https://spinningup.openai.com/en/latest/user/algorithms.html>
 - [X] Key Concepts in RL: <https://spinningup.openai.com/en/latest/spinningup/rl_intro.html>
 - [ ] A Taxonomy of RL Algorithms: <https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html>
-- [ ] Intro to Policy Optimization: <https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html>
+- [X] Intro to Policy Optimization: <https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html>
+- [ ] Algorithms
+  - [ ] VPG: <https://spinningup.openai.com/en/latest/algorithms/vpg.html>
+  - [ ] TRPO: <https://spinningup.openai.com/en/latest/algorithms/trpo.html>
+  - [ ] PPO: <https://spinningup.openai.com/en/latest/algorithms/ppo.html>
+  - [ ] DDPG: <https://spinningup.openai.com/en/latest/algorithms/ddpg.html>
+  - [ ] TD3: <https://spinningup.openai.com/en/latest/algorithms/td3.html>
+  - [ ] SAC: <https://spinningup.openai.com/en/latest/algorithms/sac.html>
 
 ---
 
@@ -88,7 +95,7 @@
 
 ## [2. A Taxonomy of RL Algorithms](https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html)
 
-**Axes**:
+### RL Axes
 
 1. Does the agent have access to or learn a model of the environment?
    1. Model-Based RL
@@ -99,7 +106,7 @@
    3. Value functions
    4. World/environment models
 
-**Taxonomy**:
+### RL Algorithms
 
 - **Model-Based RL**
   - **Model Given**
@@ -125,17 +132,93 @@
     - TD3
     - SAC
 
-**Model-Free RL**:
+### Model-Free RL
 
 - TODO
 
-**Model-Based RL**:
+### Model-Based RL
 
 - TODO
 
 ## [3. Intro to Policy Optimization](https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html)
 
-- TODO
+### Deriving the Simplest Policy Gradient
+
+We aim to maximize the expected return $J(\pi_\theta) = \underset{\tau\sim \pi_\theta}{\mathbb{E}}[R(\tau)] = \int_{\tau} P(\tau|\pi_\theta) R(\tau)$,
+where
+
+- $\pi_\theta$ is the policy,
+- $\theta$ denotes the parameters of the policy,
+- $\tau$ is the trajectory sampled from the policy.
+
+by optimizing the parameters of the policy by gradient ascent: $\theta_{k+1} = \theta_k + \alpha \left. \nabla_{\theta} J(\pi_{\theta}) \right|_{\theta_k}$.
+
+> The gradient of policy performance, **$\nabla_{\theta} J(\pi_{\theta})$, is called the policy gradient**, and algorithms that optimize the policy this way are called **policy gradient algorithms**. (Examples include Vanilla Policy Gradient and TRPO. PPO is often referred to as a policy gradient algorithm, though this is slightly inaccurate.)
+
+> To actually use this algorithm, we need an expression for the policy gradient which we can numerically compute. This involves two steps: 1) deriving **the analytical gradient of policy performance, which turns out to have the form of an expected value**, and then 2) forming a sample estimate of that expected value, which can be computed with data from a finite number of agent-environment interaction steps.
+
+- **(1) Probability of a trajectory**: For a trajectory $\tau = (s_0, a_0, ..., s_{T+1})$, $P(\tau|\theta) = \rho_0 (s_0) \prod_{t=0}^{T} \pi_{\theta}(a_t |s_t) P(s_{t+1}|s_t, a_t)$.
+- **(2) Log-probability of a trajectory**: $\log P(\tau|\theta) = \log \rho_0 (s_0) + \sum_{t=0}^{T} \bigg( \log \pi_{\theta}(a_t |s_t) + \log P(s_{t+1}|s_t, a_t) \bigg)$.
+- **(3) Gradient of log-probability of a trajectory**: $\nabla_\theta \log P(\tau|\theta) = \sum_{t=0}^{T} \nabla_\theta \log \pi_{\theta}(a_t |s_t)$ (since the initial state and state transition functions don't depend on $\theta$).
+- **(4) Log-derivative trick**: Since the derivative of $\log x$ is $1/x$, we can rewrite $\nabla_{\theta} P(\tau | \theta) = P(\tau | \theta) \nabla_{\theta} \log P(\tau | \theta)$.
+- **(5) Policy gradient derivation** (putting everything together):
+  - $\nabla_\theta J(\pi_\theta) = \nabla_\theta \underset{\tau\sim \pi_\theta}{\mathbb{E}}[R(\tau)]$
+  - $\nabla_\theta J(\pi_\theta) = \nabla_\theta \int_{\tau} P(\tau|\pi_\theta) R(\tau)$
+  - $\nabla_\theta J(\pi_\theta) = \int_{\tau} \nabla_\theta P(\tau|\pi_\theta) R(\tau)$
+  - $\nabla_\theta J(\pi_\theta) = \int_{\tau} P(\tau | \theta) \nabla_{\theta} \log P(\tau | \theta) R(\tau)$ (log-derivative trick)
+  - $\nabla_\theta J(\pi_\theta) = \underset{\tau\sim \pi_\theta}{\mathbb{E}}\bigg[\nabla_{\theta} \log P(\tau | \theta) R(\tau)\bigg]$
+  - $\nabla_\theta J(\pi_\theta) = \underset{\tau\sim \pi_\theta}{\mathbb{E}}\bigg[\sum_{t=0}^{T} \nabla_\theta \log \pi_{\theta}(a_t |s_t) R(\tau)\bigg]$
+
+The final expectation above can be estimated with a sample mean over a set of trajectories collected by running the policy $\pi_\theta$ (which makes it on-policy) in the environment.
+
+> A loss function usually evaluates the performance metric that we care about. Here, we care about expected return, J(\pi_{\theta}), but our “loss” function does not approximate this at all, even in expectation. This “loss” function is only useful to us because, when evaluated at the current parameters, with data generated by the current parameters, it has the negative gradient of performance.
+>
+> But after that first step of gradient descent, there is no more connection to performance. This means that minimizing this “loss” function, for a given batch of data, has no guarantee whatsoever of improving expected return. You can send this loss to -\infty and policy performance could crater; in fact, it usually will. Sometimes a deep RL researcher might describe this outcome as the policy “overfitting” to a batch of data. This is descriptive, but should not be taken literally because it does not refer to generalization error.
+>
+> We raise this point because it is common for ML practitioners to interpret a loss function as a useful signal during training—”if the loss goes down, all is well.” In policy gradients, this intuition is wrong, and you should only care about average return. The loss function means nothing.
+
+### Fix 1: Reward-to-go Policy Gradient
+
+$\nabla_\theta J(\pi_\theta) = \underset{\tau\sim \pi_\theta}{\mathbb{E}}\bigg[\sum_{t=0}^{T} \nabla_\theta \log \pi_{\theta}(a_t |s_t) R(\tau)\bigg]$
+
+This final expression from the policy gradient derivation leads to the log-probabilities of each action being pushed up in proportion to $R(\tau)$, the sum of all rewards ever obtained. But each action only impacts future rewards, not the past rewards. This can be fixed by making sure for each timestep in summation, we only include the future rewards.
+
+$\nabla_\theta J(\pi_\theta) = \underset{\tau\sim \pi_\theta}{\mathbb{E}}\bigg[\sum_{t=0}^{T} \nabla_\theta \log \pi_{\theta}(a_t |s_t) \hat{R}_t\bigg]$, where $\hat{R}_t$ is the sum of rewards from time $t$.
+
+> But how is this better? **A key problem with policy gradients is how many sample trajectories are needed to get a low-variance sample estimate** for them. The formula we started with included terms for reinforcing actions proportional to past rewards, all of which had zero mean, but nonzero variance: as a result, they would just add noise to sample estimates of the policy gradient. By removing them, we reduce the number of sample trajectories needed.
+
+### Fix 2: Baselines in Policy Gradients
+
+**Expected Grad-Log-Prob (EGLP) Lemma**:
+
+- $\int_x P_\theta(x) = 1$ (any normalized probability distribution)
+- $\nabla_\theta \int_x P_\theta(x) = 0$ (taking gradient on both sides)
+- $\int_x \nabla_\theta P_\theta(x) = 0$ (rearranging)
+- $\int_x P_\theta(x) \nabla_\theta \log P_\theta(x) = 0$ (log-derivative trick)
+- **$\underset{x \sim P_\theta}{\mathbb{E}}\bigg[\nabla_\theta \log P_\theta(x)\bigg] = 0$ (EGLP Lemma)**
+
+As a consequence of the above lemma, for any function $b$ which depends only on state (and not on action), $\underset{a_t \sim \pi_{\theta}}{\mathbb{E}}\bigg[{\nabla_{\theta} \log \pi_{\theta}(a_t|s_t) b(s_t)}\bigg] = 0$.
+
+As a result, the following doesn't change the expectation:
+
+$\nabla_\theta J(\pi_\theta) = \underset{\tau\sim \pi_\theta}{\mathbb{E}}\bigg[\sum_{t=0}^{T} \nabla_\theta \log \pi_{\theta}(a_t |s_t) (\hat{R}_t - b(s_t))\bigg]$.
+
+Any function $b$ used in the above manner is called a **baseline**. A common choice of baseline is the **on-policy value function $V^{\pi}(s_t)$**, which is the average an agent gets if it starts at state $s_t$ and then acts according to the policy $\pi$ for the rest of its life.
+
+$V^{\pi}(s_t)$ cannot be computed exactly and is approximated with a neural network, $V_\phi(s_t)$, updated concurrently with the policy (so that the value network always approximates the value function of the most recent policy), typically with a mean-squared-error objective between $V_\phi(s_t)$ and $\hat{R}_t$.
+
+> Empirically, the choice $b(s_t) = V^{\pi}(s_t)$ has the desirable effect of reducing variance in the sample estimate for the policy gradient. This results in faster and more stable policy learning. It is also appealing from a conceptual angle: it encodes the intuition that if an agent gets what it expected, it should “feel” neutral about it.
+
+### Policy Gradient General Form
+
+$\nabla_\theta J(\pi_\theta) = \underset{\tau\sim \pi_\theta}{\mathbb{E}}\bigg[\sum_{t=0}^{T} \nabla_\theta \log \pi_{\theta}(a_t |s_t) \Phi_t \bigg]$,
+where $\Phi_t$ could be any of:
+
+- **Basic**: $\Phi_t = R(\tau)$. Full trajectory return.
+- **Reward-to-go**: $\Phi_t = \hat{R}_t$. Only include rewards from time $t$ onwards for action $a_t$, not the past rewards.
+- **Reward-to-go with baseline**: $\Phi_t = \hat{R}_t - b(s_t)$. Baseline to reduce variance (and thus improve sample efficiency). Typically this is the value function $V^{\pi}(s_t)$ that provides the average expected return from a given state.
+- **On-policy value function**: $\Phi_t = Q^{\pi_{\theta}}(s_t, a_t)$. Proof in <https://spinningup.openai.com/en/latest/spinningup/extra_pg_proof2.html>
+- **Advantage function**: $\Phi_t = A^{\pi_\theta}(s_t,a_t) = Q^{\pi_\theta}(s_t,a_t) - V^{\pi_\theta}(s_t)$
 
 ## 4. Algorithms
 
