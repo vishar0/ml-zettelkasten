@@ -15,7 +15,7 @@
 - [ ] A Taxonomy of RL Algorithms: <https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html>
 - [X] Intro to Policy Optimization: <https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html>
 - [ ] Algorithms
-  - [ ] VPG: <https://spinningup.openai.com/en/latest/algorithms/vpg.html>
+  - [x] VPG: <https://spinningup.openai.com/en/latest/algorithms/vpg.html>
   - [ ] TRPO: <https://spinningup.openai.com/en/latest/algorithms/trpo.html>
   - [ ] PPO: <https://spinningup.openai.com/en/latest/algorithms/ppo.html>
   - [ ] DDPG: <https://spinningup.openai.com/en/latest/algorithms/ddpg.html>
@@ -222,4 +222,42 @@ where $\Phi_t$ could be any of:
 
 ## 4. Algorithms
 
+### [VPG: Vanilla Policy Gradient](https://spinningup.openai.com/en/latest/algorithms/vpg.html)
+
+- **On-policy**
+- **Action space**: Discrete or continuous
+- Policy Gradient general form with Advantage function: $\Phi_t = A^{\pi_\theta}(s_t,a_t) = Q^{\pi_\theta}(s_t,a_t) - V^{\pi_\theta}(s_t)$.
+- **Intuition**: Push up the probabilities of actions that lead to higher return, and push down the probabilities of actions that lead to lower return.
+- **Code**: <https://github.com/jachiam/rl-intro/blob/master/pg_cartpole.py>
+
+![VPG pseudocode](https://spinningup.openai.com/en/latest/_images/math/262538f3077a7be8ce89066abbab523575132996.svg)
+
+### [TRPO: Trust Region Policy Optimization](https://spinningup.openai.com/en/latest/algorithms/trpo.html)
+
 - TODO
+
+![TRPO pseudocode](https://spinningup.openai.com/en/latest/_images/math/5808864ea60ebc3702704717d9f4c3773c90540d.svg)
+
+### [PPO: Proximal Policy Optimization](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
+
+- TODO
+
+![PPO pseudocode](https://spinningup.openai.com/en/latest/_images/math/e62a8971472597f4b014c2da064f636ffe365ba3.svg)
+
+### [DDPG: Deep Deterministic Policy Gradient](https://spinningup.openai.com/en/latest/algorithms/ddpg.html)
+
+- TODO
+
+![DDPG pseudocode](https://spinningup.openai.com/en/latest/_images/math/5811066e89799e65be299ec407846103fcf1f746.svg)
+
+### [TD3: Twin Delayed DDPG](https://spinningup.openai.com/en/latest/algorithms/td3.html)
+
+- TODO
+
+![TD3 pseudocode](https://spinningup.openai.com/en/latest/_images/math/b7dfe8fa3a703b9657dcecb624c4457926e0ce8a.svg)
+
+### [SAC: Soft Actor-Critic](https://spinningup.openai.com/en/latest/algorithms/sac.html)
+
+- TODO
+
+![SAC pseudocode](https://spinningup.openai.com/en/latest/_images/math/c01f4994ae4aacf299a6b3ceceedfe0a14d4b874.svg)
