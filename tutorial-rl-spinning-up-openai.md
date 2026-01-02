@@ -1,7 +1,7 @@
 # [Spinning Up in RL, OpenAI](https://spinningup.openai.com/)
 
 - **Created**: 2025-12-13
-- **Last Updated**: 2025-12-15
+- **Last Updated**: 2026-01-02
 - **Status**: `In Progress`
 
 ---
@@ -225,15 +225,17 @@ where $\Phi_t$ could be any of:
 ### [VPG: Vanilla Policy Gradient](https://spinningup.openai.com/en/latest/algorithms/vpg.html)
 
 - **On-policy**
-- **Action space**: Discrete or continuous
-- Policy Gradient general form with Advantage function: $\Phi_t = A^{\pi_\theta}(s_t,a_t) = Q^{\pi_\theta}(s_t,a_t) - V^{\pi_\theta}(s_t)$.
-- **Intuition**: Push up the probabilities of actions that lead to higher return, and push down the probabilities of actions that lead to lower return.
+- **Action spaces**: discrete, continuous
 - **Code**: <https://github.com/jachiam/rl-intro/blob/master/pg_cartpole.py>
+- **Intuition**: Push up the probabilities of actions that lead to higher return, and push down the probabilities of actions that lead to lower return.
+- Policy Gradient general form with Advantage function: $\Phi_t = A^{\pi_\theta}(s_t,a_t) = Q^{\pi_\theta}(s_t,a_t) - V^{\pi_\theta}(s_t)$.
 
 ![VPG pseudocode](https://spinningup.openai.com/en/latest/_images/math/262538f3077a7be8ce89066abbab523575132996.svg)
 
 ### [TRPO: Trust Region Policy Optimization](https://spinningup.openai.com/en/latest/algorithms/trpo.html)
 
+- **On-policy**
+- **Action spaces**: discrete, continuous
 - TODO
 
 ![TRPO pseudocode](https://spinningup.openai.com/en/latest/_images/math/5808864ea60ebc3702704717d9f4c3773c90540d.svg)
@@ -246,18 +248,43 @@ where $\Phi_t$ could be any of:
 
 ### [DDPG: Deep Deterministic Policy Gradient](https://spinningup.openai.com/en/latest/algorithms/ddpg.html)
 
-- TODO
-
+- **Off-policy**
+- **Action spaces**: continuous
+- **DDPG: Extends DQN to continuous action spaces**.
+  - In Q-learning, if we know the optimal action-value function $Q^*(s,a)$, then the optimal action at a given state can be found as $a^*(s) = \arg \max_a Q^*(s,a)$.
+  - The above works for discrete action spaces, but **$\text{argmax}$ is intractable when the action space is continuous**.
+  - But, if we can learn a policy $\mu(s)$ such that $a^*(s) = \mu(s)$, then $\max_a Q^*(s,a) \approx Q^*(s,\mu(s))$.
+  - And since $a$ is a continuous variable, we can differentiate $Q^*(s,a)$ wrt $a$, and in turn, we can differentiate $Q^*(s,\mu(s))$ wrt the parameters of $\mu$ to learn the policy.
+- **Learns both the $Q(s,a)$ function (critic) and the policy $\mu(s)$ (actor) via alternating optimization**.
+  - **(1) Q-Learning Side of DDPG**: The parameters of the Q network $Q(s,a)$ can be updated via **gradient descent using Mean-Squared Bellman Error (MSBE) loss** $\underset{(s,a,r,s') \sim {\mathcal D}}{{\mathbb E}}\left[ \Bigg( Q(s,a) - \left(r + \gamma (1 - \text{done}) Q^\text{target}(s', \mu^\text{target}(s')) \right) \Bigg)^2 \right]$, where $D$ is the replay buffer.
+  - **(2) Policy-Learning Side of DDPG**: We want to learn a deterministic policy $\mu(s)$ that maximizes $Q(s,\mu(s))$. The parameters of the policy network $\mu(s)$ can be updated via **gradient ascent to maximize $\underset{s \sim {\mathcal D}}{\mathbb E}\left[ Q(s,\mu(s)) \right]$**.
+- **Leverages Replay Buffer and Target Network tricks from DQN**.
+  - In DDPG, there's both a target Q network and a target policy network.
+  - In DQN, the target network is just copied over from the main network every few steps. In DDPG, the target network parameters are updated every step via polyak averaging: $\theta_\text{target} = \rho\theta_\text{target} + (1-\rho)\theta$, where $\theta$ denotes the most recent parameters, $\theta_\text{target}$ denotes the target network parameters, and $\rho$ is a hyperparam between 0 and 1.
+- **Exploration vs Exploitation**: The policy network $\mu(s)$ in DDPG outputs a deterministic action value within the continuous action space. Given that the policy is not stochastic, we need to explicitly add some noise to encourage exploration early on, such as uncorrelated Gaussian with zero mean.
+  
 ![DDPG pseudocode](https://spinningup.openai.com/en/latest/_images/math/5811066e89799e65be299ec407846103fcf1f746.svg)
 
 ### [TD3: Twin Delayed DDPG](https://spinningup.openai.com/en/latest/algorithms/td3.html)
 
-- TODO
+- **Off-policy**
+- **Action spaces**: continuous
+- **TD3: Tricks to address brittleness in DDPG**.
+  - **Trick 1 ("Twin") - Clipped Double-Q Learning**: TODO
+    - **DDPG Failure Mode**: The learned Q-function can dramatically overestimate Q-values.
+    - **TD3 Fix**: Learns two Q-functions instead of one, and uses the smaller of the two Q-values to form the targets in the Bellman error loss: $\underset{(s,a,r,s') \sim {\mathcal D}}{{\mathbb E}}\left[ \Bigg( Q(s,a) - \left(r + \gamma (1 - \text{done}) \min(Q^\text{target}_1(s',a'), Q^\text{target}_2(s',a')) \right) \Bigg)^2 \right]$.
+  - **Trick 2 ("Delayed") - Delayed Policy Updates**:
+    - **DDPG Failure Mode**: Training volatility.
+    - **TD3 Fix**: Policy (and target networks) updated less frequently than the Q-function. The paper recommends one policy update for every two Q-function updates.
+  - **Trick 3 - Target Policy Smoothing**:
+    - **DDPG Failure Mode**: If the Q-function approximator develops an incorrect sharp peak for some actions, the policy will quickly exploit that peak and then have brittle or incorrect behavior.
+    - **TD3 Fix**: Regularization via smoothing out the Q-function over similar actions by adding clipped noise to the output of the target policy network.
 
 ![TD3 pseudocode](https://spinningup.openai.com/en/latest/_images/math/b7dfe8fa3a703b9657dcecb624c4457926e0ce8a.svg)
 
 ### [SAC: Soft Actor-Critic](https://spinningup.openai.com/en/latest/algorithms/sac.html)
 
-- TODO
+- **Off-policy**
+- **Action spaces**: discrete, continuous
 
 ![SAC pseudocode](https://spinningup.openai.com/en/latest/_images/math/c01f4994ae4aacf299a6b3ceceedfe0a14d4b874.svg)
