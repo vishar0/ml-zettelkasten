@@ -1,7 +1,7 @@
 # [Spinning Up in RL, OpenAI](https://spinningup.openai.com/)
 
 - **Created**: 2025-12-13
-- **Last Updated**: 2026-01-02
+- **Last Updated**: 2026-01-03
 - **Status**: `In Progress`
 
 ---
@@ -10,17 +10,17 @@
 
 ---
 
-- [X] Overview: <https://spinningup.openai.com/en/latest/user/algorithms.html>
-- [X] Key Concepts in RL: <https://spinningup.openai.com/en/latest/spinningup/rl_intro.html>
+- [x] Overview: <https://spinningup.openai.com/en/latest/user/algorithms.html>
+- [x] Key Concepts in RL: <https://spinningup.openai.com/en/latest/spinningup/rl_intro.html>
 - [ ] A Taxonomy of RL Algorithms: <https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html>
-- [X] Intro to Policy Optimization: <https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html>
+- [x] Intro to Policy Optimization: <https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html>
 - [ ] Algorithms
   - [x] VPG: <https://spinningup.openai.com/en/latest/algorithms/vpg.html>
   - [ ] TRPO: <https://spinningup.openai.com/en/latest/algorithms/trpo.html>
   - [ ] PPO: <https://spinningup.openai.com/en/latest/algorithms/ppo.html>
-  - [ ] DDPG: <https://spinningup.openai.com/en/latest/algorithms/ddpg.html>
-  - [ ] TD3: <https://spinningup.openai.com/en/latest/algorithms/td3.html>
-  - [ ] SAC: <https://spinningup.openai.com/en/latest/algorithms/sac.html>
+  - [x] DDPG: <https://spinningup.openai.com/en/latest/algorithms/ddpg.html>
+  - [x] TD3: <https://spinningup.openai.com/en/latest/algorithms/td3.html>
+  - [x] SAC: <https://spinningup.openai.com/en/latest/algorithms/sac.html>
 
 ---
 
@@ -226,7 +226,6 @@ where $\Phi_t$ could be any of:
 
 - **On-policy**
 - **Action spaces**: discrete, continuous
-- **Code**: <https://github.com/jachiam/rl-intro/blob/master/pg_cartpole.py>
 - **Intuition**: Push up the probabilities of actions that lead to higher return, and push down the probabilities of actions that lead to lower return.
 - Policy Gradient general form with Advantage function: $\Phi_t = A^{\pi_\theta}(s_t,a_t) = Q^{\pi_\theta}(s_t,a_t) - V^{\pi_\theta}(s_t)$.
 
@@ -286,5 +285,10 @@ where $\Phi_t$ could be any of:
 
 - **Off-policy**
 - **Action spaces**: discrete, continuous
+- **SAC: TD3 but with stochastic policy instead of deterministic policy**. Differences from TD3:
+  - **(1) Stochastic Policy**: Unlike TD3, policy is stochastic instead of deterministic. For continuous action spaces, the policy outputs mean and std action values to sample from via the reparametrization trick.
+  - **(2) No Target Policy Smoothing**: Since the policy is stochastic, no external stochastic noise needs to be added to smooth the outputs of the policy.
+  - **(3) Entropy Regularization**: Instead of the goal being just to maximize reward, a weighted entropy regularization term is added.
+  - **(4) Actions sampled from current policy**: Unlike in TD3, the next-state actions used in the target come from the current policy instead of a target policy.
 
 ![SAC pseudocode](https://spinningup.openai.com/en/latest/_images/math/c01f4994ae4aacf299a6b3ceceedfe0a14d4b874.svg)
