@@ -1,7 +1,7 @@
 # [Spinning Up in RL, OpenAI](https://spinningup.openai.com/)
 
 - **Created**: 2025-12-13
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-01-05
 - **Status**: `In Progress`
 
 ---
@@ -12,12 +12,12 @@
 
 - [x] Overview: <https://spinningup.openai.com/en/latest/user/algorithms.html>
 - [x] Key Concepts in RL: <https://spinningup.openai.com/en/latest/spinningup/rl_intro.html>
-- [ ] A Taxonomy of RL Algorithms: <https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html>
+- [x] A Taxonomy of RL Algorithms: <https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html>
 - [x] Intro to Policy Optimization: <https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html>
 - [ ] Algorithms
   - [x] VPG: <https://spinningup.openai.com/en/latest/algorithms/vpg.html>
   - [ ] TRPO: <https://spinningup.openai.com/en/latest/algorithms/trpo.html>
-  - [ ] PPO: <https://spinningup.openai.com/en/latest/algorithms/ppo.html>
+  - [x] PPO: <https://spinningup.openai.com/en/latest/algorithms/ppo.html>
   - [x] DDPG: <https://spinningup.openai.com/en/latest/algorithms/ddpg.html>
   - [x] TD3: <https://spinningup.openai.com/en/latest/algorithms/td3.html>
   - [x] SAC: <https://spinningup.openai.com/en/latest/algorithms/sac.html>
@@ -132,13 +132,7 @@
     - TD3
     - SAC
 
-### Model-Free RL
-
-- TODO
-
-### Model-Based RL
-
-- TODO
+![RL Algorithms Taxonomy](https://spinningup.openai.com/en/latest/_images/rl_algorithms_9_15.svg)
 
 ## [3. Intro to Policy Optimization](https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html)
 
@@ -241,7 +235,17 @@ where $\Phi_t$ could be any of:
 
 ### [PPO: Proximal Policy Optimization](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
 
-- TODO
+- **On-policy**
+- **Action spaces**: discrete, continuous
+- **PPO vs TRPO**:
+  - PPO is motivated by the same question as TRPO: how can we take the biggest possible improvement step on a policy using the data we currently have, without stepping so far that we accidentally cause performance collapse?
+  - TRPO tries to solve this via second-order methods, while PPO simplifes to only using first-order methods.
+- **PPO Variants**:
+  - **(1) PPO-Penalty**: Approximately solves a KL-constrained update like TRPO, but instead of a hard constrait, penalizes KL-divergence in the objective, and automatically adjusts the penalty coefficient over the course of training.
+  - **(2) PPO-Clip**: Neither a KL-divergence term in the objective nor a hard constraint. Instead, relies on specialized clipping in the objective function to remove incentives for the new policy to get far from the old policy.
+    - Updates policy via $\theta_{k+1} = \arg \max_{\theta} \underset{s,a \sim \pi_{\theta_k}}{{\mathbb E}}\left[L(s,a,\theta_k, \theta)\right]$ by taking multiple gradient steps, where
+      - $L(s,a,\theta_k,\theta) = \min\left(\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}  A^{\pi_{\theta_k}}(s,a), \;\;\text{clip}\left(\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}, 1 - \epsilon, 1+\epsilon \right) A^{\pi_{\theta_k}}(s,a)\right)$.
+      - $\epsilon$ is a (small) hyperparameter which roughly says how far away the new policy is allowed to go from the old.
 
 ![PPO pseudocode](https://spinningup.openai.com/en/latest/_images/math/e62a8971472597f4b014c2da064f636ffe365ba3.svg)
 
@@ -269,7 +273,7 @@ where $\Phi_t$ could be any of:
 - **Off-policy**
 - **Action spaces**: continuous
 - **TD3: Tricks to address brittleness in DDPG**.
-  - **Trick 1 ("Twin") - Clipped Double-Q Learning**: TODO
+  - **Trick 1 ("Twin") - Clipped Double-Q Learning**:
     - **DDPG Failure Mode**: The learned Q-function can dramatically overestimate Q-values.
     - **TD3 Fix**: Learns two Q-functions instead of one, and uses the smaller of the two Q-values to form the targets in the Bellman error loss: $\underset{(s,a,r,s') \sim {\mathcal D}}{{\mathbb E}}\left[ \Bigg( Q(s,a) - \left(r + \gamma (1 - \text{done}) \min(Q^\text{target}_1(s',a'), Q^\text{target}_2(s',a')) \right) \Bigg)^2 \right]$.
   - **Trick 2 ("Delayed") - Delayed Policy Updates**:
