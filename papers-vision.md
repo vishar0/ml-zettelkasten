@@ -93,16 +93,16 @@
     - **(2) RQ-Transformer**: Autoregressive next-token prediction adapted to RVQ codes (predict tokens corresponding to all RVQ levels at once per timestep).
 - **Methods**:
   - **(1) RQ-VAE (Residual Quantized VAE)**:
-    - Replaces VQ in VQ-VAE with RVQ (Residual Vector Quantizer). See SoundStream [[papers-speech.md]].
+    - Replaces VQ in VQ-VAE with RVQ (Residual Vector Quantizer). See SoundStream [[papers-speech]].
     - **Helps reduce spatial resolution of the vector-quantized feature map** for AR modeling without needing to exponentially grow the codebook size to combat loss in approximation.
     - In this work, a single shared codebook is shared across all $Q$ levels of RVQ instead of one codebook per level.
     - **RQ-VAE Loss $L_{RQ-VAE} = L_{reconstruction} + \alpha L_{commitment}$**
       - **(a) Reconstruction loss** $L_{reconstruction} = \lVert X - \hat{X} \rVert^2_2$, where $X$ is the original image and $\hat{X}$ is the reconstructed image.
       - **(b) Commitment loss** $L_{commitment} = \sum_{q=1}^{Q} \lVert Z - \hat{Z}_q.\text{detach()} \rVert^2_2$, where $Z$ is the latent representation before quantization and $\hat{Z}_q$ is the reconstructed latent representation corresponding to RVQ level $q$.
-        - cf. commitment loss in vq-wav2vec [[papers-speech.md]] for a slight difference in formulation.
+        - cf. commitment loss in vq-wav2vec [[papers-speech]] for a slight difference in formulation.
         - > Note that $L_{commitment}$ is the sum of quantization errors from every $q$, not a single term $\lVert Z - \hat{Z}\rVert^2_2$. It aims to make $\hat{Z}_q$ sequentially decrease the quantization error of $Z$ as $q$ increases. Thus, RQ-VAE approximates the feature map in a coarse-to-fine manner and keeps the training stable.
         - $\hat{Z}_q.\text{detach()}$ is the straight-through estimator (STE) application to bypass the non-differentiable codebook lookup step.
-        - **Codebook entries are updated via EMA** (exponential moving average) as in SoundStream [[papers-speech.md]] and <https://github.com/vishar0/emg-tokenizer> (`vector_quantizer.VectorQuantizer._update_codebook`).
+        - **Codebook entries are updated via EMA** (exponential moving average) as in SoundStream [[papers-speech]] and <https://github.com/vishar0/emg-tokenizer> (`vector_quantizer.VectorQuantizer._update_codebook`).
   - **(2) RQ-Transformer** (Fig 2):
     - **Input**: Discrete codes/tokens from RQ-VAE of shape $H \times W \times Q$.
     - **Naive approach**: Autoregressive modeling over 1D flattened sequence of codes. **$H \times W \times $Q$ autoregressive steps**.

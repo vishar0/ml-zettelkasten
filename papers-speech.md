@@ -172,7 +172,7 @@
 - **Date**: 2025-09-03
 - **Arxiv**: <https://arxiv.org/abs/2212.04356>
 - **Paperpile**: <https://app.paperpile.com/view/?id=170c2958-cbd1-41de-a6cc-8ef0fc1ee507>
-- **Code**: <https://github.com/openai/whisper> [[code-whisper.md]]
+- **Code**: <https://github.com/openai/whisper> [[code-whisper]]
 
 ---
 
@@ -341,7 +341,7 @@
     - For attention-based models, runtime complexity is quadradic wrt sequence length, leading to tradeoff between perception quality of the generated audio and runtime.
   - **Three orthogonal approaches to combat the problem of generating long audio token sequences**:
     - (a) efficient attention mechanisms,
-    - (b) non-autoregressive **parallel decoding schemes such as MaskGIT** [[papers-vision.md]],
+    - (b) non-autoregressive **parallel decoding schemes such as MaskGIT** [[papers-vision]],
     - (c) custom **architectures adapted to the special structure of audio tokens such as hierarchical SoundStream RVQ codes**.
       - > We believe that it is the special structure of the audio token sequence that holds the most promise for future advances in long-sequence audio modeling. Concretely, both SoundStream (Zeghidour et al., 2022) and EnCodec (Defossez et al., 2022) rely on Residual Vector Quantization (RVQ), where each compressed audio frame is quantized by a series of quantizers, with each quantizer operating on the residual of the previous one, and the number of quantizers controlling the overall bitrate. This induces a hierarchical token structure, where tokens from finer RVQ levels contribute less to the perceptual quality, allowing for efficient factorizations and approximations of the joint distribution of the token sequence. Hence, the models and decoding schemes should take this special structure of the input into account for efficient training and inference.
   - **SoundStorm's improvements over AudioLM**:
@@ -364,7 +364,7 @@
       - (ii) To enable voice prompting, randomly sample a timestep $t \in \{1,...,T\}$ and all tokens before this timestep are not masked.
       - (iii) Randomly sample RVQ level $q \in \{1,...,Q\}$.
       - (iv) For timestep $> t$, mask all acoustic tokens corresponding to RVQ level $> q$.
-      - (v) For timestep $> t$, sample and apply mask for acoustic tokens corresponding to RVQ level $q$ per cosine mask scheduling function as in MaskGIT [[papers-vision.md]].
+      - (v) For timestep $> t$, sample and apply mask for acoustic tokens corresponding to RVQ level $q$ per cosine mask scheduling function as in MaskGIT [[papers-vision]].
     - **Cross-entropy loss calculated only on the masked tokens within RVQ level $q$** sampled at Step (iii) to ensure conditional dependency arising from the hierarchical nature of RVQ levels.
   - **Iterative Parallel Decoding (MaskGIT-inspired)**:
     - Given semantic tokens to condition on, start with all SoundStream acoustic tokens masked out (except for those corresponding to any provided prompt).
@@ -373,7 +373,7 @@
 - **Lineage**: <https://chatgpt.com/share/68af5b20-4658-8005-9c83-8ee9afe52c2d>
   - **(1) SoundStream**: Foundational codec for discrete tokenization detokenization of audio.
   - **(2) AudioLM**: Train autoregressive generative LM over discrete audio tokens.
-  - **(3) SoundStorm**: Efficiency improvement over the slow sequential acoustic token decoding process of AudioLM via a parallel decoding process inspired by MaskGIT [[papers-vision.md]].
+  - **(3) SoundStorm**: Efficiency improvement over the slow sequential acoustic token decoding process of AudioLM via a parallel decoding process inspired by MaskGIT [[papers-vision]].
 
 ## [2023] AudioPaLM: A Large Language Model That Can Speak and Listen
 
@@ -415,7 +415,7 @@
 - **Lineage**: <https://chatgpt.com/share/68af5b20-4658-8005-9c83-8ee9afe52c2d>
   - **(1) SoundStream**: Foundational codec for discrete tokenization detokenization of audio.
   - **(2) AudioLM**: Train autoregressive generative LM over discrete audio tokens.
-  - **(3) SoundStorm**: Efficiency improvement over the slow sequential acoustic token decoding process of AudioLM via a parallel decoding process inspired by MaskGIT [[papers-vision.md]].
+  - **(3) SoundStorm**: Efficiency improvement over the slow sequential acoustic token decoding process of AudioLM via a parallel decoding process inspired by MaskGIT [[papers-vision]].
   - **(4) AudioPaLM**: Merges AudioLM (speech-only LM) with PaLM-2 (text-only LM) by unifying the audio and text vocabularies into a single multimodal vocabulary. Allows for training a single model in both directions, arbitrary interleaving of speech and text, and enables a single model to do ASR, TTS, speech-to-speech translation, etc.
 
 ## [2023] MusicGen: Simple and Controllable Music Generation
@@ -447,7 +447,7 @@
     - **(a) Flattening pattern ($T \times Q$ timesteps)**: Baseline approach as in AudioLM. Flatten the outputs of all $Q$ streams, resulting in a sequence of $Q$ tokens per timestep predicted autoregressively. Fully satisfies dependencies along both $T$ and $Q$ axes, but wastefully.
     - **(b) Parallel pattern ($T$ timesteps)**: At each time step, the model predicts logits for all $Q$ codebooks in parallel. Fully satisifies dependency only along $T$ axis.
     - **(c) Coarse-first pattern ($T \times 2$ timesteps)**: First predict the tokens corresponding to zeroth/coarsest codebook for all $T$ timesteps autoregresively. Then, predict the remaining $Q-1$ codebook tokens in parallel for each of the $T$ timesteps, conditioned on the zeroth/coarsest codebook tokens. Partially satisifies dependencies along both $T$ and $Q$ axes.
-    - **(d) Delay pattern ($T + Q - 1$ timesteps)**: A pipelined approach with conceptual similarity to pipeline parallelism bubble reduction strategies [[book-huggingface-ultra-scale-llm-training.md]]. Partially satisfies dependency along $T$ axis, fully satisfies dependency along $Q$ axis. See Fig 1.
+    - **(d) Delay pattern ($T + Q - 1$ timesteps)**: A pipelined approach with conceptual similarity to pipeline parallelism bubble reduction strategies [[book-huggingface-ultrascale-llm-training]]. Partially satisfies dependency along $T$ axis, fully satisfies dependency along $Q$ axis. See Fig 1.
   - **(3) Model conditioning**:
     - **(a) Text conditioning**: Given a textual description matching the input audio, generate a conditioning tensor $C \in \mathbb{R}^{T_C \times D}$ where $D$ is embedding dim of the autoregresssive model, such as using a pretrained text encoder.
     - **(b) Melody conditioning**: Optionally also condition ussing the chromagram of another track.
@@ -504,7 +504,7 @@
 - **Model** (Fig 1):
   - **(1) Pre-trained text-only LLM (Helium)**:
     - Standard autoregressive transformer with some architectural tweaks. 7B-param, Engligh-only, trained on 2.1T tokens.
-    - To be used as the pre-trained checkpoint to initialize the "Temporal Transformer" of Moshi ("Temporal Transformer" in contrast to "Depth Transformer", see RQ-Transformer [[papers-vision.md]])).
+    - To be used as the pre-trained checkpoint to initialize the "Temporal Transformer" of Moshi ("Temporal Transformer" in contrast to "Depth Transformer", see RQ-Transformer [[papers-vision]])).
   - **(2) Audio Tokenization via Neural Audio Codec (Mimi)** (Fig 2):
     - Prior art (AudioLM): Hierarchical modeling of semantic tokens (clustering representations from a pretrained SSL model) for long-term coarse linguistic information and acoustic tokens (SoundStream/Encodec) for fine-grained high-quality audio reconstruction.
       - But this is not streaming friendly.
@@ -521,7 +521,7 @@
       - (i) Extends Helium (text-only LLM) to support audio tokens produced by Mimi (neural audio codec).
       - (ii) Full-duplex: models two audio streams - the user's and the system's.
       - (iii) Inner Monologue: jointly models the system's output text and audio to improve the quality of interactions.
-    - **RQ-Transformer** [[papers-vision.md]] (Fig 3):
+    - **RQ-Transformer** [[papers-vision]] (Fig 3):
       - Factorize autoregressive modeling along temporal (using a larger "Temporal Transfomer") and quantization level/depth (using a smaller "Depth Transformer").
       - Sum of learnt embeddings corresponding to all semantic/acoustic tokens at time $t-1$ -> Temporal Transformer -> temporal latent representation $z_t$ -> Depth Transformer -> autoregressive generation of all semantic/acoustic tokens at time $t$.
       - **Notation**: Tokens $A_{t,q}$ where timestamp $t \in \{1,...,T\}$ and quantization level/depth $q \in \{1,...,Q\}$ (with $q=1$ corresponding to the semantic token)

@@ -20,7 +20,7 @@
 
 ---
 
-- Original BPE (Byte Pair Encoding) algorithm in [Neural Machine Translation of Rare Words with Subword Units](https://arxiv.org/abs/1508.07909) [[papers-ml-fundamentals.md]], and then popularized by GPT-2.
+- Original BPE (Byte Pair Encoding) algorithm in [Neural Machine Translation of Rare Words with Subword Units](https://arxiv.org/abs/1508.07909) [[papers-ml-fundamentals]], and then popularized by GPT-2.
   - Basic BPE implementation in <https://github.com/karpathy/minbpe/blob/master/minbpe/basic.py>
   - TODO See my independent impl at TODO
 - Couple of additional things to handle:

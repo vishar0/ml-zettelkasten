@@ -40,7 +40,7 @@
     - Params of each layer is sharded over DP ranks and materialized on the fly as needed via AllGather.
     - Reduces memory over ZeRO-2 at the cost of added 1 AllGather per layer per forward and per backward. For $L$ layers, $2 \times L - 1$ additional AllGather ops per training step (it's not $2 \times L$ as the last layer needs only one AllGather).
     - Forward computation for layer $L$ overlapped with AllGather for layer $L + 1$. Backward computation for layer $L$ overlapped with AllGather for layer $L - 1$.
-    - Aside: Toy implementation in <https://github.com/vishar0/LLM-Training-Puzzles> [[srush-ml-puzzles.md]].
+    - Aside: Toy implementation in <https://github.com/vishar0/LLM-Training-Puzzles> [[srush-ml-puzzles]].
 
 ## Tensor Parallelism (TP)
 
@@ -51,22 +51,22 @@
   - Column-wise sharding (column-linear) and row-wise sharding (row-linear). Different communication primitives based on sharding type.
   - Example: $Y = X \times W$; $X$ = input tensor/activations, $W$ = weight matrix
   - Column-wise sharding (column-linear): $W_{col=i}$ - $W$ sharded among GPUs along column dim
-    - 1. $X$ = Broadcast $X$ to all GPUs
-    - 2. Parallel $Y_{col_i}$ = $X \times W_{col=i}$
-    - 3. $Y$ = AllGather $Y_{col=i}$
+    - (1) $X$ = Broadcast $X$ to all GPUs
+    - (2) Parallel $Y_{col_i}$ = $X \times W_{col=i}$
+    - (3) $Y$ = AllGather $Y_{col=i}$
   - Row-wise sharding (row-linear): $W_{row=i}$ - $W$ sharded among GPUs along row dim
-    - 1. $X_{col=i}$ = Scatter $X$ to across GPUs along column dim
-    - 2. Parallel $Y_{gpu=i}$ = $X_{col=i} \times W_{row=i}$
-    - 3. $Y$ = AllReduce $Y_{gpu=i}$
+    - (1) $X_{col=i}$ = Scatter $X$ to across GPUs along column dim
+    - (2) Parallel $Y_{gpu=i}$ = $X_{col=i} \times W_{row=i}$
+    - (3) $Y$ = AllReduce $Y_{gpu=i}$
 - Tensor Parallelism in a transformer:
   - Feedforward block: 2 linear layers
     - Column-linear (without the final allgather) followed by row-linear (without needing the first step to scatter along column dim)
     - Goal: $Y1 = X \times W1$, $Y2 = Y1 \times W2$
     - Steps: $W1_{col=i}$ - $W1$ sharded along column dim, $W2_{row=i}$ - $W2$ sharded along row dim.
-      - 1. $X$ = Broadcast $X$ to all GPUs
-      - 2. Parallel $Y1_{col=i}$ = $X \times W1_{col=i}$
-      - 3. Parallel $Y2_{gpu=i}$ = $Y1_{col=i} \times W2_{row=i}$
-      - 4. $Y2$ = AllReduce $Y2_{gpu=i}$
+      - (1) $X$ = Broadcast $X$ to all GPUs
+      - (2) Parallel $Y1_{col=i}$ = $X \times W1_{col=i}$
+      - (3) Parallel $Y2_{gpu=i}$ = $Y1_{col=i} \times W2_{row=i}$
+      - (4) $Y2$ = AllReduce $Y2_{gpu=i}$
   - Multihead attention block:
     - TODO
   - TODO
@@ -77,7 +77,7 @@
 
 ## Pipeline Parallelism (PP)
 
-- Aside: Toy implementation in <https://github.com/vishar0/LLM-Training-Puzzles> [[srush-ml-puzzles.md]].
+- Aside: Toy implementation in <https://github.com/vishar0/LLM-Training-Puzzles> [[srush-ml-puzzles]].
 - Layers split among a few GPUs, sequential dataflow.
 - Pro: Compared to Tensor Parallelism (TP), communication only at certain layer junctions. TP needs communications for each layer.
 - Downside: Lots of GPU idle time due to "bubble" when other layers are executing.

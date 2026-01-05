@@ -57,7 +57,7 @@
   - Other extreme: word-level tokenization. Small token length / text size, but very large vocab and still can't account for all words (rare words) and will need to fallback to dictionary translation for OOV words.
   - A balanced approach: Short lists of unsegmented words with subword-units for rare words.
   - BPE (Byte Pair Encoding): The above intermediate approach is manual. Alternatively, BPE allows learning a vocab that strikes this balance and provides a good compression rate.
-- **Byte Pair Encoding (BPE)**: Also see [minbpe](https://github.com/karpathy/minbpe) in [[karpathy-curriculum.md]]
+- **Byte Pair Encoding (BPE)**: Also see [minbpe](https://github.com/karpathy/minbpe) in [[karpathy-curriculum]]
   - Iteratively replaces the most frequent pair of bytes in a sequence with a single, unused byte.
   - Applying this to word segmentation by merging characters or character sequences rather than bytes.
   - Ref: Algorithm 1
