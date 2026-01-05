@@ -6,7 +6,7 @@
 
 ---
 
-- [[tutorial-rl-spinning-up-openai.md]]
+- [[tutorial-rl-spinning-up-openai]]
 
 ---
 

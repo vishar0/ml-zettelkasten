@@ -2,11 +2,11 @@
 
 - **Created**: 2025-12-13
 - **Last Updated**: 2026-01-05
-- **Status**: `In Progress`
+- **Status**: `Done`
 
 ---
 
-- [[papers-rl.md]]
+- [[papers-rl]]
 
 ---
 
@@ -14,9 +14,9 @@
 - [x] Key Concepts in RL: <https://spinningup.openai.com/en/latest/spinningup/rl_intro.html>
 - [x] A Taxonomy of RL Algorithms: <https://spinningup.openai.com/en/latest/spinningup/rl_intro2.html>
 - [x] Intro to Policy Optimization: <https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html>
-- [ ] Algorithms
+- [x] Algorithms
   - [x] VPG: <https://spinningup.openai.com/en/latest/algorithms/vpg.html>
-  - [ ] TRPO: <https://spinningup.openai.com/en/latest/algorithms/trpo.html>
+  - [x] TRPO: <https://spinningup.openai.com/en/latest/algorithms/trpo.html>
   - [x] PPO: <https://spinningup.openai.com/en/latest/algorithms/ppo.html>
   - [x] DDPG: <https://spinningup.openai.com/en/latest/algorithms/ddpg.html>
   - [x] TD3: <https://spinningup.openai.com/en/latest/algorithms/td3.html>
@@ -229,7 +229,31 @@ where $\Phi_t$ could be any of:
 
 - **On-policy**
 - **Action spaces**: discrete, continuous
-- TODO
+- **TRPO: VPG, but with a KL-divergence constraint on how far the new policy can jump from the old policy**.
+  - > even seemingly small differences in parameter space can have very large differences in performance—so a single bad step can collapse the policy performance. This makes it dangerous to use large step sizes with vanilla policy gradients, thus hurting its sample efficiency. TRPO nicely avoids this kind of collapse, and tends to quickly and monotonically improve performance.
+- **Theoretical TRPO Update**: $\theta_{k+1} = \arg \max_{\theta} {\mathcal L}(\theta_k, \theta) \; \text{s.t.} \; \bar{D}_{KL}(\theta || \theta_k) \leq \delta$, where
+  - **Surrogate Advantage** ${\mathcal L}(\theta_k, \theta) = \underset{s,a \sim \pi_{\theta_k}}{\mathbb E}{\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)} A^{\pi_{\theta_k}}(s,a)}$ is a measure of how policy $\pi_{\theta}$ performs relative to the old policy $\pi_{\theta_k}$ using data from the old policy.
+  - **Average KL-Divergence** $\bar{D}_{KL}(\theta || \theta_k) = \underset{s \sim \pi_{\theta_k}}{\mathbb E}{D_{KL}\left(\pi_{\theta}(\cdot|s) || \pi_{\theta_k} (\cdot|s) \right)}$ between policies across states visited by the old policy.
+- **At $\theta = \theta_k$**,
+  - **(a) Surrogate advantage = 0**.
+    - ${\mathcal L}(\theta_k, \theta_k) = \underset{s,a \sim \pi_{\theta_k}}{\mathbb E} \left[A^{\pi_{\theta_k}}(s,a)\right]$
+    - ${\mathcal L}(\theta_k, \theta_k) = \underset{s,a \sim \pi_{\theta_k}}{\mathbb E} \left[Q^{\pi_{\theta_k}}(s,a) - V^{\pi_{\theta_k}}(s)\right]$
+    - ${\mathcal L}(\theta_k, \theta_k) = \underset{s,a \sim \pi_{\theta_k}}{\mathbb E} \left[Q^{\pi_{\theta_k}}(s,a)\right] - \underset{s \sim \pi_{\theta_k}}{\mathbb E} \left[V^{\pi_{\theta_k}}(s)\right]$
+    - ${\mathcal L}(\theta_k, \theta_k) = \underset{s \sim \pi_{\theta_k}}{\mathbb E} \left[V^{\pi_{\theta_k}}(s)\right] - \underset{s \sim \pi_{\theta_k}}{\mathbb E} \left[V^{\pi_{\theta_k}}(s)\right]$
+    - ${\mathcal L}(\theta_k, \theta_k) = 0$
+  - **(b) Gradient of surrogate advantage wrt $\theta$ = vanilla policy gradient**.
+    - $\nabla_{\theta} \mathcal{L}(\theta_k, \theta) \Big|_{\theta=\theta_k} = \mathbb{E}_{s,a \sim \pi_{\theta_k}} \left[ \frac{\nabla_{\theta} \pi_{\theta}(a|s) \Big|_{\theta=\theta_k}}{\pi_{\theta_k}(a|s)} A^{\pi_{\theta_k}}(s,a) \right]$
+    - $\nabla_{\theta} \mathcal{L}(\theta_k, \theta) \Big|_{\theta=\theta_k} = \mathbb{E}_{s,a \sim \pi_{\theta_k}} \left[ \frac{\pi_{\theta_k}(a|s) \nabla_{\theta} \log \pi_{\theta}(a|s) \Big|_{\theta=\theta_k}}{\pi_{\theta_k}(a|s)} A^{\pi_{\theta_k}}(s,a) \right]$ (log-derivative trick)
+    - $\nabla_{\theta} \mathcal{L}(\theta_k, \theta) \Big|_{\theta=\theta_k} = \mathbb{E}_{s,a \sim \pi_{\theta_k}} \left[ \nabla_{\theta} \log \pi_{\theta}(a|s) \Big|_{\theta=\theta_k} A^{\pi_{\theta_k}}(s,a) \right]$ (vanilla policy gradient)
+  - **(c) KL-divergence = 0**.
+  - **(d) Gradient of KL-divergence wrt $\theta$ = 0** since at $\theta = \theta_k$, $D_{KL}(\theta || \theta_k)$ is at a global minimum.
+- **Approximating the theoretical TRPO update**:
+  - **Taylor expansion**: ${\mathcal L}(\theta_k, \theta) \approx g^T (\theta - \theta_k)$ (follows from (b) above at $\theta = \theta_k$).
+  - **Taylor expansion**: $\bar{D}_{KL}(\theta || \theta_k) \approx \frac{1}{2} (\theta - \theta_k)^T H (\theta - \theta_k)$ (follows from (c) and (d) above at $\theta = \theta_k$).
+  - And therefore, $\theta_{k+1} = \arg \max_{\theta} \; g^T (\theta - \theta_k) \; \text{s.t.} \; \frac{1}{2} (\theta - \theta_k)^T H (\theta - \theta_k) \leq \delta$
+  - **Lagrangian duality**: $\theta_{k+1} = \theta_k + \sqrt{\frac{2 \delta}{g^T H^{-1} g}} H^{-1} g$
+  - **Backtracking line search**: The above might not  satisfy the KL constraint or actually improve the surrogate advantage due to the approximation errors introduced by Taylor expansion. TRPO adds backtracking line search, $\theta_{k+1} = \theta_k + \alpha^j \sqrt{\frac{2 \delta}{g^T H^{-1} g}} H^{-1} g$, where $\alpha \in (0,1)$ is the backtracking coefficient, and $j$ is the smallest nonnegative integer such that $\pi_{\theta_{k+1}}$ satisfies the KL constraint and produces a positive surrogate advantage.
+  - **Conjugate gradient**: To solve for $Hx = g$ and obtain $x = H^{-1}g$ as computing $H^{-1}$ directly is expensive.
 
 ![TRPO pseudocode](https://spinningup.openai.com/en/latest/_images/math/5808864ea60ebc3702704717d9f4c3773c90540d.svg)
 
@@ -237,9 +261,7 @@ where $\Phi_t$ could be any of:
 
 - **On-policy**
 - **Action spaces**: discrete, continuous
-- **PPO vs TRPO**:
-  - PPO is motivated by the same question as TRPO: how can we take the biggest possible improvement step on a policy using the data we currently have, without stepping so far that we accidentally cause performance collapse?
-  - TRPO tries to solve this via second-order methods, while PPO simplifes to only using first-order methods.
+- **PPO: Same goal as TRPO (taking the biggest possible policy improvement step but not being too far from old policy), but achieved via first-order methods instead of second-order**.
 - **PPO Variants**:
   - **(1) PPO-Penalty**: Approximately solves a KL-constrained update like TRPO, but instead of a hard constrait, penalizes KL-divergence in the objective, and automatically adjusts the penalty coefficient over the course of training.
   - **(2) PPO-Clip**: Neither a KL-divergence term in the objective nor a hard constraint. Instead, relies on specialized clipping in the objective function to remove incentives for the new policy to get far from the old policy.
