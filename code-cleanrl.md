@@ -1,7 +1,7 @@
 # [vwxyzjn/cleanrl](https://github.com/vwxyzjn/cleanrl)
 
 - **Created**: 2025-12-15
-- **Last Updated**: 2025-12-15
+- **Last Updated**: 2026-01-06
 - **Status**: `In Progress`
 
 ---
@@ -12,4 +12,55 @@
 ---
 
 - [ ] cleanrl
+  - [x] c51.py
+  - [ ] c51_atari.py
+  - [ ] c51_atari_jax.py
+  - [x] c51_jax.py
+  - [ ] ddpg_continuous_action.py
+  - [ ] ddpg_continuous_action_jax.py
+  - [x] dqn.py
+  - [x] dqn_atari.py
+  - [ ] dqn_atari_jax.py
+  - [x] dqn_jax.py
+  - [ ] ppg_procgen.py
+  - [x] ppo.py
+  - [x] ppo_atari.py
+  - [x] ppo_atari_envpool.py
+  - [ ] ppo_atari_envpool_xla_jax.py
+  - [ ] ppo_atari_envpool_xla_jax_scan.py
+  - [x] ppo_atari_lstm.py
+  - [x] ppo_atari_multigpu.py
+  - [x] ppo_continuous_action.py
+  - [x] ppo_continuous_action_isaacgym
+  - [x] ppo_pettingzoo_ma_atari.py
+  - [x] ppo_procgen.py
+  - [ ] ppo_rnd_envpool.py
+  - [ ] ppo_trxl
+  - [ ] pqn.py
+  - [ ] pqn_atari_envpool.py
+  - [ ] pqn_atari_envpool_lstm.py
+  - [ ] qdagger_dqn_atari_impalacnn.py
+  - [ ] qdagger_dqn_atari_jax_impalacnn.py
+  - [ ] rainbow_atari.py
+  - [ ] rpo_continuous_action.py
+  - [ ] sac_atari.py
+  - [ ] sac_continuous_action.py
+  - [ ] td3_continuous_action.py
+  - [ ] td3_continuous_action_jax.py
 - [ ] cleanrl_utils
+  - [x] add_header.py
+  - [ ] atari_wrappers.py
+  - [x] benchmark.py
+  - [x] buffers.py
+  - [x] docker_build.py
+  - [x] docker_queue.py
+  - [ ] enjoy.py
+  - [ ] evals
+  - [x] huggingface.py
+  - [ ] paper_plot.py
+  - [ ] plot.py
+  - [ ] plot_individual.py
+  - [x] reproduce.py
+  - [x] resume.py
+  - [x] submit_exp.py
+  - [x] tuner.py
