@@ -313,7 +313,7 @@ where $\Phi_t$ could be any of:
 - **Action spaces**: discrete, continuous
 - **SAC: TD3 but with stochastic policy instead of deterministic policy**. Differences from TD3:
   - **(1) Stochastic Policy**: Unlike TD3, policy is stochastic instead of deterministic. For continuous action spaces, the policy outputs mean and std action values to sample from via the reparametrization trick.
-  - **(2) No Target Policy Smoothing**: Since the policy is stochastic, no external stochastic noise needs to be added to smooth the outputs of the policy.
+  - **(2) No Target Policy Smoothing**: Since the actions are sampled from a stochastic policy already in SAC, no external stochastic noise needs to be added to smooth the action values output by the policy as done in TD3.
   - **(3) Entropy Regularization**: Instead of the goal being just to maximize reward, a weighted entropy regularization term is added.
   - **(4) Actions sampled from current policy**: Unlike in TD3, the next-state actions used in the target come from the current policy instead of a target policy.
 

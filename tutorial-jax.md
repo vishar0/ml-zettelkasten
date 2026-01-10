@@ -23,7 +23,7 @@
   - [ ] TODO
 - [ ] <https://docs.jax.dev/en/latest/notes.html>
 - [ ] pallas (kernels): <https://docs.jax.dev/en/latest/pallas/index.html>
-  
+
 ---
 
 ## Notes

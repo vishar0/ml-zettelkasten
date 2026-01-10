@@ -1,7 +1,7 @@
 # [vwxyzjn/cleanrl](https://github.com/vwxyzjn/cleanrl)
 
 - **Created**: 2025-12-15
-- **Last Updated**: 2026-01-06
+- **Last Updated**: 2026-01-10
 - **Status**: `In Progress`
 
 ---
@@ -16,7 +16,7 @@
   - [ ] c51_atari.py
   - [ ] c51_atari_jax.py
   - [x] c51_jax.py
-  - [ ] ddpg_continuous_action.py
+  - [x] ddpg_continuous_action.py
   - [ ] ddpg_continuous_action_jax.py
   - [x] dqn.py
   - [x] dqn_atari.py
@@ -45,7 +45,7 @@
   - [ ] rpo_continuous_action.py
   - [ ] sac_atari.py
   - [ ] sac_continuous_action.py
-  - [ ] td3_continuous_action.py
+  - [x] td3_continuous_action.py
   - [ ] td3_continuous_action_jax.py
 - [ ] cleanrl_utils
   - [x] add_header.py
