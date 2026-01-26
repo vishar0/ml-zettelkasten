@@ -1,7 +1,7 @@
 # Gated Linear Networks (GLN)
 
 - **Created**: 2026-01-23
-- **Last Updated**: 2026-01-25
+- **Last Updated**: 2026-01-26
 - **Status**: `In Progress`
 
 ---
@@ -25,7 +25,12 @@
 ---
 
 - **Abstract**:
-  - > This paper describes a family of probabilistic architectures designed for online learning under the logarithmic loss.  Rather than relying on non-linear transfer functions, our method gains representational power by the use of data conditioning.  We state under general conditions a learnable capacity theorem that shows this approach can in principle learn any bounded Borel-measurable function on a compact subset of euclidean space; the result is stronger than many universality results for connectionist architectures because we provide both the model and the learning procedure for which convergence is guaranteed.
+  - > This paper describes a family of probabilistic architectures designed for online learning under the logarithmic loss.
+  - > Rather than relying on non-linear transfer functions, our method gains representational power by the use of data conditioning.
+    - Rather than using non-linear activations, representational power comes input/context-dependent weights (such as in hypernetworks).
+  - > We state under general conditions a learnable capacity theorem that shows this approach can in principle learn any bounded Borel-measurable function on a compact subset of euclidean space;
+    - Borel-measurable functions: Larger set than just continuous functions that standard neural nets are good at. Can have discontinuities.
+  - > the result is stronger than many universality results for connectionist architectures because we provide both the model and the learning procedure for which convergence is guaranteed.
 - **1. Intro**:
   - > This paper explores the use of **techniques from the online learning and data compression communities for the purpose of high dimensional density modeling, with a particular emphasis on image density modeling**.
   - > Our main contribution is to show that a certain family of neural networks, composed of techniques originating from the data compression and online learning communities, can **in some circumstances match the performance of deep learning based approaches in just a single pass through the data**, while also enjoying universal source coding guarantees.
@@ -112,8 +117,20 @@
   - **Parallelism**:
     - > When generating a prediction, parallelism can occur within a layer, similar to an MLP. The local training rule however enables all the neurons to be updated simul- taneously, as they have no need to communicate information to each other.  This compares favorably  to  back-propagation  and  significantly  simplifies  any  possible  distributed  imple- mentation.  Furthermore, as the bulk of the computation is primarily matrix multiplication, large speedups can be obtained straightforwardly using GPUs.
 - **4. Effective Capacity of GLN**:
-  - TODo
+  - TODO
 - **5. Adaptive Regularization via Sub-network Switching**:
   - TODO
 - **6. Experiments**:
-  - TODO
+  - **6.1. Non-Linear Decision Boundaries**:
+    - To empirically verify GLNs can model non-linearity.
+    - Ensemble of 3 GLNs to construct a one-vs-all classifier.
+    - **Half-space context** by sampling 2D normal vectors, with (x,y) coordinates as side information.
+    - Each component of all weight vectors were constrained to lie within $[−200, 200]$ (hypercube).
+    - Input to GLN: component-wise sigmoid of (x,y) values as GLNs require the input to be within $[0,1]$.
+  - **6.2. Online MNIST Classification**:
+    - Ensemble of 10 GLNs to construct a one-vs-all classifier.
+    - **6 half-space context functions** resulting in a weight table with 64 entries.
+    - Each component of all weight vectors were constrained to lie within $[−200, 200]$ (hypercube).
+    - Input: Preprocessed by applying mean-subtraction and de-skewing operation (Ghosh and Wan, 2017).
+  - **6.3. Online MNIST Density Modeling**:
+    - TODO
