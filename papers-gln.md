@@ -1,7 +1,7 @@
 # Gated Linear Networks (GLN)
 
 - **Created**: 2026-01-23
-- **Last Updated**: 2026-01-24
+- **Last Updated**: 2026-01-25
 - **Status**: `In Progress`
 
 ---
@@ -15,12 +15,12 @@
 
 ---
 
-## [2017] [Core] Online Learning with Gated Linear Networks - [paper](https://arxiv.org/abs/1712.01897)
+## [2017] Online Learning with Gated Linear Networks - [paper](https://arxiv.org/abs/1712.01897)
 
 - **Date**: 2026-01-23
 - **Paper**: <https://arxiv.org/abs/1712.01897>
 - **Paperpile**: <https://app.paperpile.com/view/?id=9c182ef6-6b82-4f11-8a5b-e69b9c1ef5fb>
-- **Assistant**: TODO
+- **Assistant**: <https://gemini.google.com/share/4d45791afe36>
 
 ---
 
@@ -35,7 +35,7 @@
     - **(2) Theoretical Justification**: Theoretical baiss for the local weight learning mechanism in these architectures. While gating was originally introduced for computational reasons, it also adds meaningful representational power.
     - **(3) Adaptive Regularization**: A technique that allows a GLN to have competitive loss guarantees with respect to all possible sub-networks obtained via pruning the original network.
     - **(4) Effective Capacity Theorem**: It proves that given a large enough network and the right gating function, these networks can learn any continuous density function to an arbitrary level of accuracy using local learning rules.
-- **2.2 Geometric Mixing**:
+- **2. Geometric Mixing**:
   - an adaptive, online ensemble technique to combine predictions from multiple probabilistic models into a single, unified conditional probability estimate.
   - > Given $m$ sequential, probabilistic, binary models $\rho_1,...,\rho_m$, Geometric Mixing provides a principled way of combining the $m$ associated conditional probability distributions into a single conditional probability distribution, giving rise to a probability measure on binary sequences that has a number of desirable properties.
   - **Geometric Mixture**: $\text{GEO}_w(x_t = 1; p_t) = \frac{\prod_{i=1}^m p_{t,i}^{w_i}}{\prod_{i=1}^m p_{t,i}^{w_i} + \prod_{i=1}^m (1 - p_{t,i})^{w_i}}$, where
@@ -71,5 +71,49 @@
     - **Online learning**: Loss applied to the predictor before moving to time $t+1$.
   - **Properties under Logarithmic Loss**:
     - TODO
-- **2.3 Gated Geometric Mixture**:
+- **2. Gated Geometric Mixing Neuron [Fig2]**: Contextual Gating + Geometric Mixing
+  - **Contextual Gating**: Mapping particular examples to particular sets of weights. **Similar in concept to hypernetworks**, except that the paper doesn't use a neural network but a hashtable of weights.
+  - **Context Function** $c \colon Z \to C$, where $Z$ is the set of possible side information and $C = {0,...,k − 1}$ for some $k \in N$ is the context space.
+    - Given a piece of side information $z_t \in Z$, $c(z_t)$ outputs an index into an a weight table $W \subset \mathbb{R}^d$, where each entry outputs the weight $w_{c(z_t)}$ to use with standard geometric mixing.
+  - **Gated Geometrix Mixer** $\text{GEO}_W^c(x_t = 1; p_t, z_t) = \text{GEO}_{w_{c(z_t)}}(x_t = 1; p_t) = \sigma (w_{c(z_t)} \cdot \text{logit}(p_t))$
+    - > The key idea is that **our neuron can now specialize its weighting of the input predictions based on some property of the side information** $z_t$. The side information can be arbitrary, for example it could be some additional input features, or even functions of $p_t$.  Ideally the choice of context function should be informative in the sense that it simplifies the probability combination task.
+  - **Classes of Context Functions** (inexhaustive):
+    - **(a) Half-space contexts**: For real-valued side information.
+      - **Concept**: It uses a hyperplane (a flat boundary in space defined by a normal vector $v$ and an offset $b$) to slice the input space into two halves.
+      - **Mechanism**: It checks if a point $z$ falls on one side of the boundary or the other (specifically, if the dot product $x \cdot v \geq b$).
+      - **Result**: This creates a binary "yes/no" context. By combining many of these random half-space cuts, the network can partition a complex continuous space (like an image or coordinate system) into fine-grained regions, assigning different weights to each region.
+    - **(b) Skip-gram contexts**: For binary or categorical inputs.
+      - **Concept**: It focuses on specific components (dimensions) of the input vector.
+      - **Mechanism**: It checks if the $i$-th bit of the input is active (i.e., if $z_i = 1$).
+      - **Result**: This allows the model to learn specific weights for the presence of specific features. For example, in text processing, it might learn a specific weight adjustment whenever the word "not" appears (the bit for "not" is 1).
+  - **Context Function Composition**: Multiple context functions can be combined into a higher-order context function with the total context space being the product of the individual context spaces.
+- **3. GLN: Gated Linear Networks [Fig3]**:
+  - Feedforward networks composed of gated geometric mixing neurons. Each neuron in layer $i$ outputs a gated geometric mixture over predictions from layer $i-1$.
+  - **Note**: The **input logit in layer $i$ cancels out the output sigmoid of layer $i-1$** (since the logit function is the inverse of sigmoid function). With fixed weights, this would be a fully linear MLP without non-linearity. But expressivity arises due to the weights being input dependant.
+    - This structure allows the network to **effectively be a linear network for a fixed input context $z$ for the purpose of training (which guarantees convexity and easy optimization), while being a non-linear network for the purpose of modeling complex data**.
+- **3. Learning in GLN**:
+  - > While architecturally **a GLN appears superficially similar to the well-known multilayer perception (MLP), what and how it learns is very different**. The key difference is that **every neuron in a GLN probabilistically predicts the target**. This allows us to associate **a loss function to each neuron**. This loss function will be defined in terms of just the parameters of the neuron itself; thus, **unlike backpropagation, learning will be local**.
+  - > Furthermore, **this loss function will be convex**, which will allow us to avoid many of the difficulties associated with training typical deep architectures. For example, we **can get away with simple deterministic weight initializations, which aids the reproducibility** of empirical results. The **convexity allows us to learn from correlated inputs in an online fashion** without suffering significant degradations in performance. And as we shall see later, GLNs are extremely data efficient, and can produce state of the art results in a single pass through the data.
+  - > One should **think of each layer as being responsible for trying to directly improve the predictions of the previous layer, rather than a form of implicit non-linear feature/filter construction** as is the case with MLPs trained offline with back-propagation (Rumelhart et al., 1988).
+  - **Weight Init**:
+    - Given the loss is convex, unlike in non-convex optimization, choice of weight selection is less critical.
+    - Weights are restricted to some scaled hypercube: $w_{ijc} \in [-b,b]^{K_{i-1}}$, where $w_{ijc}$ is the weight vector for neuron $j$ in layer $i$ with context id $c$, $K_{i-1}$ is the number of neurons in layer $i-1$, and $b \ge 1$.
+    - **(a) Zero Init**: $w_{ijc} = 0$. Acts as a **sparsity prior**.
+    - **(b) Geometric Average Init**: $w_{ijc} = 1/K^{i-1}$. Geometric mean of inputs.
+    - **(c) Small Random Init**: Little practical difference, negative impact on reproducibility.
+  - **Weight Update**:
+    - **Local Learning**: Each neuron in each layer probabilistically predicts the target, and loss is applied to each neuron locally.
+    - **Online Gradient Descent**: Log loss applied to each neuron, gradient computed, and weight updated applied with a suitable learning rate. After update, weights are clipped to $[-b,b]$ to restrict to project onto the hypercube $[-b,b]^{K_{i-1}}$.
+    - **Time Complexity**: $O(K_{i-1})$ to update the weight of any neuron in layer $i$.
+  - **Performance Guaratees**:
+    - TODO
+- **3. Computational Properties of GLN**:
+  - **Complexity of a single online learning step**: $O(\sum_{i=1}^L K_i K_{i-1})$ for $L$ layers and $K_i$ being the number of neurons in layer $i$. Same complexity for forward and backward.
+  - **Parallelism**:
+    - > When generating a prediction, parallelism can occur within a layer, similar to an MLP. The local training rule however enables all the neurons to be updated simul- taneously, as they have no need to communicate information to each other.  This compares favorably  to  back-propagation  and  significantly  simplifies  any  possible  distributed  imple- mentation.  Furthermore, as the bulk of the computation is primarily matrix multiplication, large speedups can be obtained straightforwardly using GPUs.
+- **4. Effective Capacity of GLN**:
+  - TODo
+- **5. Adaptive Regularization via Sub-network Switching**:
+  - TODO
+- **6. Experiments**:
   - TODO
