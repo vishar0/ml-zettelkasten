@@ -1,7 +1,7 @@
 # Gated Linear Networks (GLN)
 
 - **Created**: 2026-01-23
-- **Last Updated**: 2026-01-26
+- **Last Updated**: 2026-01-30
 - **Status**: `In Progress`
 
 ---
@@ -15,7 +15,7 @@
 
 ---
 
-## [2017] Online Learning with Gated Linear Networks - [paper](https://arxiv.org/abs/1712.01897)
+## [2017] Online Learning with Gated Linear Networks
 
 - **Date**: 2026-01-23
 - **Paper**: <https://arxiv.org/abs/1712.01897>
@@ -43,7 +43,7 @@
 - **2. Geometric Mixing**:
   - an adaptive, online ensemble technique to combine predictions from multiple probabilistic models into a single, unified conditional probability estimate.
   - > Given $m$ sequential, probabilistic, binary models $\rho_1,...,\rho_m$, Geometric Mixing provides a principled way of combining the $m$ associated conditional probability distributions into a single conditional probability distribution, giving rise to a probability measure on binary sequences that has a number of desirable properties.
-  - **Geometric Mixture**: $\text{GEO}_w(x_t = 1; p_t) = \frac{\prod_{i=1}^m p_{t,i}^{w_i}}{\prod_{i=1}^m p_{t,i}^{w_i} + \prod_{i=1}^m (1 - p_{t,i})^{w_i}}$, where
+  - **Geometric Mixture**: $$\text{GEO}_w(x_t = 1; p_t) = \frac{\prod_{i=1}^m p_{t,i}^{w_i}}{\prod_{i=1}^m p_{t,i}^{w_i} + \prod_{i=1}^m (1 - p_{t,i})^{w_i}}$$ where
     - $x_t \in \{0,1\}$ denotes the boolean target at time $t$,
     - $p_t = (\rho_1(x_t = 1 | x_{<t}), \ldots, \rho_m(x_t = 1 | x_{<t}))$,
     - $\rho_1,...,\rho_m$ are $m$ sequential, probabilistic, binary models,
@@ -55,20 +55,20 @@
     - If $w_i = 0$, then the contribution of the model $i$ is ignored (since $p_{t,i}^{w_i} = p_{t,i}^0 = 1$).
     - If $w_i = 0$ for all $i \in \{1,..,m\}$, then $\text{GEO}_w(x_t = 1; p_t) = 1/2$.
     - Due to the product formulation, every model also has **the right of veto**: a single $p_{t,i}$ close to $0$ coupled with a $w_i > 0$ drives $\text{GEO}_w(x_t = 1; p_t)$ close to zero.
-  - **Alternate Form**: $\text{GEO}_w(x_t = 1; p_t) = \sigma(w \cdot \text{logit}(p_t))$, where
+  - **Alternate Form**: $$\text{GEO}_w(x_t = 1; p_t) = \sigma(w \cdot \text{logit}(p_t))$$ where
     - $\sigma(x) = \frac{1}{1 + e^{-x}}$ is the sigmoid function,
     - $\text{logit}(x) = \log\left(\frac{x}{1 - x}\right)$ is the inverse of the sigmoid function.
-    - > This form is **best suited for numerical implementation. Furthermore, the property of **having an input non-linearity that is the inverse of the output non-linearity is the reason why a linear network is obtained when layers of geometric mixers are stacked on top of each other**.
+    - > This form is best suited for numerical implementation. Furthermore, the property of **having an input non-linearity that is the inverse of the output non-linearity is the reason why a linear network is obtained when layers of geometric mixers are stacked on top of each other**.
   - **Alternate Form Derivation**:
-    - Start with the original form: $\text{GEO}_w(x_t = 1; p_t) = \frac{\prod p_{t,i}^{w_i}}{\prod p_{t,i}^{w_i} + \prod (1 - p_{t,i})^{w_i}}$
-    - Divide numerator and denominator by $\prod (1 - p_{t,i})^{w_i}$: $\text{GEO}_w(x_t = 1; p_t) = \frac{\prod (p_{t,i} / (1-p_{t,i}))^{w_i}}{\prod (p_{t,i} / (1-p_{t,i}))^{w_i} + 1}$
-    - Define intermediate term $Q = \prod_{i=1}^m \left( \frac{p_{t,i}}{1 - p_{t,i}} \right)^{w_i}$
-    - Taking log: $\log(Q) = \sum_{i=1}^m w_i \log \left( \frac{p_{t,i}}{1 - p_{t,i}} \right)$
-    - Substituting logit definition: $\log(Q) = \sum w_i \cdot \text{logit}(p_{t,i}) = w \cdot \text{logit}(p_t)$
-    - Taking exp: $Q = e^{w \cdot \text{logit}(p_t)}$
-    - Substitute $Q$ back into the equation: $\text{GEO}_w(x_t = 1; p_t) = \frac{e^{w \cdot \text{logit}(p_t)}}{e^{w \cdot \text{logit}(p_t)} + 1}$
-    - Multiply by $e^{-x}/e^{-x}$ to reach sigmoid form: $\text{GEO}_w(x_t = 1; p_t) = \frac{1}{1 + e^{-w \cdot \text{logit}(p_t)}}$
-    - Final Result: **$\text{GEO}_w(x_t = 1; p_t) = \sigma(w \cdot \text{logit}(p_t))$**.
+    - Start with the original form: $$\text{GEO}_w(x_t = 1; p_t) = \frac{\prod p_{t,i}^{w_i}}{\prod p_{t,i}^{w_i} + \prod (1 - p_{t,i})^{w_i}}$$
+    - Divide numerator and denominator by $\prod (1 - p_{t,i})^{w_i}$: $$\text{GEO}_w(x_t = 1; p_t) = \frac{\prod (p_{t,i} / (1-p_{t,i}))^{w_i}}{\prod (p_{t,i} / (1-p_{t,i}))^{w_i} + 1}$$
+    - Define intermediate term $Q$: $$Q = \prod_{i=1}^m \left( \frac{p_{t,i}}{1 - p_{t,i}} \right)^{w_i}$$
+    - Taking log: $$\log(Q) = \sum_{i=1}^m w_i \log \left( \frac{p_{t,i}}{1 - p_{t,i}} \right)$$
+    - Substituting logit definition: $$\log(Q) = \sum w_i \cdot \text{logit}(p_{t,i}) = w \cdot \text{logit}(p_t)$$
+    - Taking exp: $$Q = e^{w \cdot \text{logit}(p_t)}$$
+    - Substitute $Q$ back into the equation: $$\text{GEO}_w(x_t = 1; p_t) = \frac{e^{w \cdot \text{logit}(p_t)}}{e^{w \cdot \text{logit}(p_t)} + 1}$$
+    - Multiply by $e^{-x}/e^{-x}$ to reach sigmoid form: $$\text{GEO}_w(x_t = 1; p_t) = \frac{1}{1 + e^{-w \cdot \text{logit}(p_t)}}$$
+    - Final Result: **$$\text{GEO}_w(x_t = 1; p_t) = \sigma(w \cdot \text{logit}(p_t))$$**.
   - **Logarithmic Loss (Binary Cross-Entropy Loss)**:
     - At each time $t$, the predictor outputs a binary distribution: $\text{GEO}_w(.; p_t) \to [0,1]$.
     - $x_t \in \{0,1\}$: binary ground-truth observation at time $t$.
@@ -80,7 +80,7 @@
   - **Contextual Gating**: Mapping particular examples to particular sets of weights. **Similar in concept to hypernetworks**, except that the paper doesn't use a neural network but a hashtable of weights.
   - **Context Function** $c \colon Z \to C$, where $Z$ is the set of possible side information and $C = {0,...,k − 1}$ for some $k \in N$ is the context space.
     - Given a piece of side information $z_t \in Z$, $c(z_t)$ outputs an index into an a weight table $W \subset \mathbb{R}^d$, where each entry outputs the weight $w_{c(z_t)}$ to use with standard geometric mixing.
-  - **Gated Geometrix Mixer** $\text{GEO}_W^c(x_t = 1; p_t, z_t) = \text{GEO}_{w_{c(z_t)}}(x_t = 1; p_t) = \sigma (w_{c(z_t)} \cdot \text{logit}(p_t))$
+  - **Gated Geometrix Mixer** $$\text{GEO}_W^c(x_t = 1; p_t, z_t) = \text{GEO}_{w_{c(z_t)}}(x_t = 1; p_t) = \sigma (w_{c(z_t)} \cdot \text{logit}(p_t))$$
     - > The key idea is that **our neuron can now specialize its weighting of the input predictions based on some property of the side information** $z_t$. The side information can be arbitrary, for example it could be some additional input features, or even functions of $p_t$.  Ideally the choice of context function should be informative in the sense that it simplifies the probability combination task.
   - **Classes of Context Functions** (inexhaustive):
     - **(a) Half-space contexts**: For real-valued side information.
@@ -111,7 +111,13 @@
     - **Online Gradient Descent**: Log loss applied to each neuron, gradient computed, and weight updated applied with a suitable learning rate. After update, weights are clipped to $[-b,b]$ to restrict to project onto the hypercube $[-b,b]^{K_{i-1}}$.
     - **Time Complexity**: $O(K_{i-1})$ to update the weight of any neuron in layer $i$.
   - **Performance Guaratees**:
-    - TODO
+    - Regret (difference between actual loss and best possible loss) $R_{ik}(n) \leq 3 b K_{i-1} \sqrt{|C|n} \log \left( \frac{1}{\epsilon} \right)$, where
+      - $R_{ik}(n)$: The total regret for a specific neuron (layer $i$, index $k$) after seeing $n$ examples. It measures how much worse the neuron performed compared to the best possible fixed set of weights chosen in hindsight.
+      - $b$: The weight bound. The weights are constrained to lie within a specific range $[-b, b]$. A larger $b$ means the search space is bigger, making learning harder.
+      - $K_{i-1}$: The number of inputs to the neuron n. This represents the "width" of the previous layer ($i-1$). The regret grows linearly with this because having more inputs to combine makes the optimization problem more complex.
+      - $|C|$: The number of contexts. This is the size of the set of all possible contexts (e.g., if you have 6 binary features, $|C| = 2^6 = 64$). More contexts split the data into more "buckets," affecting how quickly each bucket collects enough data to learn.
+      - $n$: The number of data points (time steps) processed so far. The fact that the bound includes $\sqrt{n}$ means the average regret ($R/n$) shrinks toward zero as $n$ increases.
+      - $\epsilon$: The clipping parameter. The input probabilities from the previous layer are clipped to be within $[\epsilon, 1-\epsilon]$ to prevent numerical instability. $\log(1/\epsilon)$: This term arises from the bound on the gradient. If inputs get too close to 0 or 1 (small $\epsilon$), the gradients can explode, making learning unstable and increasing the regret.
 - **3. Computational Properties of GLN**:
   - **Complexity of a single online learning step**: $O(\sum_{i=1}^L K_i K_{i-1})$ for $L$ layers and $K_i$ being the number of neurons in layer $i$. Same complexity for forward and backward.
   - **Parallelism**:
