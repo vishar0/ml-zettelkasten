@@ -1,4 +1,4 @@
-# JAX
+# Jax
 
 - **Created**: 2025-12-02
 - **Last Updated**: 2025-12-07
@@ -6,12 +6,14 @@
 
 ---
 
+## [Jax](https://docs.jax.dev/en/latest/)
+
 - [X] Thinking in jax: <https://docs.jax.dev/en/latest/notebooks/thinking_in_jax.html>
 - [X] The sharp bits: <https://docs.jax.dev/en/latest/notebooks/Common_Gotchas_in_JAX.html>
 - [ ] Jax 101: <https://docs.jax.dev/en/latest/jax-101.html>
   - [X] `jax.jit`: <https://docs.jax.dev/en/latest/jit-compilation.html>
   - [X] `jax.vmap`: <https://docs.jax.dev/en/latest/automatic-vectorization.html>
-  - [ ] `jax.grad`: <https://docs.jax.dev/en/latest/automatic-differentiation.html>
+  - [x] `jax.grad`: <https://docs.jax.dev/en/latest/automatic-differentiation.html>
   - [ ] pytrees: <https://docs.jax.dev/en/latest/pytrees.html>
   - [ ] `jax.random`: <https://docs.jax.dev/en/latest/random-numbers.html>
   - [ ] sharding and parallelism: <https://docs.jax.dev/en/latest/sharded-computation.html>
@@ -23,6 +25,16 @@
   - [ ] TODO
 - [ ] <https://docs.jax.dev/en/latest/notes.html>
 - [ ] pallas (kernels): <https://docs.jax.dev/en/latest/pallas/index.html>
+
+## [Flax](https://flax.readthedocs.io/en/stable/)
+
+- [ ] Flax basics: <https://flax.readthedocs.io/en/stable/nnx_basics.html>
+- [ ] MNIST tutorial: <https://flax.readthedocs.io/en/stable/mnist_tutorial.html>
+- [ ] TODO
+
+## [Optax](https://flax.readthedocs.io/en/stable/mnist_tutorial.html)
+
+- [ ] TODO
 
 ---
 
