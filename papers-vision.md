@@ -1,7 +1,7 @@
 # Vision
 
 - **Created**: 2025-07-21
-- **Last Updated**: 2025-09-22
+- **Last Updated**: 2026-02-10
 - **Status**: `In Progress`
 
 ---
@@ -13,9 +13,12 @@
 - [ ] [2020] VQGAN: Taming Transformers for High-Resolution Image Synthesis - [paper](https://arxiv.org/abs/2012.09841)
 - [X] [2022] RQ-VAE & RQ-Transformer: Autoregressive Image Generation using Residual Quantization — [paper](https://arxiv.org/abs/2203.01941)
 - [X] [2022] MaskGIT: Masked Generative Image Transformer — [paper](https://arxiv.org/abs/2202.04200)
+- [x] [2021] ViT: An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale
+- [ ] [2021] DINO: Emerging Properties in Self-Supervised Vision Transformers — [paper](https://arxiv.org/abs/2104.14294)
+- [ ] [2023] DINOv2: Learning Robust Visual Features without Supervision — [paper](https://arxiv.org/abs/2304.07193)
+- [ ] [2025] DINOv3 - [paper](https://arxiv.org/abs/2508.10104)
 - [ ] [paper](https://arxiv.org/abs/2506.22355)
 - [ ] Cambrian (Saining): <https://cambrian-mllm.github.io/>, [paper](https://arxiv.org/abs/2406.16860)
-- [ ] TODO vision transformer (ViT)
 - [ ] SAM papers
 - [ ] Flamingo: a Visual Language Model for Few-Shot Learning — [paper](https://arxiv.org/abs/2204.14198)
 
@@ -171,3 +174,34 @@
       - **Frechet Inception Distance (FID)**
       - **Inception Score (IS)**
     - Outperforms VQGAN in quality (owing to bidirectional nature), speed (parallelism of decoding), and versatility (extends to image inpainting/outpaintaing/editing beyond image synthesis).
+
+## [2021] ViT: An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale
+
+- **Date**: 2026-02-10
+- **Arxiv**: <https://arxiv.org/abs/2010.11929>
+- **Paperpile**: <https://app.paperpile.com/view/?id=de534f6a-4352-4d95-a867-9a041d8ce7f9>
+
+---
+
+- **Abstract**:
+  - > While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited.  In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place.  We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classification tasks.  When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks (ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent results compared to state-of-the-art convolutional networks while requiring sub- stantially fewer computational resources to train.
+- **Intro**:
+  - > Thanks to Transformers’ computational efficiency and scalability, it has become possible to train models of unprecedented size, with over 100B parameters
+  - > Inspired  by  the  Transformer  scaling  successes  in  NLP,  we  experiment  with  applying  a  standard Transformer directly to images, with the fewest possible modifications. To do so, we split an image into patches and provide the sequence of linear embeddings of these patches as an input to a Trans- former. Image patches are treated the same way as tokens (words) in an NLP application. We train the model on image classification in supervised fashion.
+  - > When trained on mid-sized datasets such as ImageNet without strong regularization,  these mod- els yield modest accuracies of a few percentage points below ResNets of comparable size.  **This seemingly discouraging outcome may be expected: Transformers lack some of the inductive biases inherent to CNNs, such as translation equivariance and locality, and therefore do not generalize well when trained on insufficient amounts of data**.
+  - > However, the picture changes if the models are trained on larger datasets (14M-300M images). We find that **large scale training trumps inductive bias**.  Our Vision Transformer (ViT) attains excellent results when pre-trained at sufficient scale and transferred to tasks with fewer datapoints.
+- **[Fig1] Method**:
+  - > In model design we follow the original Transformer (Vaswani et al., 2017) as closely as possible. An advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and their efficient implementations – can be used almost out of the box.
+  - > **Inductive bias.** We note that **Vision Transformer has much less image-specific inductive bias than CNNs**. In CNNs, locality, two-dimensional neighborhood structure, and translation equivariance are baked into each layer throughout the whole model.  In ViT, only MLP layers are local and transla- tionally equivariant, while the self-attention layers are global.  The two-dimensional neighborhood structure is used very sparingly: in the beginning of the model by cutting the image into patches and at fine-tuning time for adjusting the position embeddings for images of different resolution (as de- scribed below). Other than that, the position embeddings at initialization time carry no information about the 2D positions of the patches and all spatial relations between the patches have to be learned from scratch.
+  - > Few-shot accuracies are obtained by solving a **regularized least-squares regression problem** that maps the (frozen) representation of a subset of training images to ${−1, 1}^K$ target vectors. This formulation allows us to recover the exact solution in closed form. Though we mainly focus on fine-tuning performance, we sometimes use linear few-shot accuracies for fast on-the-fly evaluation where fine-tuning would be too costly.
+
+## [2021] DINO: Emerging Properties in Self-Supervised Vision Transformers
+
+- **Date**: 2026-02-10
+- **Arxiv**: <https://arxiv.org/abs/2104.14294>
+- **Paperpile**: <https://app.paperpile.com/view/?id=49b41748-5ef1-4a15-9105-68d688d292db>
+
+---
+
+- **Abstract**:
+  - > In this paper, we question if self-supervised learning pro- vides new properties to Vision Transformer (ViT) [19] that stand out compared to convolutional networks (convnets). Beyond the fact that adapting self-supervised methods to this architecture works particularly well, we make the follow- ing observations: first, self-supervised ViT features contain explicit information about the semantic segmentation of an image, which does not emerge as clearly with supervised ViTs, nor with convnets. Second, these features are also ex- cellent k-NN classifiers, reaching 78.3% top-1 on ImageNet with a small ViT. Our study also underlines the importance of momentum encoder [33], multi-crop training [10], and the use of small patches with ViTs. We implement our findings into a simple self-supervised method, called DINO, which we interpret as a form of self-distillation with no labels. We show the synergy between DINO and ViTs by achieving 80.1% top-1 on ImageNet in linear evaluation with ViT-Base.
