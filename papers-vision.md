@@ -205,3 +205,20 @@
 
 - **Abstract**:
   - > In this paper, we question if self-supervised learning pro- vides new properties to Vision Transformer (ViT) [19] that stand out compared to convolutional networks (convnets). Beyond the fact that adapting self-supervised methods to this architecture works particularly well, we make the follow- ing observations: first, self-supervised ViT features contain explicit information about the semantic segmentation of an image, which does not emerge as clearly with supervised ViTs, nor with convnets. Second, these features are also ex- cellent k-NN classifiers, reaching 78.3% top-1 on ImageNet with a small ViT. Our study also underlines the importance of momentum encoder [33], multi-crop training [10], and the use of small patches with ViTs. We implement our findings into a simple self-supervised method, called DINO, which we interpret as a form of self-distillation with no labels. We show the synergy between DINO and ViTs by achieving 80.1% top-1 on ImageNet in linear evaluation with ViT-Base.
+- **Intro**:
+  - > we study the impact of **self-supervised pre-training on ViT features**.
+  - > Of particular interest, **we have identified several interesting properties that do not emerge with supervised ViTs, nor with convnets**:
+    - > Self-supervised  ViT  features  explicitly  contain  the scene layout and, in particular, object boundaries, as shown in Figure 1. This information is directly accessible in the self-attention modules of the last block.
+    - > Self-supervised ViT features perform particularly well with a basic nearest neighbors classifier (k-NN) without any finetuning, linear classifier nor data augmentation, achieving 78.3% top-1 accuracy on ImageNet.
+    - > The emergence of segmentation masks seems to be a property shared across self-supervised methods. However, the good performance with k-NN only emerge when com- bining certain components such as momentum encoder [33] and multi-crop augmentation [10].
+  - [Fig2] DINO: Self-distillation with no labels
+    - Simplifies SSL training by directly predicting the output of a teacher network, built with a momentum encoder, by using a standard cross-entropy loss.
+    - > Training DINO with ViT takes just **two 8-GPU servers over 3 days** to achieve 76.1% on ImageNet linear benchmark,  which outperforms self-supervised systems based on convnets of comparable sizes with significantly reduced compute require- ments
+    - **Approach**:
+      - (1) The model passes two different random transformations of an input image to the student and teacher networks. Both networks have the same architecture but different parameters.
+      - (2) The output of the teacher network is centered with a mean computed over the batch.
+      - (3) Each networks outputs a K dimensional feature that is normalized with  a temperature softmax over the feature dimension.
+      - (4) Their similarity is then measured with a cross-entropy loss.
+      - (5) We apply a stop-gradient (sg) operator on the teacher to propagate gradients only through the student.
+      - (6) The teacher parameters are updated with an exponential moving average (ema) of the student parameters.
+- TODO

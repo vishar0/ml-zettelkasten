@@ -1,12 +1,14 @@
-# Bird Talks
+# Birding
 
 "Bird" in the sense of Freeman Dyson's "Birds and Frogs": <https://www.ams.org/notices/200902/rtx090200212p.pdf>.
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2025-11-10
+- **Last Updated**: 2026-02-12
 - **Status**: `In Progress`
 
 ---
+
+## Talks
 
 - [ ] [2018] Krste Asanovic, "Accelerating AI: Past, Present, and Future": <https://www.youtube.com/watch?v=8n2HLp2gtYs>
 - [X] [2024] [MLSys] Kurt Keutzer, "GenAI efficiency is more than about models": <https://mlsys.org/media/mlsys-2024/Slides/2668.pdf>
@@ -28,3 +30,7 @@
 - [ ] [2025] [NeurIPS] Melanie Mitchell, "On the Science of Alien Intelligences: Evaluating Cognitive Capabilities in Babies, Animals, and AI": <https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109607>
 - [ ] [2025] [NeurIPS] Andrew Saxe, Demystifying depth: Principles of learning in deep neural networks: <https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109602>
 - [ ] [2025] [NeurIPS] Kyunghyun Cho, "From Benchmarks to Problems - A Perspective on Problem Finding in AI": <https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109605>
+
+## Writing
+
+- [x] [2026] Jim Fan, The Second Pre-training Paradigm: <https://x.com/DrJimFan/status/2018754323141054786>
