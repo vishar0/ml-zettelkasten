@@ -22,7 +22,11 @@
 - [ ] [2020] Revisiting Fundamentals of Experience Replay - [paper](https://arxiv.org/abs/2007.06700)
 - [ ] [2023] Bigger, Better, Faster (BBF): Human-level Atari with human-level efficiency - [paper](https://arxiv.org/abs/2305.19452)
 - [ ] [2023] [deepmind] A Definition of Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2307.11046)
-- [ ] [2025] Kevin Murphy RL book: <https://arxiv.org/abs/2412.05265>
+- [ ] TODO nethack
+- [ ] TODO crafter
+- [ ] [2024] Craftax: A Lightning-Fast Benchmark for Open-Ended Reinforcement Learning - [paper](https://arxiv.org/abs/2402.16801)
+- [ ] [2025] [ScaleRL] The Art of Scaling Reinforcement Learning Compute for LLMs - [paper](https://arxiv.org/abs/2510.13786)
+- [ ] [2025] TODO Kevin Murphy RL book: <https://arxiv.org/abs/2412.05265>
 
 ---
 
@@ -89,6 +93,64 @@
   - (4) Online RL (Environment interaction) vs Offline RL (Batch RL) - Offline RL is inherently off-policy, online RL can be either on-policy or off-policy.
 - **Method**:
   - > The question driving this work is: **How does one scale networks for deep RL when samples are scarce?**
+
+## [2024] Craftax: A Lightning-Fast Benchmark for Open-Ended Reinforcement Learning
+
+- **Date**: 2026-02-18
+- **Arxiv**: <https://arxiv.org/abs/2402.16801>
+- **Paperpile**: <https://app.paperpile.com/view/?id=ce36a760-eb42-4ce0-b5c7-36b7fd72f43f>
+- **Code**: <https://github.com/MichaelTMatthews/Craftax>
+
+---
+
+- **Abstract**:
+  - > Benchmarks play a crucial role in the development and analysis of reinforcement learning (RL) algorithms. We identify that existing benchmarks used for research into open-ended learning fall into one of two categories.  Either they are too slow  for  meaningful  research  to  be  performed without enormous computational resources, like Crafter, NetHack and Minecraft, or they are not complex enough to pose a significant challenge, like Minigrid and Procgen.  To remedy this, we first present Craftax-Classic: a ground-up rewrite of Crafter in JAX that runs up to 250x faster than the Python-native original. A run of PPO using 1 billion environment interactions finishes in under an hour using only a single GPU and averages 90% of the optimal reward.  To provide a more compelling challenge we present the main Craftax benchmark, a significant extension of the Crafter mechanics with elements inspired from NetHack. **Solving Craftax requires deep exploration, long term planning and memory, as well as continual adaptation to novel situations as more of the world is discovered**. We show that **existing methods including global and episodic exploration, as well as unsupervised environment design (UED) fail to make material progress** on the benchmark. We believe that **Craftax can for the first time allow researchers to experiment in a complex, open-ended environment with limited computational resources**.
+- **Motivation**:
+  - Benchmark gap: existing open-ended RL benchmarks are either too slow (Crafter, NetHack, Minecraft) or too easy (Minigrid, Procgen).
+  - Goal: a benchmark that is both fast enough for accessible research AND hard enough that existing methods fail.
+  - One author completed perfect runs in ~5 hours of human gameplay (with unlimited decision time), so it's human-solvable but not agent-solvable.
+  - > While deep RL training has traditionally been split between collecting trajectories on CPU-based environments and then training policy and value networks on the GPU, **the relatively new phenomenon of JAX-based environments allows for the whole RL pipeline to be run on the GPU**. This allows for massive parallelisation of trajectory gathering (we use up to 4096 parallel environment workers), the elimination of the GPU-CPU transfer bottleneck and just-in-time (JIT) compilation of the whole training process.
+  - > While Crafter has become a popular benchmark, the evaluation protocol proposed allocates algorithms only 1 million environment interactions, a very limiting constraint when compared to other RL benchmarks. While we reuse many of the Crafter dynamics, our aim is to provide a benchmark for investigations into open-endedness rather than sample efficiency. Open-endedness, by its very definition, should not be constrained by a fixed number of samples. In practice we have to impose some limit, but this should be suitably high as to not impact the emergence of interesting phenomena.
+- **Craftax-Classic** (JAX rewrite of Crafter):
+  - 257x speedup over the Python-native Crafter original.
+  - PPO hits ~90% of optimal reward using 1B interactions in 51 minutes on a single GPU.
+  - Pixel-based and symbolic observation variants.
+- **Craftax** (extended benchmark, Crafter + NetHack-inspired):
+  - 9 procedurally generated floors: overworld, dungeons, mines, fire/ice realms, graveyard, boss floor.
+  - Enemies expanded from 3 to 19 types, each requiring different strategies.
+  - Potions with randomly permuted effects per episode (tests in-context learning).
+  - Attribute system: XP from floor descent → specialize in dexterity, strength, or intelligence.
+  - Requires deep exploration, long-term planning, memory, and continual adaptation.
+- **Speed comparison** (steps/sec at best-case parallelism):
+  - Craftax-Classic: 405,618 (4,096 workers)
+  - Craftax: 266,961 (4,096 workers)
+  - Procgen: 7,638 (1,024 workers)
+  - NetHack: 5,628 (64 workers)
+  - Crafter: 1,580 (1,024 workers)
+- **Observation space**:
+  - Symbolic (primary): 1,345-dim (Classic), 8,268-dim (Craftax) — one-hot encodings for blocks/creatures + inventory.
+  - Pixel: 63×63×3 (Classic), 110×130×3 (Craftax).
+  - Also supports textual observations for language-conditioned research.
+- **Reward structure**: achievement-based tiers (Basic=1, Intermediate=3, Advanced=5, Very Advanced=8 pts) + 0.1/hp recovered, -0.1/damage taken.
+- **Two evaluation protocols**:
+  - **Craftax-1B**: 1B steps (~6 years of human gameplay at agent step rates) — targets exploration, continual learning, long-horizon reasoning.
+  - **Craftax-1M**: 1M steps, finishes in seconds — for rapid iteration and sample efficiency research.
+- **Technical: JAX architecture**:
+  - Up to 4,096 parallel environment workers; JIT compilation of entire pipeline eliminates CPU-GPU bottleneck.
+  - Full environment state exposed as single functional object (enables UED methods directly).
+  - **Optimistic environment resets**: since JAX can't branch inside parallelized functions, both reset and step run every timestep. Generate M new worlds per step for N workers (M << N, e.g. 64 new states for 1,024 workers). P(duplicate assignment) < 10^-10 over 1B timesteps. Gives ~2x speedup with negligible training impact.
+- **Experimental results** (Craftax-1B):
+  - PPO: masters basic achievements, plateaus at intermediate.
+  - PPO-RNN (with memory): best overall; significantly more dungeon entry than other methods.
+  - Intrinsic motivation (RND, ICM, E3B): no improvement; E3B *reduced* reward — dense achievement rewards already provide sufficient signal.
+  - No method makes appreciable progress onto floor 2 (Gnomish Mines).
+  - Running 10B steps "barely improves performance" — likely an LR decay artifact, not algorithmic.
+- **UED results** (Craftax-1B):
+  - PLR > domain randomization.
+  - Robust PLR < PLR (contradicts prior work — Craftax naturally generates high-quality, solvable levels so robustness curriculum is unnecessary).
+  - ACCEL variants ≈ domain randomization.
+  - ACCEL showed distribution shift: collected diamonds 30% of replay time vs 7% on normal levels.
+- **Key takeaway**: no existing RL method makes meaningful progress on Craftax despite large compute budgets. Specialized exploration methods (intrinsic rewards, UED) provide no benefit. Memory (RNN) helps most.
 
 ## 2019-04 Reading List
 

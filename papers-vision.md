@@ -214,11 +214,11 @@
   - [Fig2] DINO: Self-distillation with no labels
     - Simplifies SSL training by directly predicting the output of a teacher network, built with a momentum encoder, by using a standard cross-entropy loss.
     - > Training DINO with ViT takes just **two 8-GPU servers over 3 days** to achieve 76.1% on ImageNet linear benchmark,  which outperforms self-supervised systems based on convnets of comparable sizes with significantly reduced compute require- ments
-    - **Approach**:
-      - (1) The model passes two different random transformations of an input image to the student and teacher networks. Both networks have the same architecture but different parameters.
-      - (2) The output of the teacher network is centered with a mean computed over the batch.
-      - (3) Each networks outputs a K dimensional feature that is normalized with  a temperature softmax over the feature dimension.
-      - (4) Their similarity is then measured with a cross-entropy loss.
-      - (5) We apply a stop-gradient (sg) operator on the teacher to propagate gradients only through the student.
-      - (6) The teacher parameters are updated with an exponential moving average (ema) of the student parameters.
+- **[Fig2] Method**:
+  - (1) The model passes two different random transformations of an input image to the student and teacher networks. Both networks have the same architecture but different parameters.
+  - (2) The output of the teacher network is centered with a mean computed over the batch.
+  - (3) Each networks outputs a K dimensional feature that is normalized with a temperature softmax over the feature dimension.
+  - (4) Their similarity is then measured with a cross-entropy loss.
+  - (5) We apply a stop-gradient (sg) operator on the teacher to propagate gradients only through the student.
+  - (6) The teacher parameters are updated with an exponential moving average (ema) of the student parameters.
 - TODO
