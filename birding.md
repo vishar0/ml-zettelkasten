@@ -3,7 +3,7 @@
 "Bird" in the sense of Freeman Dyson's "Birds and Frogs": <https://www.ams.org/notices/200902/rtx090200212p.pdf>.
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-02-12
+- **Last Updated**: 2026-02-19
 - **Status**: `In Progress`
 
 ---
@@ -34,4 +34,6 @@
 ## Writing
 
 - [ ] [2017] ["Open-endedness: The last grand challenge you’ve never heard of"](https://www.oreilly.com/radar/open-endedness-the-last-grand-challenge-youve-never-heard-of)
+- [ ] [2026] [Sara Hooker, "On the Slow Death of Scaling"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5877662)
 - [x] [2026] [Jim Fan, "The Second Pre-training Paradigm"](https://x.com/DrJimFan/status/2018754323141054786)
+- [x] [2026] [Maithra Raghu, "The Post-Scaling Era of Frontier AI"](https://x.com/maithra_raghu/status/2024154498961420509)
