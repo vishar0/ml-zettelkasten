@@ -25,6 +25,7 @@
 - [ ] [2023] Blake Richards: The study of plasticity has always been about gradients. <https://physoc.onlinelibrary.wiley.com/doi/full/10.1113/JP282747>
 - [ ] [2023] The connectome of an insect brain - [paper](https://www.biorxiv.org/content/10.1101/2022.11.28.516756v1)
 - [X] [2024] [Sam Gershman] What have we learned about AI from studying the brain? - [paper](https://gershmanlab.com/pubs/NeuroAI_critique.pdf)
+- [ ] [2024] Illusions of Alignment Between Large Language Models and Brains Emerge From Fragile Methods and Overlooked Confounds - [paper](https://www.biorxiv.org/content/10.1101/2025.03.09.642245v1)
 - [X] [2025] [Joshua Vogelstein] Biological Processing Units (BPU): Leveraging an Insect Connectome to Pioneer Biofidelic Neural Architectures - [paper](https://arxiv.org/abs/2507.10951)
 - TODO: references in BPU paper
 - [ ] [2025] [Kris Jensen] A mechanistic theory of planning in prefrontal cortex - [paper](https://www.biorxiv.org/content/10.1101/2025.09.23.677709v1.abstract)
