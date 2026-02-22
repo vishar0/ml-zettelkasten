@@ -33,13 +33,23 @@
 - [ ] [2022] [rockt] Evolving Curricula with Regret-Based Environment Design - [paper](https://arxiv.org/abs/2203.01302)
 - [ ] [2022] [rockt] E3B: Exploration via elliptical episodic bonuses - [paper](https://arxiv.org/abs/2210.05805)
 - [ ] [2024] Craftax: A Lightning-Fast Benchmark for Open-Ended Reinforcement Learning - [paper](https://arxiv.org/abs/2402.16801)
-- [ ] [2025] [ScaleRL] The Art of Scaling Reinforcement Learning Compute for LLMs - [paper](https://arxiv.org/abs/2510.13786)
+- [x] [2025] ScaleRL: The Art of Scaling Reinforcement Learning Compute for LLMs - [paper](https://arxiv.org/abs/2510.13786)
 - [ ] TODO diplomacy
 - [ ] TODO alphago etc
 - [ ] TODO openai dota 5v5
 - [ ] [2025] TODO Kevin Murphy RL book: <https://arxiv.org/abs/2412.05265>
 
 ---
+
+## [2015] [TimLillicrap,DavidSilver] Continuous control with deep reinforcement learning
+
+- **Date**: 2026-02-20
+- **Arxiv**: <https://arxiv.org/abs/1509.02971>
+- **Paperpile**: <https://app.paperpile.com/view/?id=a37dfe47-75a9-426d-8e47-0d73d7a07638>
+
+---
+
+- TODO
 
 ## [2018] [Ben Recht] A Tour of Reinforcement Learning: The View from Continuous Control
 
@@ -183,6 +193,70 @@
   - ACCEL variants ≈ domain randomization.
   - ACCEL showed distribution shift: collected diamonds 30% of replay time vs 7% on normal levels.
 - **Key takeaway**: no existing RL method makes meaningful progress on Craftax despite large compute budgets. Specialized exploration methods (intrinsic rewards, UED) provide no benefit. Memory (RNN) helps most.
+
+## [2025] ScaleRL: The Art of Scaling Reinforcement Learning Compute for LLMs
+
+- **Date**: 2026-02-22
+- **Arxiv**: <https://arxiv.org/abs/2510.13786>
+- **Paperpile**: <https://app.paperpile.com/view/?id=8e1e35ce-ae48-46f7-a33f-3c989ccc44a1>
+
+---
+
+- **Abstract**:
+  - > Reinforcement learning (RL) has become central to training large language models (LLMs), yet the field lacks predictive scaling methodologies comparable to those established for pre-training. Despite rapidly rising compute budgets, there is no principled understanding of how to evaluate algorithmic improvements for scaling RL compute. We present the first large-scale systematic study, amounting to more than 400,000 GPU-hours, that defines a principled framework for analyzing and predicting RL scaling in LLMs. We fit sigmoidal compute-performance curves for RL training and ablate a wide range of common design choices to analyze their effects on asymptotic performance and compute efficiency. We observe: (1) Not all recipes yield similar asymptotic performance, (2) Details such as loss aggregation, normalization, curriculum, and off-policy algorithm primarily modulate compute efficiency without materially shifting the asymptote, and (3) Stable, scalable recipes follow predictable scaling trajectories, enabling extrapolation from smaller-scale runs. Combining these insights, we propose a best-practice recipe, ScaleRL, and demonstrate its effectiveness by successfully scaling and predicting validation performance on a single RL run scaled up to 100,000 GPU-hours. Our work provides both a scientific framework for analyzing scaling in RL and a practical recipe that brings RL training closer to the predictability long achieved in pre-training.
+- **Intro**:
+  - > Scaling reinforcement learning (RL) compute is emerging as a critical paradigm for advancing large language models (LLMs). While pre-training establishes the foundations of a model; the subsequent phase of RL training unlocks many of today’s most important LLM capabilities, from test-time thinking (OpenAI, 2024; Guo et al., 2025) to agentic capabilities (Kimi Team et al., 2025a).
+  - > Deepseek-R1-Zero used 100,000 H800 GPU hours for RL training – 3.75% of its pre-training compute (Guo et al., 2025). This dramatic increase in RL compute is amplified across frontier LLM generations, with more than 10× increase from o1 to o3 (OpenAI, 2025) and a similar leap from Grok-3 to Grok-4 (xAI Team, 2025).
+  - > This work lays the groundwork for science of RL scaling by borrowing from the well-established concept of scaling laws from pre-training. While pre-training has converged to algorithmic recipes that scale predictably with compute (Kaplan et al., 2020; Hoffmann et al., 2022; Owen, 2024), the RL landscape lacks a clear standard.
+- **Setup**:
+  - **Architecture**: generator–trainer split — generators handle rollout sampling via optimized inference kernels on one set of GPUs, trainers do policy updates via FSDP on another set of GPUs.
+  - **Setup**: math reasoning domain (Polaris-53K). Sequence length 16,384 tokens (12,288 thinking + 2,048 solution + 2,048 prompt). Batch: 768 = 48 prompts × 16 generations.
+    - 48 prompts (distinct math problems) × 16 independent completions each. The 16 completions per prompt are needed to compute the group baseline for GRPO — advantage is normalized relative to the other completions for the *same* prompt. If 1/16 is correct it gets large positive advantage; if 15/16 are correct the one failure gets large negative advantage.
+  - **Base algorithm**: GRPO without KL, with asymmetric DAPO clipping to prevent entropy collapse.
+    - Group-normalized advantage: $\hat{A}_i = r_i - \text{mean}(\{r_j\})$, $\hat{A}_i^G = \hat{A}_i / (\text{std}(\{r_j\}) + \epsilon)$
+    - Importance sampling ratio: $\rho_{i,t}(\theta) = \pi_\text{train}(y_{i,t}) / \pi_\text{gen}(y_{i,t})$
+    - Objective: $J(\theta) = \mathbb{E}\left[\frac{1}{G} \sum_i \min\left(\rho_{i,t}(\theta)\hat{A}_i^G,\ \text{clip}_\text{asym}(\rho_{i,t}(\theta))\hat{A}_i^G\right)\right]$
+  - **GRPO vs PPO**: [[tutorial-rl-spinning-up-openai]]
+    - Both use the same clipped surrogate objective. Key difference is the baseline.
+    - PPO has a learned critic (value function $V(s)$); advantage $= R_t - V(s_t)$. For LLMs the critic must match the policy in size — doubles memory.
+    - GRPO has no critic; the group mean reward *is* the baseline. No extra model needed.
+    - GRPO requires multiple rollouts per prompt (to form the group); PPO does not.
+    - GRPO signal is noisier (sparse outcome reward only) but much cheaper. Works well for LLM reasoning where reward is already sparse (final answer correctness) so a learned $V(s)$ wouldn't add much.
+  - **Length control**: forcibly append end-of-thinking phrase to interrupt overly long generations, preventing instability.
+  - **[Fig3] Scaling model** (Section 2.1): sigmoid over compute, not power-law (power-law is unbounded; reward is bounded): $R_C - R_0 = (A - R_0) \cdot \frac{1}{1 + (C_\text{mid}/C)^B}$ where
+    - $A$: asymptotic pass rate (performance ceiling)
+    - $B > 0$: compute efficiency (how fast you climb)
+    - $C_\text{mid}$: midpoint of the curve
+    - Three phases: slow growth → sharp acceleration → saturation
+    - Curve fitting excludes very early regime ($< 1.5$k GPU-hours) for stability.
+  - **Validation**: 1,000 held-out prompts from Polaris-53K, measured every 100 steps with 16 generations per prompt. Curves fit on validation to measure generalization, not training performance.
+  - **Curve fitting**: $R_0$ is known (initial reward); fit for $A$, $B$, $C_\text{mid}$ jointly via nonlinear least squares: $\min_{A,B,C_\text{mid}} \sum_i \left(R_i - \left[R_0 + (A-R_0)\cdot\frac{1}{1+(C_\text{mid}/C_i)^B}\right]\right)^2$. Solved with Levenberg-Marquardt (e.g. `scipy.optimize.curve_fit`). $A$ is not observed — it's inferred from the shape of the partial curve.
+- **Section 3: Empirical Study of RL Design Choices** (8B dense model):
+  - **3.1 Asynchronous setup**:
+    - *PPO-off-policy-k*: generate batch, do k gradient updates, repeat.
+    - *PipelineRL-k*: generators stream continuously while trainers update immediately; generators use updated weights but stale cached KV from k steps ago. More off-policy but much faster wall-clock.
+    - **Takeaway**: PipelineRL-8 substantially improves compute efficiency ($B$) with similar asymptote ($A$) → preferred infrastructure.
+  - **3.2 Algorithmic choices** (what shifts $A$ vs only $B$):
+    - **Loss type** (shifts $A$): DAPO < GSPO ≈ CISPO. CISPO (truncated importance sampling + vanilla policy gradient) shows longest linear reward growth → selected.
+      - **DAPO (Decoupled Clip and Dynamic Sampling Policy Optimization)**: token-level importance sampling ratio $\rho_{i,t} = \pi_\text{train}(y_{i,t})/\pi_\text{gen}(y_{i,t})$ with asymmetric clip $[1-\varepsilon_\text{low}, 1+\varepsilon_\text{high}]$, $\varepsilon_\text{low} < \varepsilon_\text{high}$ (often $\varepsilon_\text{low}=0$). When $\rho$ exceeds upper bound, gradient = 0 — prevents entropy collapse but kills gradient signal when very off-policy.
+      - **GSPO (Group Sequence Policy Optimization)**: sequence-level importance sampling ratio $\rho_i^\text{seq} = \prod_t \rho_{i,t}$. More principled (the whole sequence is the "action") but product of many token ratios has enormous variance for long sequences.
+      - **CISPO (Clipped Importance Sampling Policy Optimization)**: token-level importance sampling but truncated — when $\rho_{i,t} > \tau$, drop the importance sampling correction and fall back to vanilla policy gradient (use $\hat{A}_i$ directly, no ratio). Uses importance sampling where it's reliable ($\rho \approx 1$), falls back to vanilla PG where it's not ($\rho \gg 1$). Avoids zero gradient (DAPO problem) and high variance (GSPO problem) when off-policy → produces cleaner gradient signal and longer linear growth before saturation.
+    - **FP32 at LM head** (shifts $A$): numerical mismatch between generator/trainer kernels corrupts importance sampling ratios. FP32 fix raises $A$ from 0.52 → 0.61. Large effect.
+    - **Loss aggregation** (shifts $B$ only): prompt-level > sample-level > token-level. Prompt-level selected.
+    - **Advantage normalization** (shifts $B$ only): prompt-level vs batch-level vs none — all similar. Batch-level selected for theoretical soundness.
+    - **Zero-variance filtering** (shifts $A$ slightly): prompts where all $G$ completions get same reward have zero policy gradient — filtering them improves efficiency and asymptote.
+    - **No-positive-resampling / curriculum** (shifts $B$ only): permanently drop prompts with pass rate $\geq 0.9$ from future epochs. Improves scalability.
+- **Section 4: ScaleRL Recipe**:
+  - Full recipe: PipelineRL-8 + CISPO loss + FP32 at logits + prompt-level aggregation + batch-level normalization + zero-variance filtering + no-positive-resampling + length interruption.
+  - **4.1 Leave-one-out (LOO) ablations** (16k GPU-hours each): removing any single component degrades efficiency or stability. FP32 fix appears less critical on 8B+CISPO but becomes essential on MoE and with other loss functions — robustness across settings justifies inclusion.
+  - **4.2 Error margins**: 3 independent runs show $\pm 0.02$ variance in fitted $A$ — establishes significance threshold for comparing recipes.
+  - **4.3 Extrapolation**: curves fit at 8k GPU-hours accurately predict performance at 16k GPU-hours, confirming predictability.
+- **Section 5: Predictable Scaling Across Axes**:
+  - **5.1 Model scale (17B×16 MoE)**: ScaleRL remains stable and predictable on larger MoE. Larger model achieves higher $A$ using only 1/6 of the RL compute needed by the 8B model.
+  - **5.2 Generation length**: longer thinking budget (14k → 32k tokens) lowers early efficiency (higher $C_\text{mid}$, lower $B$) but raises $A$. **Long context is a ceiling-raising knob**, not just an efficiency tradeoff. Validated by extended runs.
+  - **5.3 Batch size**: larger batches (up to 2,048 prompts) → higher $A$ and cleaner scaling. Smaller batches stagnate on downstream evals even when in-distribution validation looks fine.
+  - **5.4 Generations per prompt** (fixing total batch size): varying $G \in \{8,16,24,32\}$ with matching prompt counts produces essentially identical scaling curves — second-order consideration at moderate batch scales.
+  - **100k GPU-hour validation**: sigmoid fit from 50k GPU-hours accurately predicted final performance, confirming the whole framework.
 
 ## 2019-04 Reading List
 

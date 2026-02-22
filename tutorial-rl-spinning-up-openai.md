@@ -268,6 +268,13 @@ where $\Phi_t$ could be any of:
     - Updates policy via $\theta_{k+1} = \arg \max_{\theta} \underset{s,a \sim \pi_{\theta_k}}{{\mathbb E}}\left[L(s,a,\theta_k, \theta)\right]$ by taking multiple gradient steps, where
       - $L(s,a,\theta_k,\theta) = \min\left(\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}  A^{\pi_{\theta_k}}(s,a), \;\;\text{clip}\left(\frac{\pi_{\theta}(a|s)}{\pi_{\theta_k}(a|s)}, 1 - \epsilon, 1+\epsilon \right) A^{\pi_{\theta_k}}(s,a)\right)$.
       - $\epsilon$ is a (small) hyperparameter which roughly says how far away the new policy is allowed to go from the old.
+      - **Why $\min$ and not just $\text{clip}$?** Let $\rho = \pi_\theta(a|s) / \pi_{\theta_k}(a|s)$. Using $\text{clip}(\rho, 1-\epsilon, 1+\epsilon) \cdot A$ alone zeros out the gradient whenever $\rho \notin [1-\epsilon, 1+\epsilon]$, regardless of direction. But two of the four cases still need a corrective gradient:
+        - $A > 0,\ \rho > 1+\epsilon$: good action, policy became much more likely to take it — already over-reinforced, stop pushing. $\rho A > (1+\epsilon)A$, $\min$ takes $(1+\epsilon)A$, gradient = 0.
+        - $A < 0,\ \rho < 1-\epsilon$: bad action, policy became much less likely to take it — already sufficiently suppressed, stop pushing. $\rho A > (1-\epsilon)A$, $\min$ takes $(1-\epsilon)A$, gradient = 0.
+        - $A > 0,\ \rho < 1-\epsilon$: good action, but policy drifted to be much less likely to take it — wrong direction, needs correcting. $\rho A < (1-\epsilon)A$, $\min$ takes $\rho A$, gradient flows and pushes $\rho$ up.
+        - $A < 0,\ \rho > 1+\epsilon$: bad action, but policy drifted to be much more likely to take it — wrong direction, needs correcting. $\rho A < (1+\epsilon)A$, $\min$ takes $\rho A$, gradient flows and pushes $\rho$ down.
+        - The $\min$ is a **one-sided constraint**: clips only when the update would be overconfidently good; lets gradient flow when the policy is drifting in the wrong direction.
+        - **Why clipping = zeroing the gradient**: when $\rho$ is saturated at the boundary, $\text{clip}(\rho)$ returns a constant $(1\pm\epsilon)$ with no dependence on $\theta$, so $\frac{d}{d\theta}[\text{clip}(\rho)\cdot A] = 0$. The objective value is still $(1\pm\epsilon)A$ but contributes nothing to the parameter update.
 
 ![PPO pseudocode](https://spinningup.openai.com/en/latest/_images/math/e62a8971472597f4b014c2da064f636ffe365ba3.svg)
 
