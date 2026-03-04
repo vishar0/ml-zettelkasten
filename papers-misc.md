@@ -7,6 +7,7 @@
 ---
 
 - [x] [2024] Atari-GPT: Benchmarking Multimodal Large Language Models as Low-Level Policies in Atari Games - [paper](https://arxiv.org/abs/2408.15950)
+- [ ] [2007] [ShaneLegg] Universal Intelligence: A Definition of Machine Intelligence - [paper](https://arxiv.org/abs/0712.3329)
 
 ---
 
