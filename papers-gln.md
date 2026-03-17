@@ -18,7 +18,7 @@
 ## [2017] Online Learning with Gated Linear Networks
 
 - **Date**: 2026-01-23
-- **Paper**: <https://arxiv.org/abs/1712.01897>
+- **Arxiv**: <https://arxiv.org/abs/1712.01897>
 - **Paperpile**: <https://app.paperpile.com/view/?id=9c182ef6-6b82-4f11-8a5b-e69b9c1ef5fb>
 - **Assistant**: <https://gemini.google.com/share/4d45791afe36>
 
@@ -140,3 +140,19 @@
     - Input: Preprocessed by applying mean-subtraction and de-skewing operation (Ghosh and Wan, 2017).
   - **6.3. Online MNIST Density Modeling**:
     - TODO
+
+## [2019] Gated Linear Networks
+
+- **Date**: 2026-03-04
+- **Arxiv**: <https://arxiv.org/abs/1910.01526>
+- **Paperpile**: <https://app.paperpile.com/view/?id=3406470a-562f-418e-98af-eb9b1d566886>
+
+---
+
+- **Abstract**:
+  - > This paper presents a new family of backpropagation-free neural architectures, Gated Linear Networks (GLNs). What distinguishes GLNs from contemporary neural networks is the **distributed and local nature of their credit assignment mechanism* each neuron directly predicts the target, forgoing the ability to learn feature representations in favor of rapid online learning**. Individual neurons can model nonlinear functions via the use of data-dependent gating in conjunction with online convex optimization. We show that *this architecture gives rise to universal learning capabilities in the limit, with effective model capacity increasing as a function of network size** in a manner comparable with deep ReLU networks. Furthermore, we demonstrate that the **GLN learning mechanism possesses extraordinary resilience to catastrophic forgetting**, performing comparably to a MLP with dropout and Elastic Weight Consolidation on standard benchmarks. These desirable theoretical and empirical properties position GLNs as a complementary technique to contemporary offline deep learning methods.
+- **Intro**:
+  - > Contemporary neural networks trained via backpropagation require many epochs of training over massive datasets, limiting their effectiveness for data-efficient online learning.
+  - > Their effectiveness is further limited in the continual learning set- ting by their tendency to catastrophically forget previously learnt tasks.
+  - > GLNs possess excellent online learning capabilities, which we demonstrate by showing performance competitive with batch-trained MLPs on a variety of standard classification, regression and density modeling tasks, using only a single online pass through the data. In terms of interpretibility, we show how the data-dependent linearity of the predictions can be exploited to trivialise the process of constructing mean- ingful saliency maps, which can be of great reassurance to practitioners that the model is predicting well for the right reasons.  Perhaps most interestingly, **we demonstrate that our credit assignment mechanism is extraordinarily resilient to catastrophic forgetting, achieving performance competitive with EWC on a standard continual learning benchmark with no knowledge of the task boundaries**.
+- TODO
