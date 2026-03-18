@@ -7,7 +7,8 @@
 ---
 
 - [x] [2018] [hardmaru] World Models - [paper](https://arxiv.org/abs/1803.10122)
-- [ ] TODO dreamer papers
+- [ ] [2018] [Dreamer0] PlaNet: Learning Latent Dynamics for Planning from Pixels - [paper](https://arxiv.org/abs/1811.04551)
+- [ ] [2019] [Dreamer1] Dream to Control: Learning Behaviors by Latent Imagination - [paper](https://arxiv.org/abs/1912.01603)
 - [ ] [2022] [rockt] General Intelligence Requires Rethinking Exploration - [paper](https://arxiv.org/abs/2211.07819)
 - [ ] [2024] [rockt] Genie: Generative Interactive Environments - [paper](https://arxiv.org/abs/2402.15391)
 - [ ] [2024] [rockt] Genie 2: A large-scale foundation world model - [blog](https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/)
@@ -49,6 +50,105 @@
 - > The benefit of implementing the world model as a fully differentiable recurrent computation graph also means that we may be able to train our agents in the dream directly using the backpropagation algorithm to fine-tune its policy to maximize an objective function.
 - > The choice of implementing V as a VAE and training it as a standalone model also has its limitations, since it may encode parts of the observations that are not relevant to a task. After all, unsupervised learning cannot, by definition, know what will be useful for the task at hand. For instance, our VAE reproduced unimportant detailed brick tile patterns on the side walls in the Doom environment, but failed to reproduce task-relevant tiles on the road in the Car Racing environment. By training together with an M that predicts rewards, the VAE may learn to focus on task-relevant areas of the image, but the tradeoff here is that we may not be able to reuse the VAE effectively for new tasks without retraining. **Learning task-relevant features has connections to neuroscience as well. Primary sensory neurons are released from inhibition when rewards are received, which suggests that they generally learn task-relevant features, rather than just any features, at least in adulthood**.
 - > Another concern is the limited capacity of our world model. While modern storage devices can store large amounts of historical data generated using an iterative training procedure, our LSTM-based [115, 116] world model may not be able to store all of the recorded information inside of its weight connections. While the human brain can hold decades and even centuries of memories to some resolution [117], our neural networks trained with backpropagation have more limited capacity and suffer from issues such as catastrophic forgetting [118, 119, 120]. Future work will explore replacing the VAE and MDN-RNN with higher capacity models [121, 122, 123, 124, 125], or incorporating an external memory module [126], if we want our agent to learn to explore more complicated worlds.
+
+## [2018] [Dreamer0] PlaNet: Learning Latent Dynamics for Planning from Pixels
+
+- **Date**: 2026-03-18
+- **Arxiv**: <https://arxiv.org/abs/1811.04551>
+- **Paperpile**: <https://app.paperpile.com/view/?id=f94a0dc8-b051-475b-b27f-04997f3a95ed>
+- **Blog**: <https://research.google/blog/introducing-planet-a-deep-planning-network-for-reinforcement-learning/>
+- **Code**: <https://github.com/google-research/planet>
+
+---
+
+- **Abstract**:
+  - > **Planning  has  been  very  successful  for  control tasks  with  known  environment  dynamics.   To leverage  planning  in  unknown  environments, the  agent  needs  to  learn  the  dynamics  from interactions with the world.**  However, learning dynamics models that are accurate enough for planning  has  been  a  long-standing  challenge, especially in image-based domains. We propose the Deep Planning Network (PlaNet),  **a purely model-based agent that learns the environment dynamics  from  images  and  chooses  actions through fast online planning in latent space.  To achieve high performance, the dynamics model must  accurately  predict  the  rewards  ahead  for multiple time steps**.  We approach this using a **latent dynamics model with both deterministic and stochastic transition components**. Moreover, we  propose  a  multi-step  variational  inference objective   that   we   name   latent   overshooting. Using only pixel observations, our agent solves continuous control tasks with contact dynamics, partial observability, and sparse rewards, which exceed the difficulty of tasks that were previously solved by planning with learned models. PlaNet uses substantially fewer episodes and reaches final performance close to and sometimes higher than strong model-free algorithms.
+- **Intro**:
+  - > Planning is a natural and powerful approach to decision making problems with known dynamics.
+  - > To leverage planning in unknown environments, the agent needs to learn the dynamics from interactions with the world.
+  - Prior work on planning assumed access to the underlying state and reward function — not available in practice. Successful latent models were limited to simple tasks like balancing cartpoles from dense rewards.
+  - Learning dynamics that are accurate enough for planning is hard due to model inaccuracies, accumulating errors of multi-step predictions, failure to capture multiple possible futures, and overconfident predictions outside of the training distribution.
+  - **Planning has two advantages over model-free RL**:
+    - (1) **sample efficiency**: leverage a richer training signal without propagating rewards through Bellman backups,
+    - (2) **test-time compute scaling**: performance can improve just by increasing compute budget for action search.
+  - **Three contributions**:
+    - (1) **Recurrent State Space Model (RSSM)**: latent dynamics with both deterministic and stochastic components, both shown to be crucial,
+    - (2) **Latent Overshooting**: multi-step variational objective trained purely in latent space,
+    - (3) solves visual continuous control with 200× fewer episodes than model-free baselines.
+- **Section 2 — Latent Dynamics**:
+  - Problem setup: POMDP with hidden states $z_t$, image observations $s_t$, continuous actions $a_t$, scalar rewards $r_t$:
+    - Transition model: $z_t \sim p(z_t \mid z_{t-1}, a_{t-1})$
+    - Observation model: $s_t \sim p(s_t \mid z_t)$
+    - Reward model: $r_t \sim p(r_t \mid z_t)$
+    - Policy: $a_t \sim p(a_t \mid s_{\leq t}, a_{< t})$
+  - Goal: maximize expected cumulative reward $\mathbb{E}_p\!\left[\sum_{t=1}^T r_t\right]$
+  - Agent learns transition, observation, and reward models, plus an encoder $q(z_t \mid s_{\leq t}, a_{< t})$ to infer belief over current hidden state from history via filtering
+  - Uses **model predictive control (MPC)** — no policy or value network; replan at each step using CEM
+- **Section 3 — Recurrent State Space Model (RSSM)**:
+  - Pure stochastic model $z_t \sim p(z_t \mid z_{t-1}, a_{t-1})$ fails: information must flow through a narrow stochastic bottleneck at each step, limiting multi-step memory
+  - Pure deterministic RNN $h_t = f(h_{t-1}, a_{t-1})$ fails: cannot represent uncertainty or multiple possible futures
+  - RSSM splits latent into deterministic + stochastic:
+    - Deterministic state model: $h_t = f(h_{t-1}, z_{t-1}, a_{t-1})$ — RNN
+    - Stochastic state model: $z_t \sim p(z_t \mid h_t)$
+    - Observation model: $s_t \sim p(s_t \mid h_t, z_t)$ — deconvolutional, identity covariance
+    - Reward model: $r_t \sim p(r_t \mid h_t, z_t)$ — scalar Gaussian, unit variance
+    - Encoder (posterior): $q(z_{1:T} \mid s_{1:T}, a_{1:T}) = \prod_t q(z_t \mid h_t, s_t)$ — CNN + feed-forward, diagonal Gaussian
+  - **Training objective** — variational lower bound:
+    - $\ln p(s_{1:T} \mid a_{1:T}) \geq \sum_t \mathbb{E}_q\!\left[\ln p(s_t \mid h_t, z_t)\right] - \mathbb{E}_q\!\left[\text{KL}\!\left[q(z_t \mid h_t, s_t) \;\|\; p(z_t \mid h_t)\right]\right]$
+    - KL term forces the prior $p(z_t \mid h_t)$ to stay close to posterior — ensures prior is accurate at planning time when no observations are available
+- **Section 4 — Latent Overshooting**:
+  - Problem: standard ELBO only trains the transition model on 1-step KL — no direct gradient signal for multi-step predictions, which is what planning actually needs
+  - Define $d$-step predictive distribution: $p(z_t \mid z_{t-d}) \triangleq \int \prod_{\tau=t-d+1}^{t} p(z_\tau \mid z_{\tau-1}) \, dz_{t-d+1:t-1}$
+  - **Latent overshooting** — average KL across all distances $1 \leq d \leq D$:
+    - $\frac{1}{D}\sum_d \ln p_d(s_{1:T}) \geq \sum_t \mathbb{E}_q\!\left[\ln p(s_t \mid h_t, z_t)\right] - \frac{1}{D}\sum_d \beta_d \, \mathbb{E}_{p,q}\!\left[\text{KL}\!\left[q(z_t \mid h_t, s_t) \;\|\; p(z_t \mid z_{t-1})\right]\right]$
+  - All multi-step KL terms are computed entirely in latent space — no image generation needed
+  - $\beta_d$ weights allow tuning how much each prediction distance is regularized
+
+## [2019] [Dreamer1] Dream to Control: Learning Behaviors by Latent Imagination
+
+- **Date**: 2026-03-18
+- **Arxiv**: <https://arxiv.org/abs/1912.01603>
+- **Paperpile**: <https://app.paperpile.com/view/?id=8a3084e7-dac0-4045-9e49-d40bed68fad7>
+- **Code**: <https://github.com/google-research/dreamer>
+
+---
+
+- **Abstract**:
+  - > Learned  world  models  summarize  an  agent’s  experience  to  facilitate  learning complex behaviors. While learning world models from high-dimensional sensory inputs is becoming feasible through deep learning, there are many potential ways for deriving behaviors from them. We present Dreamer, a reinforcement learning agent that solves long-horizon tasks from images purely by latent imagination. We efficiently learn behaviors by propagating analytic gradients of learned state values back through trajectories imagined in the compact state space of a learned world model. On 20 challenging visual control tasks, Dreamer exceeds existing approaches in data-efficiency, computation time, and final performance.
+- **Intro**:
+  - > **Intelligent agents can achieve goals in complex environments even though they never encounter the exact same situation twice. This ability requires building  representations  of  the  world  from  past  experience  that  enable generalization to novel situations**.
+  - > World models offer an explicit way to represent an agent’s knowledge about the world in a parametric model that can make predictions about the future.
+  - [Fig1] **Dreamer**:
+    - an agent that learns long-horizon behaviors from images purely by latent imagination.
+    - > A novel actor critic algorithm accounts for rewards beyond the imagination horizon while making efficient use of the neural network dynamics.
+    - > The values optimize Bellman consistency for imagined rewards and the policy maximizes the values by propagating their analytic gradients back through the dynamics.
+    - > **In comparison to actor critic algorithms that learn online or by experience replay, world models can interpolate past experience and offer analytic gradients of multi-step returns for efficient policy optimization**.
+    - **With a world model, the environment dynamics becomes differentiable**.
+- **Section 2 — Control with World Models**:
+  - Three interleaved loops:
+    - (1) **Dynamics learning**: fit world model to real experience in replay buffer
+    - (2) **Behavior learning**: train actor-critic inside the world model via imagined rollouts — no real env interaction
+    - (3) **Environment interaction**: run current policy, collect data, grow replay buffer
+  - **World model (RSSM)**:
+    - Deterministic path: $h_t = \text{GRU}(h_{t-1}, z_{t-1}, a_{t-1})$ — memory, gradients flow cleanly
+    - Stochastic path (posterior): $z_t \sim q(z_t \mid h_t, s_t)$ — encodes observation into latent
+    - Prior (used during imagination): $z_t \sim p(z_t \mid h_t)$ — predicts latent without seeing observation
+    - Reward model: $p(r_t \mid h_t, z_t)$
+    - Decoder: $p(s_t \mid h_t, z_t)$ — reconstructs image, provides training signal
+    - Loss: VAE-style ELBO — image reconstruction + reward prediction + $\text{KL}(q \| p)$
+  - **Behavior learning via latent imagination**:
+    - Branch imagined trajectories from real states in the buffer, unroll $H$ steps using prior + actor
+    - **Actor**: tanh-Gaussian policy, optimized by backpropagating gradients through imagined transitions (reparameterization)
+    - **Critic**: regresses to $V_\lambda$ targets
+    - **$\lambda$-returns** — exponential mixture of n-step returns, same as TD($\lambda$):
+      - $V_R$: sum rewards over horizon, no bootstrapping — shortsighted
+      - $V_N^k$: $k$ steps of rewards + critic bootstrap at step $k$
+      - $V_\lambda = (1-\lambda)\sum_{n=1}^{H-1} \lambda^{n-1} V_N^n + \lambda^{H-1} V_N^H$ — balances bias (short) vs variance (long)
+    - Actor loss: $\max_\phi \, \mathbb{E}\!\left[\sum_\tau V_\lambda(z_\tau)\right]$ — gradients flow back through dynamics
+    - Critic loss: $\min_\psi \, \mathbb{E}\!\left[\tfrac{1}{2} \| v_\psi(z_\tau) - V_\lambda(z_\tau) \|^2\right]$
+  - Uses **state values** $V(z)$ not action values $Q(z, a)$ — sufficient because gradients already reach actions through the dynamics
+  - Predicts a **discount factor** $\gamma_t$ per latent state for tasks with early termination — imagined trajectories naturally downweight steps after likely episode ends
+- TODO
 
 ## [2024] [rockt] Genie: Generative Interactive Environments
 
