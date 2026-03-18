@@ -33,6 +33,7 @@
 - [ ] TODO "Are brain-inspired algorithms inherently unscalable compared to backpropagation?", <https://arxiv.org/abs/2505.13124>. Tweet-print: <https://x.com/InnocFrancesco/status/1978121338859503822>
 - [ ] <https://www.aria.org.uk/opportunity-spaces/nature-computes-better>
 - [ ] <https://www.openphilanthropy.org/research/how-much-computational-power-does-it-take-to-match-the-human-brain/>
+- [ ] Replay Comes of Age, <https://www.annualreviews.org/content/journals/10.1146/annurev-neuro-072116-031538>
 
 ---
 
