@@ -124,31 +124,50 @@
     - > The values optimize Bellman consistency for imagined rewards and the policy maximizes the values by propagating their analytic gradients back through the dynamics.
     - > **In comparison to actor critic algorithms that learn online or by experience replay, world models can interpolate past experience and offer analytic gradients of multi-step returns for efficient policy optimization**.
     - **With a world model, the environment dynamics becomes differentiable**.
-- **Section 2 — Control with World Models**:
-  - Three interleaved loops:
-    - (1) **Dynamics learning**: fit world model to real experience in replay buffer
-    - (2) **Behavior learning**: train actor-critic inside the world model via imagined rollouts — no real env interaction
-    - (3) **Environment interaction**: run current policy, collect data, grow replay buffer
-  - **World model (RSSM)**:
-    - Deterministic path: $h_t = \text{GRU}(h_{t-1}, z_{t-1}, a_{t-1})$ — memory, gradients flow cleanly
-    - Stochastic path (posterior): $z_t \sim q(z_t \mid h_t, s_t)$ — encodes observation into latent
-    - Prior (used during imagination): $z_t \sim p(z_t \mid h_t)$ — predicts latent without seeing observation
-    - Reward model: $p(r_t \mid h_t, z_t)$
-    - Decoder: $p(s_t \mid h_t, z_t)$ — reconstructs image, provides training signal
-    - Loss: VAE-style ELBO — image reconstruction + reward prediction + $\text{KL}(q \| p)$
-  - **Behavior learning via latent imagination**:
-    - Branch imagined trajectories from real states in the buffer, unroll $H$ steps using prior + actor
-    - **Actor**: tanh-Gaussian policy, optimized by backpropagating gradients through imagined transitions (reparameterization)
-    - **Critic**: regresses to $V_\lambda$ targets
-    - **$\lambda$-returns** — exponential mixture of n-step returns, same as TD($\lambda$):
-      - $V_R$: sum rewards over horizon, no bootstrapping — shortsighted
-      - $V_N^k$: $k$ steps of rewards + critic bootstrap at step $k$
-      - $V_\lambda = (1-\lambda)\sum_{n=1}^{H-1} \lambda^{n-1} V_N^n + \lambda^{H-1} V_N^H$ — balances bias (short) vs variance (long)
-    - Actor loss: $\max_\phi \, \mathbb{E}\!\left[\sum_\tau V_\lambda(z_\tau)\right]$ — gradients flow back through dynamics
-    - Critic loss: $\min_\psi \, \mathbb{E}\!\left[\tfrac{1}{2} \| v_\psi(z_\tau) - V_\lambda(z_\tau) \|^2\right]$
-  - Uses **state values** $V(z)$ not action values $Q(z, a)$ — sufficient because gradients already reach actions through the dynamics
-  - Predicts a **discount factor** $\gamma_t$ per latent state for tasks with early termination — imagined trajectories naturally downweight steps after likely episode ends
-- TODO
+- [Fig3,Algorithm1] **Section 2 - Control with World Models**:
+  - **2.1 Reinforcement learning**: visual control as a POMDP — continuous actions, high-dimensional observations, scalar rewards; goal is to maximize expected cumulative rewards
+  - **2.2 Agent components** — three operations throughout the agent's lifetime, either interleaved or in parallel:
+    - (1) **Dynamics learning**: learn latent dynamics from past experience.
+    - (2) **Behavior learning**: learn action and value models from predicted trajectories in latent space. The value model optimizes Bellman consistency for imagined rewards and the action model is updated by propagating gradients of value estimates back through the neural network dynamics.
+    - (3) **Environment interaction**: execute the learned action model in the environment to grow the dataset.
+  - **2.3 Latent dynamics** — three model components:
+    - Representation model: $p(z_t \mid z_{t-1}, a_{t-1}, s_t)$
+    - Transition model: $q(z_t \mid z_{t-1}, a_{t-1})$ — predicts future latent states without seeing the corresponding observations
+    - Reward model: $q(r_t \mid z_t)$
+    - > **the transition model lets us predict ahead in the compact latent space without having to observe or imagine the corresponding images**. This results in a low memory footprint and fast predictions of thousands of imagined trajectories in parallel.
+    - > The model mimics a non-linear Kalman filter (Kalman, 1960), latent state space model, or HMM with real-valued states. However, it is conditioned on actions and predicts rewards, allowing the agent to imagine the outcomes of potential action sequences without executing them in the environment.
+- **Section 3 - Learning Behaviors by Latent Imagination**:
+  - **3.1 Imagination environment**: the latent dynamics define a fully-observable MDP — imagined trajectories start from real model states in the dataset, then follow the transition model, reward model, and policy; objective is $\mathbb{E}_q\!\left[\sum_{\tau=t}^\infty \gamma^{\tau-t} r_\tau\right]$
+  - **3.2 Action and value models**:
+    - Action model: $a_\tau \sim q_\phi(a_\tau \mid z_\tau)$ — tanh-transformed Gaussian, enables reparameterized gradients through sampling
+    - Value model: $v_\psi(z_\tau) \approx \mathbb{E}_{q(\cdot|z_\tau)}\!\left[\sum_{\tau=t}^{t+H} \gamma^{\tau-t} r_\tau\right]$
+  - **3.3 Value estimation** — three estimates trading off bias and variance:
+    - $V_R(z_\tau) \triangleq \mathbb{E}_{q_\theta, q_\phi}\!\left[\sum_{n=\tau}^{t+H} r_n\right]$ — sums rewards to horizon, ignores beyond
+    - $V_N^k(z_\tau) \triangleq \mathbb{E}_{q_\theta, q_\phi}\!\left[\sum_{n=\tau}^{h-1} \gamma^{n-\tau} r_n + \gamma^{h-\tau} v_\psi(z_h)\right],\quad h = \min(\tau+k,\,t+H)$
+    - $V_\lambda(z_\tau) \triangleq (1-\lambda)\sum_{n=1}^{H-1} \lambda^{n-1} V_N^n(z_\tau) + \lambda^{H-1} V_N^H(z_\tau)$ — exponentially-weighted average
+  - **3.4 Learning objectives**:
+    - Actor (Eq. 7): $\max_\phi\ \mathbb{E}_{q_\theta, q_\phi}\!\left[\sum_{\tau=t}^{t+H} V_\lambda(z_\tau)\right]$ — analytic gradients via stochastic backprop
+    - Critic (Eq. 8): $\min_\psi\ \mathbb{E}_{q_\theta, q_\phi}\!\left[\sum_{\tau=t}^{t+H} \tfrac{1}{2}\left\|v_\psi(z_\tau) - V_\lambda(z_\tau)\right\|^2\right]$ — regresses to stopped targets
+    - For early-termination tasks: world model predicts discount factor $\gamma_t$ per latent state; timesteps weighted by cumulative product of predicted discounts
+  - **3.5 Comparison to actor-critic methods**:
+    - REINFORCE-based (A3C, PPO): use value baselines to reduce variance — Dreamer instead backpropagates through the value model
+    - Deterministic actor-critics (DDPG, SAC): maximize immediate $Q$-values without using transition gradients — Dreamer propagates through multi-step dynamics
+    - Uses state values $V(z)$ not action values $Q(z,a)$ — sufficient because gradients already reach actions through the dynamics
+- **Section 4 - Learning Latent Dynamics**:
+  - Goal: learn a world model that generalizes well enough for behavior training in imagination
+  - Requires: representation model $p(z_t \mid z_{t-1}, a_{t-1}, s_t)$, transition model $q(z_t \mid z_{t-1}, a_{t-1})$, reward model $q(r_t \mid z_t)$
+  - Three representation learning objectives compared — behavior learning is identical across all three:
+  - **4.1 Reward prediction**: learn purely by predicting future rewards given actions and observations — no image modeling. Insufficient in practice: > "with a finite dataset and especially when rewards are sparse, learning about observations that correlate with rewards is likely to improve the world model"
+  - **4.2 Reconstruction** — ELBO objective $\mathcal{J}_{REC}$, sum of the folloing terms:
+    - $\mathcal{J}_O^t \triangleq \ln q(s_t \mid z_t)$ — image log-likelihood (decoded via transposed CNN)
+    - $\mathcal{J}_R^t \triangleq \ln q(r_t \mid z_t)$ — reward log-likelihood
+    - $\mathcal{J}_D^t \triangleq -\beta\,\text{KL}\!\left[p(z_t \mid z_{t-1}, a_{t-1}, s_t) \;\|\; q(z_t \mid z_{t-1}, a_{t-1})\right]$ — KL regularizer
+    - Best performer — wins on majority of tasks
+  - **4.3 Contrastive estimation** — replaces pixel reconstruction with NCE objective $\mathcal{J}_{NCE}$ which replaces $\mathcal{J}_O$ in $\mathcal{J}_{REC}$ with $\mathcal{J}_S$:
+    - Uses a state model $q_\theta(z_t \mid s_t)$ instead of an observation model; no decoder
+    - $\mathcal{J}_S^t \triangleq \ln q(z_t \mid s_t) - \ln \sum_{s'} q(z_t \mid s')$ — makes $z_t$ predictable from $s_t$ while contrasting against other observations to prevent collapse
+    - $\mathcal{J}_R^t$ and $\mathcal{J}_D^t$ same as reconstruction
+    - Solves about half the tasks — worse than reconstruction despite avoiding task-irrelevant pixel details
 
 ## [2024] [rockt] Genie: Generative Interactive Environments
 
