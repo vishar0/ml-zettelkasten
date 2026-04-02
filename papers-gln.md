@@ -6,9 +6,9 @@
 
 ---
 
-- [ ] [2017] Online Learning with Gated Linear Networks - [paper](https://arxiv.org/abs/1712.01897)
-- [ ] [2019] Gated Linear Networks - [paper](https://arxiv.org/abs/1910.01526)
-- [ ] [2020] Gaussian Gated Linear Networks - [paper](https://arxiv.org/abs/2006.05964)
+- [x] [2017] Online Learning with Gated Linear Networks - [paper](https://arxiv.org/abs/1712.01897)
+- [x] [2019] Gated Linear Networks - [paper](https://arxiv.org/abs/1910.01526)
+- [x] [2020] Gaussian Gated Linear Networks - [paper](https://arxiv.org/abs/2006.05964)
 - [ ] [2020] Online Learning in Contextual Bandits using Gated Linear Networks - [paper](https://arxiv.org/abs/2002.11611)
 - [ ] [2020] A Combinatorial Perspective on Transfer Learning - [paper](https://arxiv.org/abs/2010.12268)
 - [ ] [2021] A Rapid and Efficient Learning Rule for Biological Neural Circuits - [paper](https://www.biorxiv.org/content/10.1101/2021.03.10.434756)
@@ -21,6 +21,7 @@
 - **Arxiv**: <https://arxiv.org/abs/1712.01897>
 - **Paperpile**: <https://app.paperpile.com/view/?id=9c182ef6-6b82-4f11-8a5b-e69b9c1ef5fb>
 - **Assistant**: <https://gemini.google.com/share/4d45791afe36>
+- **Code**: <https://github.com/google-deepmind/deepmind-research/tree/master/gated_linear_networks>
 
 ---
 
@@ -68,14 +69,24 @@
     - Taking exp: $$Q = e^{w \cdot \text{logit}(p_t)}$$
     - Substitute $Q$ back into the equation: $$\text{GEO}_w(x_t = 1; p_t) = \frac{e^{w \cdot \text{logit}(p_t)}}{e^{w \cdot \text{logit}(p_t)} + 1}$$
     - Multiply by $e^{-x}/e^{-x}$ to reach sigmoid form: $$\text{GEO}_w(x_t = 1; p_t) = \frac{1}{1 + e^{-w \cdot \text{logit}(p_t)}}$$
-    - Final Result: **$$\text{GEO}_w(x_t = 1; p_t) = \sigma(w \cdot \text{logit}(p_t))$$**.
+    - Final Result: **$$\text{GEO}_w(x_t = 1; p_t) = \sigma(w \cdot \text{logit}(p_t))$$**
   - **Logarithmic Loss (Binary Cross-Entropy Loss)**:
     - At each time $t$, the predictor outputs a binary distribution: $\text{GEO}_w(.; p_t) \to [0,1]$.
     - $x_t \in \{0,1\}$: binary ground-truth observation at time $t$.
     - Logarithmic loss (binary cross-entropy loss) $l_t(\text{GEO}_w(.; p_t), x_t)$ between the predictor's output and the ground-truth observation.
     - **Online learning**: Loss applied to the predictor before moving to time $t+1$.
   - **Properties under Logarithmic Loss**:
-    - TODO
+    - The log loss of a geometric mixer w.r.t. weights $w$ is **convex** in $w$. This is the key property that makes local learning tractable — there are no local minima to get stuck in, so simple online gradient descent is sufficient.
+    - **Proposition** — for all $t$, $x_t \in \{0,1\}$, $p_t \in (0,1)^m$, $w \in \mathcal{W}$:
+      1. **Gradient**: $\nabla \ell^\text{geo}_t(w) = \left(\text{GEO}_w(1;p_t) - x_t\right)\text{logit}(p_t)$ — prediction error × logit of inputs, same structure as logistic regression.
+      2. **Gradient norm**: $\|\nabla \ell^\text{geo}_t(w)\|_2 \leq \|\text{logit}(p_t)\|_2$
+      3. **Convexity**: $\ell^\text{geo}_t(w)$ is convex in $w$.
+      4. If inputs are clipped: $p_t \in [\epsilon, 1-\epsilon]^m$:
+         - **Exp-concavity**: $\ell^\text{geo}_t$ is $\alpha$-exp-concave (a strictly stronger condition than convexity that allows curvature-aware updates).
+         - **Tighter gradient norm**: $\|\nabla \ell^\text{geo}_t(w)\|_2 \leq \sqrt{m}\log(1/\epsilon)$
+    - **Optimization options**:
+      - Convexity alone → Online Gradient Descent → $O(\sqrt{T})$ regret (average error vanishes).
+      - Exp-concavity → Online Newton Step → $O(\log T)$ regret (much faster convergence, but more compute per step).
 - **2. Gated Geometric Mixing Neuron [Fig2]**: Contextual Gating + Geometric Mixing
   - **Contextual Gating**: Mapping particular examples to particular sets of weights. **Similar in concept to hypernetworks**, except that the paper doesn't use a neural network but a hashtable of weights.
   - **Context Function** $c \colon Z \to C$, where $Z$ is the set of possible side information and $C = {0,...,k − 1}$ for some $k \in N$ is the context space.
@@ -123,9 +134,17 @@
   - **Parallelism**:
     - > When generating a prediction, parallelism can occur within a layer, similar to an MLP. The local training rule however enables all the neurons to be updated simul- taneously, as they have no need to communicate information to each other.  This compares favorably  to  back-propagation  and  significantly  simplifies  any  possible  distributed  imple- mentation.  Furthermore, as the bulk of the computation is primarily matrix multiplication, large speedups can be obtained straightforwardly using GPUs.
 - **4. Effective Capacity of GLN**:
-  - TODO
+  - Standard universality proofs for neural nets say: *there exist weights* that can approximate any function. They say nothing about whether training will find those weights. The GLN result is stronger: it proves that a specific learning rule (OGD) will *converge* to the right answer — this is called **effective capacity**.
+  - **What the theorem says** (informally): Given enough data and a sufficiently rich set of context functions, a GLN trained with a no-regret algorithm will converge to the true function $f$ almost everywhere.
+  - The convergence is layerwise: each neuron learns to predict $f$ *averaged over the input regions its contexts carve out*. With more layers (or more neurons per layer), those regions get finer, and the approximation improves. In the limit of infinite depth, all neurons in a layer converge to the same output — and if the contexts are rich enough, that output equals $f$.
+  - **What counts as "rich enough" contexts?** Half-space contexts (the kind used in practice) are sufficient, as long as you use enough of them. A two-layer network with many half-space neurons in the first layer can approximate any continuous function on a compact domain.
+  - **Effective $\neq$ Capacity**: For a *fixed* architecture, there may be functions that *can* be represented but that OGD will never find. The failure case is XOR: neurons in the same layer optimize selfishly and never coordinate to solve it, so OGD gets stuck at $1/2$ — even though correct weights exist.
 - **5. Adaptive Regularization via Sub-network Switching**:
-  - TODO
+  - **Problem — Catch-Up Phenomenon**: Early in training, lower-layer neurons predict better (they have a simpler job — fewer inputs to combine). Higher layers catch up as more data arrives, but by then the model has already wasted predictions deferring to them. Naively using the top neuron's output is suboptimal.
+  - **Solution**: Since every neuron already outputs a probability for the target, we can maintain a weighted mixture over *all* neurons across all layers, and let the weights track which neuron is currently predicting best. This is a **switching ensemble**.
+  - **Prior design**: Weight the mixture using a run-length encoding prior — essentially, sequences of neurons that stick to one neuron for a long time are assigned higher prior probability. This biases the ensemble toward stable predictions, and only "switches" when another neuron clearly starts outperforming.
+  - **Guarantee**: If the best strategy is to follow a sequence of neurons that switches $s$ times, the ensemble's regret is only $O(s \log n)$ — logarithmic in data, not linear. If a single neuron is always best, the cost of running the ensemble is essentially zero.
+  - **In practice**: On a 6-layer GLN, the ensemble weight starts concentrated on a mid-level (3rd layer) neuron, then gradually shifts up through layers 4, 5, and finally the top — automatically adapting the "effective depth" of the model as training progresses.
 - **6. Experiments**:
   - **6.1. Non-Linear Decision Boundaries**:
     - To empirically verify GLNs can model non-linearity.
@@ -139,13 +158,22 @@
     - Each component of all weight vectors were constrained to lie within $[−200, 200]$ (hypercube).
     - Input: Preprocessed by applying mean-subtraction and de-skewing operation (Ghosh and Wan, 2017).
   - **6.3. Online MNIST Density Modeling**:
-    - TODO
+    - **Task**: Density model over binarized MNIST ($28 \times 28$ binary images).
+    - **Autoregressive Factorization**: Use chain rule $P(X_1, \ldots, X_d) = \prod_i P(X_i | X_{<i})$ with row-major pixel ordering. Train 784 GLNs, one per pixel.
+    - **Base Layer**: Up to 600 skip-gram predictions per pixel (exact count depends on pixel position). Geometric patterns known to help lossless image compression + randomly sampled pixel locations. Probabilities estimated online using the **Zero-Redundancy Estimator** (per-context, online).
+    - **Context Functions**:
+      - **Skip-gram**: Checks if specific earlier pixels are active — allows conditioning on the presence of nearby features.
+      - **Max-pool**: Returns a binary-encoded index from max-pooled regions of the image — captures coarser spatial structure.
+      - **Distance**: Returns the index of the nearest active pixel under various scan orderings (row, column, diagonal) — captures local texture/edge information.
+    - **Network**: 4 layers, shape 35-60-35-70. 200 context functions randomly assigned across neurons. Learning rate: $\min(25/t,\ 0.005)$.
+    - **Results**: **79.0 nats/image** on a single pass over the full dataset (train + val + test). Matches the state-of-the-art for batch-trained exact density models (PixelCNN) at the time, with no re-use of data.
 
 ## [2019] Gated Linear Networks
 
 - **Date**: 2026-03-04
 - **Arxiv**: <https://arxiv.org/abs/1910.01526>
 - **Paperpile**: <https://app.paperpile.com/view/?id=3406470a-562f-418e-98af-eb9b1d566886>
+- **Code**: <https://github.com/google-deepmind/deepmind-research/tree/master/gated_linear_networks>
 
 ---
 
@@ -155,4 +183,50 @@
   - > Contemporary neural networks trained via backpropagation require many epochs of training over massive datasets, limiting their effectiveness for data-efficient online learning.
   - > Their effectiveness is further limited in the continual learning set- ting by their tendency to catastrophically forget previously learnt tasks.
   - > GLNs possess excellent online learning capabilities, which we demonstrate by showing performance competitive with batch-trained MLPs on a variety of standard classification, regression and density modeling tasks, using only a single online pass through the data. In terms of interpretibility, we show how the data-dependent linearity of the predictions can be exploited to trivialise the process of constructing mean- ingful saliency maps, which can be of great reassurance to practitioners that the model is predicting well for the right reasons.  Perhaps most interestingly, **we demonstrate that our credit assignment mechanism is extraordinarily resilient to catastrophic forgetting, achieving performance competitive with EWC on a standard continual learning benchmark with no knowledge of the task boundaries**.
-- TODO
+- Delta from previous paper:
+  - **Halfspace Sampling**:
+    - Sample the normal vector $v$ uniformly from the surface of the unit sphere: draw i.i.d. $\mathcal{N}(0,1)$ components, then normalize. Sample the offset $b$ from $\mathcal{N}(0,1)$.
+    - In high dimensions, randomly sampled hyperplanes are nearly orthogonal with high probability — so a set of $m$ halfspaces tends to cut the space in complementary, non-redundant ways.
+    - The binary vector $g = (c_1(z), \ldots, c_m(z))$ is called the **signature** of input $z$. By locality-sensitive hashing theory, inputs close in cosine similarity map to similar signatures — so inputs that are geometrically nearby activate similar weight matrices and predict similarly. This is the inductive bias of halfspace-gated GLNs.
+  - **Linear Interpretability & Saliency Maps**:
+    - For a fixed input $z$, the product of data-dependent weight matrices $W_L(z) \cdots W_1(z)$ collapses to a single vector of the same dimension as the input (since $W_L$ has 1 row and $W_1$ has $K_0$ columns). The final prediction is $\sigma(\text{collapsed vector} \cdot \text{logit}(p_0))$.
+    - This collapsed vector is a **multilinear polynomial of degree $L$** in the learned weights — it directly encodes how the network weights the input features for this specific example.
+    - Saliency maps come for free: no gradient tricks or post-hoc analysis needed. Just read off the collapsed weight vector for any given input. Empirically, saliency maps on MNIST clearly preserve the characteristic digit shapes — the model is predicting for the right reasons.
+  - **Empirical Capacity**:
+    - The 2017 paper proves GLNs have universal capacity theoretically. This paper verifies it empirically: GLNs can memorize randomly labelled MNIST and pure noise datasets comparably to an MLP with the same total number of weights.
+    - Capacity scales with both network width and context dimension — increasing either allows the model to fit more complex (or random) mappings.
+  - **Resilience to Catastrophic Forgetting**:
+    - Tested on permuted MNIST: 8 sequential tasks, each a different random pixel permutation of MNIST. No task boundaries given to the model.
+    - GLN outperforms a standard MLP and matches EWC (Elastic Weight Consolidation) in a single pass per task. EWC only surpasses the GLN when given 10 passes per task.
+    - **Why it works**: Inputs from different tasks have very different signatures (different halfspaces fire) since cosine distance between permuted images is large. This means different tasks activate nearly disjoint subsets of the weight table — gating acts as **implicit weight hashing**, giving tasks their own effective parameter space without any explicit mechanism.
+  - **Convergence Rates**:
+    - The loss $\ell_t(w)$ is not strongly convex everywhere — it's flat in directions orthogonal to $\text{logit}(p_t)$. But it *is* strongly convex in the subspace spanned by the observed gradients. Once $n > d$, this subspace is likely all of $\mathbb{R}^d$, so SGD with a $1/t$ learning rate achieves $O(\log T)$ regret (same as Online Newton Step but cheaper).
+    - Learning proceeds layer by layer: after the first layer converges (in $\tilde{O}(1/\epsilon^2)$ steps), its outputs become approximately i.i.d. inputs for the second layer, which then converges, and so on. Overall convergence to $\epsilon$-accuracy is $O(L/\epsilon^2)$.
+  - **Benchmarks**:
+    - **MNIST classification**: 98% accuracy in a single pass (one-vs-all, 10 GLNs, 128 neurons/layer, context dimension 4).
+    - **UCI datasets**: Single-pass GLN competitive with SVM, Gradient Boosting, and MLP trained for 100 epochs across diverse small-data classification tasks.
+    - **MNIST density modeling**: 79.0 nats/image online; 80.74 nats if weights frozen at test time. Matches state-of-the-art batch-trained exact density models (PixelCNN). Additionally, unlike batch models, the online GLN can be directly coupled to an arithmetic decoder for lossless compression — batch models would need to first encode their (large) parameters, making them impractical for compression.
+
+## [2020] Gaussian Gated Linear Networks
+
+- **Date**: 2026-04-02
+- **Arxiv**: <https://arxiv.org/abs/2006.05964>
+- **Paperpile**: <https://app.paperpile.com/view/?id=84d4f164-fcfa-4b5c-a1de-babfcb7493e4>
+
+---
+
+- **Abstract**: Extends GLNs from binary (Bernoulli) to real-valued outputs by replacing geometric mixing with a **weighted Product of Gaussians**. All the desirable properties of B-GLNs carry over: local learning, convex loss, data-dependent gating, universality, catastrophic forgetting resilience.
+- **Core Extension — Weighted Product of Gaussians (PoG)**:
+  - The Gaussian analogue of geometric mixing. Given $m$ Gaussian experts $\mathcal{N}(\mu_i, \sigma_i^2)$ with weights $w \in \mathbb{R}_+^m$, their weighted product is itself a Gaussian (exponential families are closed under multiplication):
+    $$\sigma^2_\text{PoG}(w) = \left[\sum_i \frac{w_i}{\sigma_i^2}\right]^{-1}, \qquad \mu_\text{PoG}(w) = \sigma^2_\text{PoG}(w) \sum_i \frac{w_i \mu_i}{\sigma_i^2}$$
+  - Intuition: the output precision is a weighted sum of input precisions; the output mean is a precision-weighted average of input means.
+  - The mean of a PoG must lie in the **convex hull** of the input means — an important constraint (see Bias Models below).
+  - Multivariate case: replace scalars with covariance matrices — $\Sigma_\text{PoG}^{-1}(w) = \sum_i w_i \Sigma_i^{-1}$. For isotropic inputs ($\Sigma_i^{-1} = \tau_i \mathcal{I}$), the product is also isotropic, enabling $O(d)$ computation.
+- **Weight Space**: Constrained to $w \in [0, b]^m$ with $\|w\| \geq \epsilon$ (non-negative, unlike B-GLN's $[-b,b]^m$). Non-negativity ensures variance stays well-defined and positive; the norm lower bound prevents the degenerate all-zero case.
+- **Bias Models**: Since $\mu_\text{PoG}$ lies in the convex hull of input means, a G-GLN neuron can't predict outside the range spanned by its inputs. To let the network predict any target in $[-r, r]^D$, constant Gaussian PDFs with means $\pm r$ (or $\pm r$ along each basis vector in the multivariate case) are concatenated to every neuron's input. These act like learned intercepts.
+- **The linear cancellation still holds**: Each neuron has a log input non-linearity and exp output non-linearity (from the PoG definition). These are inverses, so stacking layers cancels them — a G-GLN is also a gated linear network in the logspace of densities.
+- **Experiments**:
+  - **UCI Regression**: Beats variational inference, probabilistic backprop, and MC dropout on 7/9 standard benchmarks — in 40 epochs, no tricks.
+  - **SARCOS** (21-dim → 7-dim robot inverse dynamics): MSE of 0.10, vs 0.14 for TabNet-L and 2.13 for MLP. Best result on the benchmark.
+  - **Contextual Bandits (continuous rewards)**: Extends GLCB (from the 4th paper in this list) to real-valued rewards using G-GLN. Best mean rank across 3 bandit tasks vs 9 Bayesian deep learning methods, in a fully online regime.
+  - **Denoising / Density Estimation**: Train as a denoising autoencoder (add noise, regress to clean). At convergence, $(x - \mu_{L,1}(x))/\lambda \approx \nabla_x \log p(x)$ — the score function. Feed into HMC to sample from the implied distribution. G-GLN recovers Swiss Roll and MNIST structure from a single online pass; MLPs require larger batches and more data.
