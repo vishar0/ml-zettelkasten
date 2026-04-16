@@ -16,6 +16,7 @@
 - [ ] [2014] [DavidSilver] DPG: Deterministic Policy Gradient Algorithms - [paper](https://proceedings.mlr.press/v32/silver14.pdf)
 - [ ] [2015] [TimLillicrap,DavidSilver] Continuous control with deep reinforcement learning - [paper](https://arxiv.org/abs/1509.02971)
 - [ ] [2015] [GregW,TimLillicrap,DavidSilver] Learning Continuous Control Policies by Stochastic Value Gradients - [paper](https://arxiv.org/abs/1510.09142)
+- [ ] [2016] [DavidSilver] Successor Features for Transfer in Reinforcement Learning - [paper](https://arxiv.org/abs/1606.05312)
 - [ ] [2018] [blog] Deep RL doesn't work yet - [blog](https://www.alexirpan.com/2018/02/14/rl-hard.html)
 - [x] [2018] [Ben Recht] A Tour of Reinforcement Learning: The View from Continuous Control - [paper](https://arxiv.org/abs/1806.09460)
 - [ ] [2018] Investigating Human Priors for Playing Video Games - [paper](https://arxiv.org/abs/1802.10217)
@@ -29,7 +30,9 @@
 - [ ] [2017] [OpenAI] Domain Randomization for Transferring Deep Neural Networks from Simulation to the Real World - [paper](https://arxiv.org/abs/1703.06907)
 - [ ] [2017] [FAIR] Intrinsic Curiosity Module (ICM): Intrinsic Motivation and Automatic Curricula via Asymmetric Self-Play - [paper](https://arxiv.org/abs/1703.05407)
 - [ ] [2018] [OpenAI] RND: Exploration by Random Network Distillation - [paper](Exploration by Random Network Distillation)
+- [ ] [2018] Diversity is All You Need: Learning Skills without a Reward Function - [paper](https://arxiv.org/abs/1802.06070)
 - [ ] [2020] [rockt] PLR: Prioritized Level Replay - [paper](https://arxiv.org/abs/2010.03934)
+- [ ] [2020] [rockt] Learning with AMIGo: Adversarially Motivated Intrinsic Goals - [paper](https://arxiv.org/abs/2006.12122)
 - [ ] [2021] [rockt] Replay-Guided Adversarial Environment Design - [paper](https://arxiv.org/abs/2110.02439)
 - [ ] [2022] [rockt] Evolving Curricula with Regret-Based Environment Design - [paper](https://arxiv.org/abs/2203.01302)
 - [ ] [2022] [rockt] E3B: Exploration via elliptical episodic bonuses - [paper](https://arxiv.org/abs/2210.05805)
@@ -50,6 +53,18 @@
 
 ---
 
+- TODO
+
+## [2016] [DavidSilver] Successor Features for Transfer in Reinforcement Learning
+
+- **Date**: 2026-04-16
+- **Arxiv**: <https://arxiv.org/abs/1606.05312>
+- **Paperpile**: <https://app.paperpile.com/view/?id=3f3681ab-6ec5-4312-a676-ee0c435ec271>
+
+---
+
+- **Abstract**:
+  - > Transfer in reinforcement learning refers to the notion that generalization should occur not only within a task but also across tasks.  We propose a transfer frame- work for the scenario where the reward function changes between tasks but the environment’s dynamics remain the same. Our approach rests on two key ideas: successor features, a value function representation that decouples the dynamics of the environment from the rewards, and generalized policy improvement, a general- ization of dynamic programming’s policy improvement operation that considers a set of policies rather than a single one.  Put together, the two ideas lead to an approach that integrates seamlessly within the reinforcement learning framework and allows the free exchange of information across tasks. The proposed method also provides performance guarantees for the transferred policy even before any learning has taken place.  We derive two theorems that set our approach in firm theoretical ground and present experiments that show that it successfully promotes transfer in practice, significantly outperforming alternative methods in a sequence of navigation tasks and in the control of a simulated robotic arm.
 - TODO
 
 ## [2018] [Ben Recht] A Tour of Reinforcement Learning: The View from Continuous Control
@@ -88,6 +103,16 @@
   - > The main question is which of these approaches makes the best use of samples and how quickly do the derived policies converge to optimality.
 - > **This survey has focused on “episodic” reinforcement learning and has steered clear of a much harder problem:  adaptive control.  In the adaptive setting, we want to learn the policy online.  We only get one trajectory.  The goal is, after a few steps, to have a model whose reward from here to eternity will be large.  This is very different, and much harder that what people are doing in RL. In episodic RL, you get endless access to a simulator.  In adaptive control, you get one go.**
 - > as soon as a  machine  learning  system  is  unleashed  in  feedback  with  humans,  that  system  is  a  reinforcement learning system.
+
+## [2020] [rockt] Learning with AMIGo: Adversarially Motivated Intrinsic Goals
+
+- **Date**: 2026-04-15
+- **Arxiv**: <https://arxiv.org/abs/2006.12122>
+- **Paperpile**: <https://app.paperpile.com/view/?id=58d2a964-d1b7-4f8a-9af3-1ccb9ce2de10>
+
+---
+
+- TODO
 
 ## [2023] Bigger, Better, Faster (BBF): Human-level Atari with human-level efficiency
 
