@@ -24,7 +24,6 @@
 - [ ] [2020] Atari 100K: Model-Based Reinforcement Learning for Atari - [paper](https://arxiv.org/abs/1903.00374)
 - [ ] [2020] Revisiting Fundamentals of Experience Replay - [paper](https://arxiv.org/abs/2007.06700)
 - [ ] [2023] Bigger, Better, Faster (BBF): Human-level Atari with human-level efficiency - [paper](https://arxiv.org/abs/2305.19452)
-- [ ] [2023] [deepmind] A Definition of Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2307.11046)
 - [ ] TODO nethack
 - [ ] TODO crafter
 - [ ] [2017] [OpenAI] Domain Randomization for Transferring Deep Neural Networks from Simulation to the Real World - [paper](https://arxiv.org/abs/1703.06907)
@@ -109,6 +108,7 @@
 
 - **Date**: 2026-04-18
 - **Arxiv**: <https://arxiv.org/abs/1910.10897>
+- **Website**: <https://meta-world.github.io/>
 - **Code**: <https://github.com/Farama-Foundation/Metaworld>
 
 ---
