@@ -55,9 +55,32 @@ The umbrella topic of learning from a non-stationary stream of tasks. Three sub-
 
 - **Abstract**:
   - > Continual learning (CL) --- the ability to continuously learn, building on previously acquired knowledge --- is a natural requirement for long-lived autonomous reinforcement learning (RL) agents. While building such agents, one needs to balance opposing desiderata, such as constraints on capacity and compute, the ability to not catastrophically forget, and to exhibit positive transfer on new tasks. Understanding the right trade-off is conceptually and computationally challenging, which we argue has led the community to overly focus on the catastrophic forgetting problem. In response to these issues, we advocate for the need to prioritize forward transfer and propose Continual World, a benchmark consisting of realistic and meaningfully diverse robotic tasks built on top of Meta-World as a testbed. Following an in-depth empirical evaluation of existing CL methods, we pinpoint their limitations and highlight unique algorithmic challenges in the continual RL domain.
-- **Motivation**:
+- **Quotes**:
+  - > one needs to balance opposing desiderata, such as constraints on capacity and compute, the ability to not catastrophically forget, and to exhibit positive transfer on new tasks. Understanding the right trade-off is conceptually and computationally challenging, which we argue has led the community to overly focus on catastrophic forgetting.
+  - > many approaches can deal relatively well with catastrophic forgetting at the expense of other desiderata, in particular forward transfer.
+  - > In a broader context, we speculate that parameter isolation methods might be a promising direction towards better CL methods.
+  - > Continual learning (CL) is an area of research which focuses on building algorithms capable of handling non-stationarity. They should be able to sequentially acquire new skills and solve novel tasks without forgetting the previous ones. Such systems are desired to accommodate over extended periods swiftly, which is often compared to human capabilities and alternatively dubbed as lifelong learning.
+  - > CL is intimately related to multi-task learning, curriculum learning, meta-learning, with some key differences. Multi-task assumes constant access to all tasks, thus ignoring non-stationarity. Curriculum learning focuses on controlling the task ordering and often the learning time-span. Meta- learning, a large field of its own, sets the objective to develop procedures that allow fast adaptation within a task distribution and usually ignores the issue of non-stationarity.
+- **Motivation** (what the paper argues prior benchmarks missed):
   - Continual-learning benchmarks prior to this were dominated by sequential image classification (split-MNIST, split-CIFAR, permuted-MNIST). Classification benchmarks reward *not forgetting* above all else, because there's nothing interesting to transfer forward between "recognize 0–4" and "recognize 5–9".
   - RL is different: the tasks in a realistic sequence share dynamics, contact primitives, and motor skills. An agent that doesn't forget but also doesn't *transfer* is missing the whole point. The paper's thesis is that the CL community was overfitting to forgetting metrics and under-measuring forward transfer.
+- **Continual learning background (Section 3)**: the paper's own framing of the problem, which is tight and worth lifting.
+  - **Definition**: CL = algorithms capable of handling non-stationarity — sequentially acquire new skills and solve novel tasks without forgetting previous ones.
+  - **Adjacent fields, distinguished**:
+    - *Multi-task*: assumes constant access to all tasks, ignores non-stationarity.
+    - *Curriculum learning*: controls task ordering and often the learning time-span.
+    - *Meta-learning*: develops procedures for fast adaptation within a task distribution, usually ignores non-stationarity.
+    - These aren't CL; collapsing the distinction is a common confusion in the literature.
+  - **Operationalization** = training protocol + evaluation protocol + resource constraints:
+    - *Training*: a sequence of tasks, boundaries possibly implicit and smooth.
+    - *Evaluation*: measures catastrophic forgetting, forward transfer, backward transfer.
+    - *Resources*: computations, memory, network size, volume of data samples — all constrained.
+  - **Fundamental observation**: these desiderata are conflicting. Given unlimited resources you could trivially mitigate forgetting (store everything, rehearse all past data), but that defeats the point of the CL framing. The *constraint* is what makes the problem hard.
+  - **The plasticity–forgetting tension** (the paper's headline conceptual claim): for neural networks, existing methods prevent forgetting by limiting plasticity. This alleviates forgetting *at the cost of choking further learning*. The paper advocates for "more nuanced approaches" that don't trade one for the other. Pre-figures what Sutton et al. (2024) later formalized as plasticity loss being a distinct failure mode.
+  - **Implications for benchmark design** (Section 3 → Section 4):
+    - Tasks must be *related* for forward transfer to even be possible → CW sequences chosen for moderate similarity.
+    - Resources must be *modestly bounded* → no "perfect memory" oracle in the headline; storage and compute tracked explicitly.
+    - Training must support both CL-specific measurements (per-task learning curves for FT) and fair comparison to single-task / multi-task references.
 - **Benchmark design**:
   - Built on Meta-World v2, reusing the Sawyer arm and 4D action space (so all tasks share an embodiment).
   - **CW10**: fixed sequence of 10 manipulation tasks, 1M environment steps per task, total 10M steps.
