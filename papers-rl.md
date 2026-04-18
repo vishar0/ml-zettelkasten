@@ -31,6 +31,7 @@
 - [ ] [2017] [FAIR] Intrinsic Curiosity Module (ICM): Intrinsic Motivation and Automatic Curricula via Asymmetric Self-Play - [paper](https://arxiv.org/abs/1703.05407)
 - [ ] [2018] [OpenAI] RND: Exploration by Random Network Distillation - [paper](Exploration by Random Network Distillation)
 - [ ] [2018] Diversity is All You Need: Learning Skills without a Reward Function - [paper](https://arxiv.org/abs/1802.06070)
+- [x] [2019] Meta-World: A Benchmark and Evaluation for Multi-Task and Meta RL - [paper](https://arxiv.org/abs/1910.10897)
 - [ ] [2020] [rockt] PLR: Prioritized Level Replay - [paper](https://arxiv.org/abs/2010.03934)
 - [ ] [2020] [rockt] Learning with AMIGo: Adversarially Motivated Intrinsic Goals - [paper](https://arxiv.org/abs/2006.12122)
 - [ ] [2021] [rockt] Replay-Guided Adversarial Environment Design - [paper](https://arxiv.org/abs/2110.02439)
@@ -103,6 +104,50 @@
   - > The main question is which of these approaches makes the best use of samples and how quickly do the derived policies converge to optimality.
 - > **This survey has focused on “episodic” reinforcement learning and has steered clear of a much harder problem:  adaptive control.  In the adaptive setting, we want to learn the policy online.  We only get one trajectory.  The goal is, after a few steps, to have a model whose reward from here to eternity will be large.  This is very different, and much harder that what people are doing in RL. In episodic RL, you get endless access to a simulator.  In adaptive control, you get one go.**
 - > as soon as a  machine  learning  system  is  unleashed  in  feedback  with  humans,  that  system  is  a  reinforcement learning system.
+
+## [2019] Meta-World: A Benchmark and Evaluation for Multi-Task and Meta Reinforcement Learning
+
+- **Date**: 2026-04-18
+- **Arxiv**: <https://arxiv.org/abs/1910.10897>
+- **Code**: <https://github.com/Farama-Foundation/Metaworld>
+
+---
+
+- **Abstract**:
+  - > Meta-reinforcement learning algorithms can enable robots to acquire new skills much more quickly, by leveraging prior experience to learn how to learn. However, much of the recent research on meta-reinforcement learning has focused on task distributions that are very narrow. For example, a commonly used meta-reinforcement learning benchmark uses different running velocities for a simulated robot as different tasks. When policies are meta-trained on such narrow task distributions, they cannot possibly generalize to more quickly acquire entirely new tasks. Therefore, if the aim of these methods is to enable faster acquisition of entirely new behaviors, we must evaluate them on task distributions that are sufficiently broad to enable generalization to new behaviors. In this paper, we propose an open-source simulated benchmark for meta-reinforcement learning and multi-task learning consisting of 50 distinct robotic manipulation tasks. Our aim is to make it possible to develop algorithms that generalize to accelerate the acquisition of entirely new, held-out tasks. We evaluate 6 state-of-the-art meta-reinforcement learning and multi-task learning algorithms on these tasks. Surprisingly, while each task and its variations (e.g., with different object positions) can be learned with reasonable success, these algorithms struggle to learn with multiple tasks at the same time, even with as few as ten distinct training tasks. Our analysis and open-source environments pave the way for future research in multi-task learning and meta-learning that can enable meaningful generalization, thereby unlocking the full potential of these methods.
+- **Motivation**:
+  - Prior meta-RL benchmarks were pathologically narrow — e.g., HalfCheetah-Vel varies only target running speed across "tasks". Any method that merely interpolates a scalar looks like it's generalizing. This was the field's MNIST problem: not wrong, but unable to distinguish real progress.
+  - The paper's thesis: if meta-RL is supposed to enable fast acquisition of *new* behaviors, evaluation has to draw tasks from a distribution broad enough that interpolation isn't sufficient.
+- **Benchmark design**:
+  - 50 distinct robotic manipulation tasks on a simulated Sawyer arm in MuJoCo (reach, push, pick-place, door-open, hammer, peg-insert-side, etc.).
+  - Shared state/action space across all tasks — 4D continuous action (3D end-effector delta + gripper) — so a single policy architecture can be applied to any task. This is the critical design choice that makes the multi-task comparison meaningful.
+  - Two axes of variation, deliberately separated:
+    - **Parametric** (within-task): fixed task semantics, scene parameters resampled per episode. For `push-v2` the task is always "push the puck to the goal", but puck start `(x,y)` and goal `(x,y)` are drawn from a bounded range each reset. Solvable by a goal-conditioned policy interpolating over a known parameter space — the same trick that made HalfCheetah-Vel misleading.
+    - **Non-parametric** (across-task): the task identity changes — `push`, `pick-place`, `door-open`, `hammer`, `peg-insert-side`. Not points on a continuous manifold; no scalar morphs "hammer a peg" into "open a door". Requires extracting reusable structure (contact primitives, end-effector control, subgoal reasoning) and recombining it. This is what "learning to learn" is actually supposed to mean.
+  - Structured evaluation modes isolate the two axes:
+    - **ML1**: meta-train and meta-test on variations of a single task — only parametric adaptation.
+    - **ML10 / ML45**: meta-train on 10/45 tasks, meta-test on 5 held-out *tasks* — non-parametric generalization, the hard one.
+    - **MT10 / MT50**: jointly train on 10/50 tasks, no held-out — pure multi-task capacity, no adaptation.
+  - This split is what exposed MAML/PEARL as mostly doing parametric adaptation while being credited for across-task generalization.
+  - Dense shaped rewards hand-designed per task so that single-task learning is tractable and any multi-task failure is attributable to interference, not reward sparsity.
+- **Results**:
+  - Every task is individually solvable (single-task SAC gets high success rates) — failures are specifically about combining tasks.
+  - Multi-task baselines (MT-PPO, MT-SAC, task-conditioned variants) degrade sharply as the number of tasks grows. Even MT10 — ten tasks sharing the same arm and action space — causes clear negative interference.
+  - Meta-RL methods (MAML, RL², PEARL) adapt within a task distribution but fail to generalize to held-out tasks in ML10/ML45. Performance on test tasks is near-zero for methods that looked strong on narrower benchmarks.
+  - The headline: meta-RL was overclaiming. The algorithms were fitting task distributions, not learning to learn.
+- **Current status (as of 2026)**:
+  - **Benchmark**: still the default for multi-task manipulation RL; maintained under Farama Foundation. Meta-World v2 fixed several reward shaping and observation bugs that made v1 comparisons noisy — most recent work reports v2 numbers.
+  - **Multi-task gradient interference**: directly motivated a cluster of gradient-surgery methods — PCGrad (Yu et al. 2020), CAGrad, GradNorm, Conflict-Averse GD. These close some of the gap on MT10/MT50 but do not solve it; single-task oracles still beat the best multi-task learners.
+  - **Meta-RL as originally framed (MAML/PEARL)**: largely abandoned as a path to manipulation generalization. The field moved to large-scale imitation pretraining on teleop data, with RL only as a fine-tuning step — RT-1/RT-2, Octo, OpenVLA, π0, Gemini Robotics. These treat "learning a new task" as in-context learning or short SFT, not as bi-level meta-optimization.
+  - **What's solved vs unsolved**:
+    - *Solved-ish*: single-task manipulation in sim, within-task parametric adaptation.
+    - *Partially solved*: multi-task training on a fixed task set with gradient surgery + scale.
+    - *Unsolved*: true few-shot generalization to a genuinely novel manipulation task without any demonstrations. Current VLA approaches need either demonstrations or language-guided priors from web-scale pretraining — they don't succeed from reward signal alone on a held-out task, which was Meta-World's original ML45 challenge.
+  - Meta-World in 2026 is read less as a meta-learning benchmark and more as a multi-task robotics benchmark — a shift the paper itself foreshadowed by showing meta-RL wasn't yet up to the framing.
+- **v1 → v2 reward bugs — the RL-reward challenges**:
+  - **Reward magnitudes silently weight multi-task learning.** v1 tasks had rewards on ~10× different scales; MT-SAC's gradient was dominated by high-reward tasks, and methods like PCGrad got credit for "fixing gradient interference" when partly just correcting scale imbalance. Normalize per task or never aggregate — otherwise the aggregation rule is an unacknowledged hyperparameter.
+  - **Shaped reward ≠ task completion, and strong policies exploit the gap.** Several v1 tasks rewarded proximity to the goal rather than finishing. Weak policies looked like they were making progress; strong policies learned to hover near the goal and collect reward without completing the task — classic reward hacking. Always report a separate binary/sparse success metric alongside reward; if reward rises but success doesn't, you're measuring the wrong thing.
+  - **Pressure-test rewards with a strong policy *before* release.** The only reliable way to catch reward-hacking and scale bugs is to run a trajectory optimizer or expert policy against each reward function and watch the behavior. If it doesn't match your intent, the reward is the bug. v1 shipped without this step; v2 fixed what got caught in the wild — at the cost of stranding years of v1 numbers that aren't directly comparable.
 
 ## [2020] [rockt] Learning with AMIGo: Adversarially Motivated Intrinsic Goals
 
