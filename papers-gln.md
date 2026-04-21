@@ -6,12 +6,12 @@
 
 ---
 
-- [x] [2017] Online Learning with Gated Linear Networks - [paper](https://arxiv.org/abs/1712.01897)
-- [x] [2019] Gated Linear Networks - [paper](https://arxiv.org/abs/1910.01526)
-- [x] [2020] Gaussian Gated Linear Networks - [paper](https://arxiv.org/abs/2006.05964)
+- [x] [2017] GLN: Online Learning with Gated Linear Networks - [paper](https://arxiv.org/abs/1712.01897)
+- [x] [2019] GLN: Gated Linear Networks - [paper](https://arxiv.org/abs/1910.01526)
+- [x] [2020] GGLN: Gaussian Gated Linear Networks - [paper](https://arxiv.org/abs/2006.05964)
 - [ ] [2020] Online Learning in Contextual Bandits using Gated Linear Networks - [paper](https://arxiv.org/abs/2002.11611)
 - [ ] [2020] A Combinatorial Perspective on Transfer Learning - [paper](https://arxiv.org/abs/2010.12268)
-- [ ] [2021] A Rapid and Efficient Learning Rule for Biological Neural Circuits - [paper](https://www.biorxiv.org/content/10.1101/2021.03.10.434756)
+- [x] [2021] DGN (Dendritic Gated Network): A Rapid and Efficient Learning Rule for Biological Neural Circuits - [paper](https://www.biorxiv.org/content/10.1101/2021.03.10.434756)
 
 ---
 
@@ -230,3 +230,79 @@
   - **SARCOS** (21-dim → 7-dim robot inverse dynamics): MSE of 0.10, vs 0.14 for TabNet-L and 2.13 for MLP. Best result on the benchmark.
   - **Contextual Bandits (continuous rewards)**: Extends GLCB (from the 4th paper in this list) to real-valued rewards using G-GLN. Best mean rank across 3 bandit tasks vs 9 Bayesian deep learning methods, in a fully online regime.
   - **Denoising / Density Estimation**: Train as a denoising autoencoder (add noise, regress to clean). At convergence, $(x - \mu_{L,1}(x))/\lambda \approx \nabla_x \log p(x)$ — the score function. Feed into HMC to sample from the implied distribution. G-GLN recovers Swiss Roll and MNIST structure from a single online pass; MLPs require larger batches and more data.
+
+## [2021] DGN (Dendritic Gated Network): A Rapid and Efficient Learning Rule for Biological Neural Circuits
+
+- **Date**: 2026-04-21
+- **BioRxiv**: <https://www.biorxiv.org/content/10.1101/2021.03.10.434756>
+
+---
+
+- **Abstract**: Reformulates GLNs into a biologically plausible architecture by replacing the weight-table lookup with **dendritic branches gated by inhibitory interneurons**. Claims cerebellar circuitry (Purkinje cells + molecular layer interneurons + climbing fibers) natively implements a two-layer DGN. Includes *in vivo* calcium imaging evidence for branch-level dendritic gating — the first biological validation of a key model prediction.
+- **Why GLNs Aren't Yet Biological**:
+  - GLN gating uses a lookup table: each context $c(x)$ selects a different weight vector $w_{ikc}$ from a bank. The brain has no obvious mechanism to maintain such a bank of weights per neuron, nor to select among them by index.
+  - DGN addresses this by routing the gating through **dendritic branches**: each neuron has $B$ branches with their own weight vectors, and inhibitory interneurons turn branches on/off as a function of input.
+- **Core Architecture**:
+  - Each neuron has $B$ dendritic branches, each with its own weight vector $w^b_{k,ij}$.
+  - Activity of neuron $i$ in layer $k$: $$r_{k,i} = \phi\left(\sum_{b=1}^{B} g^b_{k,i}(\mathbf{x}) \sum_j w^b_{k,ij} h_{k-1,j}\right)$$ where $g^b_{k,i}(\mathbf{x}) \in \{0, 1\}$ is the branch gate, $h_{k-1,j} = \phi^{-1}(r_{k-1,j})$ is the synaptic drive, and $\phi$ is identity (regression) or sigmoid (classification).
+  - Gates are **random half-space functions**, fixed at initialization (not learned): $g^b_{k,i}(\mathbf{x}) = \mathbb{1}[v^b_{k,i} \cdot \mathbf{x} \geq \theta^b_{k,i}]$.
+  - A DGN with $B=1$ branch per neuron is a *restricted* GLN: only $K$ weights per neuron vs a single-halfspace GLN's $2K$ weights. The "gate-off" half-space has no learned weight vector — it contributes nothing ($\phi(0)$, e.g. 0.5 for sigmoid). A full GLN would have an independent weight vector for each side of the halfspace.
+- **Learning Rule — Gated Delta Rule**:
+  - $$\Delta w^b_{k,ij} = \eta \, g^b_{k,i}(\mathbf{x}) \, (r^* - r_{k,i}) \, h_{k-1,j}$$
+  - Completely local: depends only on presynaptic activity ($h_{k-1,j}$), postsynaptic error ($r^* - r_{k,i}$), and the branch gate. Same form as the classic Rescorla–Wagner delta rule, but gated.
+  - Loss is still convex per neuron (as in GLNs), so it inherits the fast online learning and no-local-minima properties.
+  - Every neuron in every layer receives the same target $r^*$ — no backward pass, no error propagation.
+- **Expressivity: Sum vs Lookup**:
+  - GLN: each input region $c^{-1}(a)$ has its own dedicated weight vector.
+  - DGN: each region corresponds to a **sum of a subset** of the $B$ branch weight vectors (depending on which gates fire). With $B$ branches, $2^B$ possible gate combinations but only $B$ weight vectors to learn — much more parameter-efficient.
+- **Cerebellar Mapping**:
+  - **Parallel fibers (PFs)** from granule cells → inputs to both Purkinje cell dendrites and MLI gates.
+  - **Purkinje cells (PCs)** → hidden-layer DGN neurons. Their unusually linear input-output transformation matches the identity activation used for regression.
+  - **Molecular layer interneurons (MLIs)** → binary branch gates. MLIs locally inhibit specific dendritic branches of PCs.
+  - **Climbing fibers (CFs)** from inferior olive → broadcast the target $r^*$ to all PCs and CbNs. This departs from the traditional view of CFs as pure error signals and aligns with evidence that CFs carry diverse sensorimotor predictions.
+  - **Cerebellar nuclear neurons (CbNs)** → output neuron. Not gated (uses a plain linear neuron) because CbN biophysics already integrate inputs approximately linearly.
+- **Experiments**:
+  - **2D continual learning (Task A then Task B)**: DGN retains 91% on Task A after training Task B; MLP drops to 66%. Decision boundaries in DGN are *fixed* (random half-spaces), so weight changes stay local to regions of the new task.
+  - **Permuted MNIST (10 sequential tasks)**: DGN forgets a factor of 2 more slowly than MLP *without* task boundaries. EWC is still better but requires task boundaries and extra machinery.
+  - **SARCOS inverse kinematics**: 20 Purkinje cells × 500 branches, quadratic loss. Competitive with standard ML methods on this 21→7-dim robot control task.
+  - **Vestibulo-ocular reflex (VOR) gain adaptation**: DGN adapts in 15–20 minutes when the gain changes, matching animal behavioral timescales. Learned parallel-fiber weight profiles are more diverse than the MLP's (MLP weights are highly stereotyped since all neurons see the same input statistics; DGN branches see gated sub-streams).
+  - **In vivo validation (2-photon calcium imaging in awake mice)**: 51% (72/142) of molecular layer interneurons produce significant suppression of climbing-fiber-evoked calcium signals in nearby Purkinje cell dendrites. Suppression is *local* — ~31 μm spatial extent, covering ~35% of the dendritic tree at the imaged plane. This is the first direct evidence for the DGN's central biological prediction: branch-specific inhibitory gating.
+- **GLN vs DGN — Detailed Comparison**:
+  - **Gating mechanism**:
+    - **GLN**: $G$ halfspaces compose into a context $c(x) \in \{0, \ldots, 2^G - 1\}$ that indexes into a weight *table* — a single lookup per neuron selects one weight vector.
+    - **DGN**: $B$ halfspaces produce $B$ independent binary gates $g^b(x) \in \{0,1\}$. All active branches contribute additively to the neuron's output. No lookup — branches are summed.
+  - **Weight storage per neuron** (with $K$ inputs from the previous layer):
+    - **GLN**: $2^G \cdot K$ weights. With $G$ halfspace gates, one independent $K$-dim weight vector per context. **Exponential in $G$.**
+    - **DGN**: $B \cdot K$ weights. One $K$-dim weight vector per branch. **Linear in $B$.**
+    - For equivalent "gating richness" ($G = B$ halfspaces), GLN stores $2^B \cdot K$ weights vs DGN's $B \cdot K$ — **exponential savings**.
+  - **Expressivity**:
+    - **GLN**: Each region $c^{-1}(a)$ has an **independent** weight vector. Maximum flexibility — any assignment of weights to regions is realizable. Up to $2^G$ distinct effective weight vectors per neuron.
+    - **DGN**: A region's effective weight is the **sum over active branches** $\sum_{b : g^b(x) = 1} w^b$. With $B$ branches you get up to $2^B$ distinct gate patterns, but they must decompose as sums of the same $B$ underlying vectors — a *structured* (not arbitrary) assignment. This is a restriction, but the structure is often desirable: nearby regions that share branches have correlated weights, giving smoother generalization.
+  - **Sample efficiency per weight**:
+    - **GLN**: Weight vector $w_c$ only updates when context $c$ is active — each weight sees roughly $n/|C|$ training examples.
+    - **DGN**: Branch weight $w^b$ updates whenever gate $b$ is on, roughly half the time per branch (for uniformly random halfspaces). Each branch sees ~$n/2$ examples regardless of $B$. Branches collect signal far more quickly than GLN contexts.
+  - **Update locality**:
+    - **GLN**: Single weight vector (the one indexed) updates per example.
+    - **DGN**: All active branches update per example — typically $B/2$ weight vectors.
+  - **Biological plausibility**:
+    - **GLN**: No known mechanism for table lookup over a bank of weight vectors.
+    - **DGN**: Direct correspondence to dendritic branches (weight vectors) gated by inhibitory interneurons (binary gates).
+  - **Bottom line**: DGN trades GLN's unconstrained per-region flexibility for (1) exponentially fewer parameters, (2) better per-weight sample efficiency, (3) smoother generalization via shared branches, and (4) biological realizability. GLN retains a theoretical edge in worst-case expressivity per neuron.
+- **Relationship to Mixture-of-Experts (MoE)**:
+  - Surface similarity: both have multiple "experts" (branches / expert networks) whose outputs are combined based on input-dependent gating.
+  - **Gating**:
+    - **MoE**: Gating network is learned end-to-end with the experts; usually soft (softmax) or top-$k$ sparse; gradient flows through the gates.
+    - **DGN**: Gates are **random, fixed halfspaces** — never learned. Pure inductive bias, no gradient through gates.
+  - **Experts**:
+    - **MoE**: Each expert is a full nonlinear network, capable of solving the task in its region alone.
+    - **DGN**: Each branch is a *linear* function of inputs. Individual branches are weak; expressivity comes from composition across branches and layers.
+  - **Combination**:
+    - **MoE**: Convex combination (probabilities sum to 1) of expert outputs. Usually only one or a few experts "win" a given input.
+    - **DGN**: **Unnormalized sum** of active branch outputs. Many branches ($\sim B/2$) are typically active simultaneously, and their contributions add.
+  - **Learning signal**:
+    - **MoE**: Gradient-based, global — experts and gates co-adapt through backprop. Requires load-balancing tricks (auxiliary losses, noise) to prevent expert collapse.
+    - **DGN**: Local delta rule per branch, no end-to-end gradients. No risk of collapse since gates are fixed; "load balancing" is automatic from random halfspace geometry.
+  - **Purpose**:
+    - **MoE**: Scales model capacity by adding experts while keeping per-example compute sparse — used in large language models (Switch Transformer, Mixtral).
+    - **DGN**: Biological plausibility + fast online learning + catastrophic forgetting resilience — used in small networks trained online.
+  - **Conceptual takeaway**: DGN ≈ "frozen-random-gate, linear-expert, additive MoE with local learning." The restriction to linear branches is what keeps the per-neuron loss convex, which is what enables local updates to converge — something learned-gate MoEs cannot easily guarantee.
