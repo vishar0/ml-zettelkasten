@@ -1,7 +1,7 @@
 # Reinforcement Learning
 
 - **Created**: 2019-04
-- **Last Updated**: 2026-02-18
+- **Last Updated**: 2026-04-23
 - **Status**: `In Progress`
 
 ---
@@ -300,6 +300,21 @@
     - $C_\text{mid}$: midpoint of the curve
     - Three phases: slow growth → sharp acceleration → saturation
     - Curve fitting excludes very early regime ($< 1.5$k GPU-hours) for stability.
+    - **Why sigmoid, not power-law**:
+      - Pre-training (Kaplan/Chinchilla) fits $L(C) = (C_0/C)^\alpha$ — a power law. Works because cross-entropy loss is unbounded below; as $C \to \infty$, $L \to 0$ is fine. Log-log is a straight line.
+      - RL metric is **pass rate**, bounded in $[0,1]$. A power law extrapolates past the ceiling ("at 10× compute, pass rate = 1.3" — nonsense). Any unbounded functional form either overshoots or requires increasingly unnatural fits near saturation.
+      - More subtly: there's usually an effective ceiling $A < 1$ from verifier bugs, unsolvable instances, recipe limits. $A$ is the thing you want to know — and it's *recipe-dependent*.
+      - Sigmoid encodes this: $C \to 0 \Rightarrow R_C \to R_0$ (base-model pass rate); $C \to \infty \Rightarrow R_C \to A$ (the ceiling, exposed as a free parameter).
+      - **Practical payoff**: because $A$ is a fittable parameter, you can fit on partial data (pre-saturation) and *extrapolate to estimate the ceiling*. This is what lets them fit at 16k GPU-hrs and predict 100k-hr behavior. A power law can't do this — it'd always say "more compute = more reward" and never reveal whether a recipe's early lead comes from faster climb or a higher plateau.
+      - TL;DR: unbounded functional form for an unbounded metric (loss); bounded functional form for a bounded metric (pass rate). Match the math to the quantity.
+    - **Why it's called "sigmoidal" (it's a logistic sigmoid in log-compute)**:
+      - Substitute $u = \log C - \log C_\text{mid}$. Then $(C_\text{mid}/C)^B = e^{-B u}$, so $\frac{1}{1 + (C_\text{mid}/C)^B} = \frac{1}{1+e^{-Bu}} = \sigma(Bu)$ — the standard logistic sigmoid.
+      - The full formula is $R_C = R_0 + (A - R_0) \cdot \sigma(B\,(\log C - \log C_\text{mid}))$:
+        - vertical range $[R_0, A]$ (the $(A-R_0)$ factor rescales from $[0,1]$)
+        - slope $B$ at the inflection — steepness of the S
+        - center at $\log C_\text{mid}$ on the log-compute axis
+      - This is why fits are plotted on log-$C$ axes: on log-$C$ you see the textbook S-shape; on linear $C$ it looks stretched because compute varies over orders of magnitude.
+      - The $(C_\text{mid}/C)^B$ form is the **Hill equation / 4-parameter logistic** parameterization (common in biochem / dose-response). Same function as $\sigma(Bu)$, but $C_\text{mid}$ has units of compute — directly interpretable as "compute at halfway point" rather than a log-space offset.
   - **Validation**: 1,000 held-out prompts from Polaris-53K, measured every 100 steps with 16 generations per prompt. Curves fit on validation to measure generalization, not training performance.
   - **Curve fitting**: $R_0$ is known (initial reward); fit for $A$, $B$, $C_\text{mid}$ jointly via nonlinear least squares: $\min_{A,B,C_\text{mid}} \sum_i \left(R_i - \left[R_0 + (A-R_0)\cdot\frac{1}{1+(C_\text{mid}/C_i)^B}\right]\right)^2$. Solved with Levenberg-Marquardt (e.g. `scipy.optimize.curve_fit`). $A$ is not observed — it's inferred from the shape of the partial curve.
 - **Section 3: Empirical Study of RL Design Choices** (8B dense model):
@@ -307,11 +322,33 @@
     - *PPO-off-policy-k*: generate batch, do k gradient updates, repeat.
     - *PipelineRL-k*: generators stream continuously while trainers update immediately; generators use updated weights but stale cached KV from k steps ago. More off-policy but much faster wall-clock.
     - **Takeaway**: PipelineRL-8 substantially improves compute efficiency ($B$) with similar asymptote ($A$) → preferred infrastructure.
+    - **In-flight weight updates and the KV cache twist**:
+      - Weights are swapped **mid-generation**. Generator is a continuous-batched inference server (vLLM/SGLang) with many completions in flight at various token positions. Every few trainer steps: trainer broadcasts new weights → generator atomically swaps → next forward pass uses new weights.
+      - **KV cache is kept, not recomputed.** KV holds the key/value projections of every prefix token, each computed under whatever weights were current when that token was generated. After a weight swap, the next-token forward pass runs $\theta_{t+k}$ against a KV cache built incrementally under $\theta_t, \theta_{t+1}, \ldots, \theta_{t+k}$.
+      - Consequence: a single 10k-token completion can have a **mixed-policy prefix** — tokens 0–2000 sampled under $\theta_t$, tokens 2001–5000 under $\theta_{t+3}$, etc. Within one trajectory.
+      - Why not recompute: O(prefix length) forward pass per swap across thousands of in-flight completions — kills the wall-clock savings. At that point just go back to on-policy.
+      - Why it's OK in practice: (1) weight deltas are small (one trainer step × small LR, with clipping); (2) the IS correction is already handling off-policyness, so the extra KV staleness gets absorbed into the same ratio $\rho = \pi_\text{train}/\pi_\text{gen}$. No separate "your KV was old" correction.
+      - The $k$ in PipelineRL-$k$ is the max staleness bound: within any single rollout, oldest weights that produced any token are at most $k$ trainer steps behind current. The empirical cliff at ~$k=12$ is where the small-delta assumption starts to break, $\rho$ drifts too far from 1, and $A$ itself collapses (0.52 → 0.49).
+    - **Relation to Hogwild and RL ancestors**:
+      - Same philosophical bet as Hogwild (Niu/Recht/Ré/Wright 2011): *bounded staleness + existing stochasticity noise = fine in practice*. Don't synchronize when you don't have to; bet that the existing noise floor (SGD variance in Hogwild, IS-weighted clipped surrogate in PipelineRL) absorbs the extra noise from async.
+      - Geometry differs: Hogwild is **symmetric** — $N$ identical SGD workers racing on shared params. PipelineRL is **asymmetric** — 1 trainer (sole writer) + $M$ generators (producers of stale data). Hogwild races on parameter memory; PipelineRL lags via a producer-consumer buffer.
+      - Closer RL ancestors: **A3C** (Mnih et al. 2016) and especially **IMPALA** (Espeholt et al. 2018) — actor/learner split with stale trajectories, corrected by V-trace (an IS correction). PipelineRL is the same pattern at LLM scale, with CISPO in V-trace's role. Lineage: Hogwild → A3C → IMPALA → PipelineRL.
+      - What's *novel* in PipelineRL with no Hogwild/IMPALA analog: **intra-sample staleness via the KV cache**. In Hogwild, staleness is a scalar fact about when a worker read params. In IMPALA, a trajectory was sampled under one old policy — also scalar. In PipelineRL, one rollout's prefix is a composite across multiple weight versions, because autoregressive generation accumulates state (KV) that can't be cheaply recomputed. No prior async method had this.
+      - Practical implication: Hogwild's "bounded staleness" was a soft convergence-rate constraint. PipelineRL's is a *hard ceiling* constraint — exceed it and the small-delta assumption the KV cache quietly depends on breaks down.
   - **3.2 Algorithmic choices** (what shifts $A$ vs only $B$):
     - **Loss type** (shifts $A$): DAPO < GSPO ≈ CISPO. CISPO (truncated importance sampling + vanilla policy gradient) shows longest linear reward growth → selected.
-      - **DAPO (Decoupled Clip and Dynamic Sampling Policy Optimization)**: token-level importance sampling ratio $\rho_{i,t} = \pi_\text{train}(y_{i,t})/\pi_\text{gen}(y_{i,t})$ with asymmetric clip $[1-\varepsilon_\text{low}, 1+\varepsilon_\text{high}]$, $\varepsilon_\text{low} < \varepsilon_\text{high}$ (often $\varepsilon_\text{low}=0$). When $\rho$ exceeds upper bound, gradient = 0 — prevents entropy collapse but kills gradient signal when very off-policy.
-      - **GSPO (Group Sequence Policy Optimization)**: sequence-level importance sampling ratio $\rho_i^\text{seq} = \prod_t \rho_{i,t}$. More principled (the whole sequence is the "action") but product of many token ratios has enormous variance for long sequences.
-      - **CISPO (Clipped Importance Sampling Policy Optimization)**: token-level importance sampling but truncated — when $\rho_{i,t} > \tau$, drop the importance sampling correction and fall back to vanilla policy gradient (use $\hat{A}_i$ directly, no ratio). Uses importance sampling where it's reliable ($\rho \approx 1$), falls back to vanilla PG where it's not ($\rho \gg 1$). Avoids zero gradient (DAPO problem) and high variance (GSPO problem) when off-policy → produces cleaner gradient signal and longer linear growth before saturation.
+      - **Token-level vs sequence-level importance sampling** (the axis on which DAPO/GSPO/CISPO differ):
+        - Setup: you sampled completion $y$ from $\pi_\text{old}$ (generator's weights at rollout time) but want the gradient for $\pi_\theta$ (current trainer weights). IS corrects the expectation by reweighting.
+        - **Sequence-level** (the statistically correct one): treat the whole completion as one action. $\mathbb{E}_{y\sim\pi_\theta}[R(y)] = \mathbb{E}_{y\sim\pi_\text{old}}[\rho^\text{seq} R(y)]$ where $\rho^\text{seq} = \pi_\theta(y|x)/\pi_\text{old}(y|x) = \prod_{t=1}^T \rho_t$. **Unbiased**, but variance explodes with $T$ — per-token drift compounds exponentially over 10k tokens.
+        - **Token-level** (the practical approximation): apply $\rho_t$ only to token $t$'s gradient contribution: $\nabla J \approx \mathbb{E}_{y\sim\pi_\text{old}}[\sum_t \rho_t \hat{A} \nabla \log \pi_\theta(y_t|y_{<t})]$. **Biased** (not the exact IS correction for sequence-level expectation), but each $\rho_t$ stays near 1 so variance is manageable. This is what PPO / DAPO use.
+        - Trade-off: seq-level is unbiased with explosive variance; token-level is biased with manageable variance. For long ($T \sim 10^4$) LLM completions, variance dominates → token-level wins in practice.
+      - **DAPO (Decoupled Clip and Dynamic Sampling Policy Optimization)**: **token-level** IS $\rho_{i,t} = \pi_\text{train}(y_{i,t})/\pi_\text{gen}(y_{i,t})$ with asymmetric clip $[1-\varepsilon_\text{low}, 1+\varepsilon_\text{high}]$, $\varepsilon_\text{low} < \varepsilon_\text{high}$ (often $\varepsilon_\text{low}=0$). When $\rho$ exceeds upper bound, gradient = 0 — prevents entropy collapse but kills gradient signal when very off-policy.
+      - **GSPO (Group Sequence Policy Optimization)**: **sequence-level** IS, but tames the product's variance with the geometric mean: $\rho_i^\text{GSPO} = (\pi_\theta(y_i|x)/\pi_\text{old}(y_i|x))^{1/|y_i|} = \exp(\frac{1}{|y_i|}\sum_t \log \rho_t)$. Two reasons for the $1/|y_i|$ exponent: (1) keeps the ratio near 1 regardless of sequence length so a fixed clip $\varepsilon$ means the same thing for a 500-token and a 10k-token completion; (2) length-normalizes so long completions don't dominate the loss. Biased differently from true sequence IS (it's length-normalized), but variance reduction is worth it.
+      - **CISPO (Clipped Importance Sampling Policy Optimization)**: hybrid. Stays **token-level** like DAPO but changes what happens when clipped: drop the IS correction and fall back to vanilla policy gradient (use $\hat{A}_i$ directly, no ratio). Uses IS where it's reliable ($\rho_t \approx 1$), falls back to vanilla PG where it's not. Avoids zero gradient (DAPO problem) and high variance (GSPO problem) when off-policy.
+      - **Why loss function is an $A$-shift, not just a $B$-shift**: the failure modes are about long-run gradient quality once off-policy drift accumulates, which only shows up after many steps.
+        - DAPO silently zeros out more and more tokens → gradient sparsifies → $A$ plateaus early
+        - GSPO variance grows with drift → noisier updates → slower but higher ceiling than DAPO
+        - CISPO keeps every token contributing *something* → cleanest long-run signal → highest $A$
     - **FP32 at LM head** (shifts $A$): numerical mismatch between generator/trainer kernels corrupts importance sampling ratios. FP32 fix raises $A$ from 0.52 → 0.61. Large effect.
     - **Loss aggregation** (shifts $B$ only): prompt-level > sample-level > token-level. Prompt-level selected.
     - **Advantage normalization** (shifts $B$ only): prompt-level vs batch-level vs none — all similar. Batch-level selected for theoretical soundness.
