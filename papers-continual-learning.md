@@ -1,7 +1,7 @@
 # Continual Learning
 
 - **Created**: 2026-03-01
-- **Last Updated**: 2026-04-18
+- **Last Updated**: 2026-04-27
 - **Status**: `In Progress`
 
 ---
@@ -25,7 +25,7 @@ The umbrella topic of learning from a non-stationary stream of tasks. Three sub-
 - [ ] [2020] PackNet: Adding Multiple Tasks to a Single Network by Iterative Pruning - [paper](https://arxiv.org/abs/1711.05769)
 - [ ] [2020] [Hadsell,Pascanu] Embracing Change: Continual Learning in Deep Neural Networks - [paper](https://doi.org/10.1016/j.tics.2020.09.004)
 - [ ] [2020] [DoinaPrecup] Towards Continual Reinforcement Learning: A Review and Perspectives - [paper](https://arxiv.org/abs/2012.13490)
-- [ ] [2021] Continual World: A Robotic Benchmark For Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2105.10919)
+- [x] [2021] Continual World: A Robotic Benchmark For Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2105.10919)
 - [ ] [2021] OWL: Same State, Different Task — Continual Reinforcement Learning without Interference - [paper](https://arxiv.org/abs/2106.02940)
 - [ ] [2023] [deepmind] A Definition of Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2307.11046)
 - [ ] [2024] [sutton] Loss of plasticity in deep continual learning - [paper](https://www.nature.com/articles/s41586-024-07711-7)
