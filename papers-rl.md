@@ -1,7 +1,7 @@
 # Reinforcement Learning
 
 - **Created**: 2019-04
-- **Last Updated**: 2026-04-23
+- **Last Updated**: 2026-04-28
 - **Status**: `In Progress`
 
 ---
@@ -31,6 +31,7 @@
 - [ ] [2018] [OpenAI] RND: Exploration by Random Network Distillation - [paper](Exploration by Random Network Distillation)
 - [ ] [2018] Diversity is All You Need: Learning Skills without a Reward Function - [paper](https://arxiv.org/abs/1802.06070)
 - [x] [2019] Meta-World: A Benchmark and Evaluation for Multi-Task and Meta RL - [paper](https://arxiv.org/abs/1910.10897)
+- [ ] [2025] Meta-World+: An Improved, Standardized, RL Benchmark - [paper](https://openreview.net/forum?id=1de3azE606)
 - [ ] [2020] [rockt] PLR: Prioritized Level Replay - [paper](https://arxiv.org/abs/2010.03934)
 - [ ] [2020] [rockt] Learning with AMIGo: Adversarially Motivated Intrinsic Goals - [paper](https://arxiv.org/abs/2006.12122)
 - [ ] [2021] [rockt] Replay-Guided Adversarial Environment Design - [paper](https://arxiv.org/abs/2110.02439)
