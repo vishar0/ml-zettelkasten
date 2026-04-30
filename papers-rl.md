@@ -1,7 +1,7 @@
 # Reinforcement Learning
 
 - **Created**: 2019-04
-- **Last Updated**: 2026-04-28
+- **Last Updated**: 2026-04-30
 - **Status**: `In Progress`
 
 ---
@@ -39,6 +39,8 @@
 - [ ] [2022] [rockt] E3B: Exploration via elliptical episodic bonuses - [paper](https://arxiv.org/abs/2210.05805)
 - [ ] [2024] Craftax: A Lightning-Fast Benchmark for Open-Ended Reinforcement Learning - [paper](https://arxiv.org/abs/2402.16801)
 - [x] [2025] ScaleRL: The Art of Scaling Reinforcement Learning Compute for LLMs - [paper](https://arxiv.org/abs/2510.13786)
+- [x] [2025] Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? - [paper](https://arxiv.org/abs/2504.13837)
+- [x] [2025] ProRL: Prolonged Reinforcement Learning Expands Reasoning Boundaries in Large Language Models - [paper](https://arxiv.org/abs/2505.24864)
 - [ ] TODO diplomacy
 - [ ] TODO alphago etc
 - [ ] TODO openai dota 5v5
@@ -366,6 +368,84 @@
   - **5.3 Batch size**: larger batches (up to 2,048 prompts) → higher $A$ and cleaner scaling. Smaller batches stagnate on downstream evals even when in-distribution validation looks fine.
   - **5.4 Generations per prompt** (fixing total batch size): varying $G \in \{8,16,24,32\}$ with matching prompt counts produces essentially identical scaling curves — second-order consideration at moderate batch scales.
   - **100k GPU-hour validation**: sigmoid fit from 50k GPU-hours accurately predicted final performance, confirming the whole framework.
+
+## [2025] Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?
+
+- **Date**: 2026-04-30
+- **Arxiv**: <https://arxiv.org/abs/2504.13837>
+
+---
+
+- **Abstract**:
+  - > Reinforcement Learning with Verifiable Rewards (RLVR) has recently demonstrated notable success in enhancing the reasoning performance of large language models (LLMs), particularly on mathematics and programming tasks. Similar to how traditional RL helps agents explore and learn new strategies, RLVR is believed to enable LLMs to continuously self-improve, thus acquiring novel reasoning abilities beyond those of the corresponding base models. In this study we critically examine the current state of RLVR by systematically probing the reasoning capability boundaries of RLVR-trained LLMs across various model families, RL algorithms, and math, coding, and visual reasoning benchmarks, using pass@k at large k values as the evaluation metric. Surprisingly, we find that the current training setup does not elicit fundamentally new reasoning patterns. While RLVR-trained models outperform their base models at small k (e.g., k = 1), the base models achieve a higher pass@k score when k is large. Coverage and perplexity analyses show that the observed reasoning abilities originate from and are bounded by the base model. Treating the base model as an upper bound, our quantitative analysis shows that six popular RLVR algorithms perform similarly and remain far from optimal in leveraging the potential of the base model. By contrast, we find that distillation can introduce new reasoning patterns from the teacher and genuinely expand the model's reasoning capabilities. Overall, our findings suggest that current RLVR methods have not yet realized the potential of RL to elicit truly novel reasoning abilities in LLMs. This highlights the need for improved RL paradigms, such as continual scaling and multi-turn agent-environment interaction, to unlock this potential.
+- **Central question**: Does RLVR teach the model genuinely new reasoning, or just sharpen the distribution over reasoning the base model already had?
+- **Methodology**:
+  - Evaluate RLVR-trained models vs their base models with **pass@k at large k** (instead of pass@1 / greedy / small-k that most RLVR papers report).
+  - Coverage analysis: for each problem, count how many of the base model's $k$ samples produce a correct answer vs how many of the RL model's do.
+  - Perplexity analysis: measure how surprising the RL model's correct trajectories are *under the base model* — if PPL is low, the trajectory was already in the base distribution.
+  - Sweep across model families, six RLVR algorithms, and math / code / visual-reasoning benchmarks.
+- **Key finding — the pass@k crossover**:
+  - At small $k$ (e.g., $k=1$), RLVR model > base model, matching headline RLVR numbers.
+  - At large $k$, base model > RLVR model. The two curves *cross*.
+  - Interpretation: RLVR doesn't add new solutions; it concentrates probability mass on solutions the base model could already sample (just rarely). Sharpening, not expansion.
+  - The RL-trained model's correct trajectories have low perplexity under the base model → those trajectories were already reachable, just less likely.
+- **The reasoning frontier is bounded by the base model**: with enough samples, the base model solves a *superset* of what the RL model solves. RLVR moves probability mass; it doesn't move the frontier.
+- **Algorithmic comparison**: six popular RLVR algorithms (PPO, GRPO, RLOO, ReMax, Reinforce++, DPO-style variants) all hit roughly the same ceiling. Algorithmic differences modulate efficiency, not the asymptote — and the asymptote sits well below the base model's pass@$\infty$.
+- **Distillation breaks the bound**: SFT-distillation from a stronger teacher *does* introduce trajectories the student couldn't sample, raising pass@$k$ at all $k$. This is the existence proof that "expansion is possible, RLVR just doesn't do it."
+- **Why this matters**:
+  - If you only report pass@1, you miss the crossover entirely and overstate RLVR.
+  - The right framing: RLVR currently gives you **a better distribution over a fixed set of trajectories**, not a larger set. For applications where you can sample many times and verify (math, code with unit tests), the base model + best-of-$N$ may dominate the RLVR model.
+  - Implies the bottleneck for novel reasoning isn't better RL on existing data — it's exposure to new trajectories (distillation, multi-turn agentic environments, tool use).
+- **Caveats / setting**:
+  - "RLVR" here means single-turn outcome-reward RL on math/code with relatively short training. The result is about *current* RLVR practice, not a fundamental impossibility — see [ProRL](#2025-prorl-prolonged-reinforcement-learning-expands-reasoning-boundaries-in-large-language-models) for a counter.
+  - Pass@k with large k is the right metric for "is this in the model's reach?" but not for product UX, where pass@1 is what users see.
+- **Direct dialogue with [ProRL](#2025-prorl-prolonged-reinforcement-learning-expands-reasoning-boundaries-in-large-language-models)**: ProRL argues this paper's conclusion is an artifact of *insufficient* training. With prolonged training + KL control + reference-policy resets + diverse tasks, ProRL claims to find tasks where the RL model solves problems the base model can't solve at any $k$. The pair frames the open question of 2025: is the pass@k crossover a property of RLVR-as-practiced, or of RLVR-in-principle?
+
+## [2025] ProRL: Prolonged Reinforcement Learning Expands Reasoning Boundaries in Large Language Models
+
+- **Date**: 2026-04-30
+- **Arxiv**: <https://arxiv.org/abs/2505.24864>
+
+---
+
+- **Abstract**:
+  - > Recent advances in reasoning-centric language models have highlighted reinforcement learning (RL) as a promising method for aligning models with verifiable rewards. However, it remains contentious whether RL truly expands a model's reasoning capabilities or merely amplifies high-reward outputs already latent in the base model's distribution, and whether continually scaling up RL compute reliably leads to improved reasoning performance. In this work, we challenge prevailing assumptions by demonstrating that prolonged RL (ProRL) training can uncover novel reasoning strategies that are inaccessible to base models, even under extensive sampling. We introduce ProRL, a novel training methodology that incorporates KL divergence control, reference policy resetting, and a diverse suite of tasks. Our empirical analysis reveals that RL-trained models consistently outperform base models across a wide range of pass@k evaluations, including scenarios where base models fail entirely regardless of the number of attempts. We further show that reasoning boundary improvements correlates strongly with task competence of base model and training duration, suggesting that RL can explore and populate new regions of solution space over time. These findings offer new insights into the conditions under which RL meaningfully expands reasoning boundaries in language models and establish a foundation for future work on long-horizon RL for reasoning.
+- **Direct counter to [Yue et al.](#2025-does-reinforcement-learning-really-incentivize-reasoning-capacity-in-llms-beyond-the-base-model)**: that paper concluded RLVR can't push past the base model's pass@$k$ frontier. ProRL's claim is that conclusion is a property of *short* RL runs — give it long enough with the right stabilization, and the frontier moves.
+- **Setup**:
+  - **Base algorithm**: GRPO, not DAPO. $\mathcal{L}_\text{GRPO} = \mathbb{E}[\min(r_\theta(\tau)A(\tau),\ \text{clip}(r_\theta(\tau), 1-\epsilon, 1+\epsilon)A(\tau))]$, advantage $A(\tau) = (R_\tau - \text{mean}(\{R_i\}))/\text{std}(\{R_i\})$.
+  - **Initial checkpoint**: DeepSeek-R1-Distill-Qwen-1.5B (already a reasoning-tuned distillate, not a raw base model — relevant below for the KL choice).
+  - **Trainer**: verl. ~16k GPU-hours on 4×8 H100-80GB.
+  - **Final model**: Nemotron-Research-Reasoning-Qwen-1.5B; +15.7% math, +14.4% code, +25.9% STEM, +22.0% IFEval, +54.8% logic puzzles vs the starting checkpoint.
+- **The recipe (in the order the paper introduces it, weakest to strongest mitigation of entropy collapse)**:
+  - **(1) High rollout temperature** (1.2): increases initial entropy. *Delays* entropy collapse but doesn't prevent it — entropy keeps declining steadily.
+  - **(2) DAPO components**: ProRL adopts two specific pieces from DAPO:
+    - **Clip-higher** — asymmetric clip $[1-\epsilon_\text{low}, 1+\epsilon_\text{high}]$ with $\epsilon_\text{low}=0.2,\ \epsilon_\text{high}=0.4$. The wider upper bound uplifts the probability of previously-unlikely tokens, encouraging exploration and reducing premature mode collapse.
+    - **Dynamic sampling** — drop prompts where all $G$ completions are correct (acc=1) or all wrong (acc=0). These contribute zero gradient and waste the rollout budget; filtering keeps the learning signal concentrated on intermediate-difficulty examples.
+    - Paper's framing: "While DAPO and temperature adjustment help slow entropy collapse, we find that explicit regularization via a KL divergence penalty provides a stronger and more stable solution." → DAPO is *necessary plumbing*, not the load-bearing novelty.
+  - **(3) KL divergence penalty** (the first ProRL-specific contribution): $L_\text{KL-RL}(\theta) = L_\text{GRPO}(\theta) - \beta D_\text{KL}(\pi_\theta || \pi_\text{ref})$. Keeps the online policy from drifting too far from a stable reference, mitigating entropy collapse and overfitting to spurious reward.
+    - Notable disagreement with recent literature: DAPO and several other recent RLVR papers *removed* the KL penalty, arguing CoT reasoning models naturally diverge from base models during training. ProRL pushes back: that holds when you start from a raw base model; ProRL starts from a distilled checkpoint that already produces coherent CoT, so retaining KL is still beneficial for stability and sustained entropy.
+  - **(4) Reference policy reset** (the second and arguably *the* ProRL contribution): periodically hard-reset $\pi_\text{ref} \leftarrow \pi_\theta$ and reinit the optimizer state. Without this, the KL term increasingly dominates the loss as $\pi_\theta$ drifts, and updates shrink toward zero. With it, the model is allowed to ratchet — settle into a new region, re-anchor KL there, and continue exploring outward from the new anchor. This is the mechanism that turns "stable but stuck" into "stable and continually improving."
+  - **(5) Diverse task suite**: 136K examples across math, code, STEM, logic puzzles, and instruction-following. Broad coverage prevents reward-signal overfitting and is what lets a *single* generalist model match domain-specialized baselines.
+- **What's actually new vs reused**:
+  - Reused: GRPO objective; DAPO's clip-higher and dynamic sampling.
+  - New (or pushed against the trend): KL penalty *retained* (most recent work removed it); reference-policy reset (this is the part with no clear precedent in RLVR literature).
+- **Headline empirical claim — the pass@k crossover does NOT always hold**:
+  - On a subset of tasks, the ProRL-trained model solves problems the base model fails at *for every* $k$ tested up to pass@128 (i.e., base pass@$k$ ≈ 0, RL pass@$k$ > 0). This is the existence proof against the Yue et al. bound.
+  - But it's not uniform — see the three-regime breakdown below.
+- **Three regimes (Section 4.2 — the most useful empirical result)**:
+  - **Diminish**: pass@$k$ for the RL model is *worse* than the base model's at large $k$ — the Yue et al. crossover. Concentrated on tasks where base pass@128 is already high (most math). RL is sharpening a distribution the base already solved; the cost is reduced output diversity.
+  - **Plateau**: RL improves pass@1 but pass@$k$ saturates early. Some gain, no expansion.
+  - **Sustained**: pass@$k$ keeps rising with prolonged training, and at large $k$ the RL model solves problems the base never solves. Concentrated on code (LiveCodeBench, codecontests, taco) and harder/OOD logic. *This is where the "expand the frontier" claim lives.*
+- **The weaker the start, the bigger the gain (Section 4.1)**: strong negative correlation between base pass@128 and RL improvement. Tasks the base already solves well diminish under RL; tasks where the base struggles see the largest expansion. They cross-check this with a "creativity index" against the DOLMA pretraining corpus — the diminished tasks have low creativity (high pretraining overlap), confirming RL mostly sharpens the already-known.
+- **Reconciling with Yue et al.**: both can be right under a refined claim:
+  - *Short* outcome-reward RL on tasks where the base is already strong → sharpens the base distribution, doesn't expand it (Yue's regime).
+  - *Prolonged* RL with KL + reference reset on tasks where the base struggles → expands the frontier (ProRL's regime).
+  - Yue's pass@k crossover is real but not universal — it's the "diminish" regime, which ProRL also reproduces. The disagreement is about whether *expansion* is achievable at all, and ProRL shows it is, on the right slice of tasks.
+- **Open questions**:
+  - How prolonged is "prolonged" in compute terms relative to pretraining, and does the gain/compute curve eventually saturate or keep climbing? (Connects to [ScaleRL](#2025-scalerl-the-art-of-scaling-reinforcement-learning-compute-for-llms) — same question, different framing. ScaleRL fits a sigmoid with a finite asymptote $A$; ProRL doesn't fit a curve but reports continued gains, so the comparison is apples-to-oranges until someone fits a ScaleRL-style sigmoid to a ProRL run.)
+  - Reference-policy resetting introduces hyperparameters (reset cadence, what triggers a reset). Paper resets when validation stagnates/degrades — this is heuristic; a principled schedule is open.
+  - How much of the win comes from the diverse task suite vs the KL+reset machinery? No clean ablation isolating the two.
+  - The "novel reasoning strategies" are demonstrated by capability (base fails, RL succeeds) but not characterized mechanistically. What *kind* of new strategy — search depth, decomposition patterns, calculation chains? Without this, "novel reasoning" remains behavioral.
 
 ## 2019-04 Reading List
 
