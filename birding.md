@@ -31,9 +31,10 @@
 - [ ] [2025] [NeurIPS] [Andrew Saxe, Demystifying depth: Principles of learning in deep neural networks](https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109602)
 - [ ] [2025] [NeurIPS] [Kyunghyun Cho, "From Benchmarks to Problems - A Perspective on Problem Finding in AI"](https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109605)
 
-## Writing
+## Articles
 
 - [ ] [2017] ["Open-endedness: The last grand challenge you’ve never heard of"](https://www.oreilly.com/radar/open-endedness-the-last-grand-challenge-youve-never-heard-of)
 - [ ] [2026] [Sara Hooker, "On the Slow Death of Scaling"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5877662)
 - [x] [2026] [Jim Fan, "The Second Pre-training Paradigm"](https://x.com/DrJimFan/status/2018754323141054786)
 - [x] [2026] [Maithra Raghu, "The Post-Scaling Era of Frontier AI"](https://x.com/maithra_raghu/status/2024154498961420509)
+- [ ] [2026] [a16z, "Why We Need Continual Learning"](https://a16z.com/why-we-need-continual-learning/)
