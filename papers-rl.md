@@ -1,7 +1,7 @@
 # Reinforcement Learning
 
 - **Created**: 2019-04
-- **Last Updated**: 2026-04-30
+- **Last Updated**: 2026-05-01
 - **Status**: `In Progress`
 
 ---
@@ -17,6 +17,8 @@
 - [ ] [2015] [TimLillicrap,DavidSilver] Continuous control with deep reinforcement learning - [paper](https://arxiv.org/abs/1509.02971)
 - [ ] [2015] [GregW,TimLillicrap,DavidSilver] Learning Continuous Control Policies by Stochastic Value Gradients - [paper](https://arxiv.org/abs/1510.09142)
 - [ ] [2016] [DavidSilver] Successor Features for Transfer in Reinforcement Learning - [paper](https://arxiv.org/abs/1606.05312)
+- [ ] [2016] [PopArt] Learning values across many orders of magnitude - [paper](https://arxiv.org/abs/1602.07714)
+- [ ] [2018] [PopArt] Multi-task Deep Reinforcement Learning with PopArt - [paper](https://arxiv.org/abs/1809.04474)
 - [ ] [2018] [blog] Deep RL doesn't work yet - [blog](https://www.alexirpan.com/2018/02/14/rl-hard.html)
 - [x] [2018] [Ben Recht] A Tour of Reinforcement Learning: The View from Continuous Control - [paper](https://arxiv.org/abs/1806.09460)
 - [ ] [2018] Investigating Human Priors for Playing Video Games - [paper](https://arxiv.org/abs/1802.10217)
