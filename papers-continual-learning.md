@@ -1,7 +1,7 @@
 # Continual Learning
 
 - **Created**: 2026-03-01
-- **Last Updated**: 2026-04-27
+- **Last Updated**: 2026-05-01
 - **Status**: `In Progress`
 
 ---
@@ -21,6 +21,7 @@ The umbrella topic of learning from a non-stationary stream of tasks. Three sub-
 - [ ] [2017] [SuryaGanguli] Continual Learning Through Synaptic Intelligence - [paper](https://arxiv.org/abs/1703.04200)
 - [ ] [2018] [Pascanu] Progress & Compress: A scalable framework for continual learning - [paper](https://arxiv.org/abs/1805.06370)
 - [ ] [2019] [deepmind] CLEAR: Experience Replay for Continual Learning - [paper](https://arxiv.org/abs/1811.11682)
+- [ ] [2017] GEM: Gradient Episodic Memory for Continual Learning - [paper](https://arxiv.org/abs/1706.08840)
 - [ ] [2019] A-GEM: Efficient Lifelong Learning with A-GEM - [paper](https://arxiv.org/abs/1812.00420)
 - [ ] [2020] PackNet: Adding Multiple Tasks to a Single Network by Iterative Pruning - [paper](https://arxiv.org/abs/1711.05769)
 - [ ] [2020] [Hadsell,Pascanu] Embracing Change: Continual Learning in Deep Neural Networks - [paper](https://doi.org/10.1016/j.tics.2020.09.004)
