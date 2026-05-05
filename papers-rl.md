@@ -1,7 +1,7 @@
 # Reinforcement Learning
 
 - **Created**: 2019-04
-- **Last Updated**: 2026-05-01
+- **Last Updated**: 2026-05-05
 - **Status**: `In Progress`
 
 ---
@@ -25,6 +25,7 @@
 - [ ] [2020] [deepmind] Agent57: Outperforming the Atari Human Benchmark - [paper](https://arxiv.org/abs/2003.13350), [blog](https://deepmind.google/blog/agent57-outperforming-the-human-atari-benchmark/)
 - [ ] [2020] Atari 100K: Model-Based Reinforcement Learning for Atari - [paper](https://arxiv.org/abs/1903.00374)
 - [ ] [2020] Revisiting Fundamentals of Experience Replay - [paper](https://arxiv.org/abs/2007.06700)
+- [ ] [2021] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345)
 - [ ] [2023] Bigger, Better, Faster (BBF): Human-level Atari with human-level efficiency - [paper](https://arxiv.org/abs/2305.19452)
 - [ ] TODO nethack
 - [ ] TODO crafter
@@ -163,6 +164,50 @@
 ---
 
 - TODO
+
+## [2021] Decision Transformer: Reinforcement Learning via Sequence Modeling
+
+- **Date**: 2026-05-05
+- **Arxiv**: <https://arxiv.org/abs/2106.01345>
+- **Code**: <https://github.com/kzl/decision-transformer>
+
+---
+
+- **Abstract**:
+  - > We introduce a framework that abstracts **Reinforcement Learning (RL) as a sequence modeling problem**. This allows us to draw upon the simplicity and scalability of the Transformer architecture, and associated advances in language modeling such as GPT-x and BERT. In particular, we present Decision Transformer, an architecture that casts the problem of RL as **conditional sequence modeling**. **Unlike prior approaches to RL that fit value functions or compute policy gradients, Decision Transformer simply outputs the optimal actions by leveraging a causally masked Transformer**. **By conditioning an autoregressive model on the desired return (reward), past states, and actions, our Decision Transformer model can generate future actions that achieve the desired return**. Despite its simplicity, Decision Transformer matches or exceeds the performance of state-of-the-art model-free offline RL baselines on Atari, OpenAI Gym, and Key-to-Door tasks.
+- **Intro**:
+  - The core move is to remove much of the usual RL machinery: no Bellman backups, no value-function fitting, no explicit policy-gradient objective.
+  - Offline RL datasets already contain sequences of states, actions, and rewards. Decision Transformer formats these as trajectories and trains a transformer with supervised autoregressive prediction.
+  - This is closer in spirit to GPT-style conditional generation than to classic dynamic programming.
+- **Trajectory modeling**:
+  - Each timestep is represented by a tuple:
+    - return-to-go $R_t$
+    - state $s_t$
+    - action $a_t$
+  - The sequence is ordered as:
+    - $R_1, s_1, a_1, R_2, s_2, a_2, \ldots$
+  - The model predicts actions autoregressively from prior returns-to-go, states, and actions.
+  - Return-to-go is the desired remaining cumulative reward from a timestep onward:
+    - $R_t = \sum_{t'=t}^{T} r_{t'}$
+  - At evaluation time, choose a target return, condition the model on that desired return, execute the predicted action, observe the reward, and decrement the remaining target return.
+- **Training**:
+  - Supervised action prediction over offline trajectories.
+  - For continuous-control tasks, train with mean-squared error on actions.
+  - For discrete Atari actions, train with cross-entropy.
+  - Uses causal masking so each predicted action only depends on past trajectory context.
+- **Why return-to-go matters**:
+  - Return-to-go acts like a goal-conditioning variable: "act so as to achieve this much remaining reward."
+  - This lets a single model represent different-quality behaviors from the same dataset by conditioning on different desired returns.
+  - In contrast, ordinary behavior cloning averages over the dataset behavior without an explicit knob for desired performance.
+- **Relation to Gato**: [[papers-generalist-agents]]
+  - Relevant to [[papers-generalist-agents]] because it is a direct technical predecessor to Gato's framing of control as sequence modeling.
+  - Decision Transformer shows "control can be sequence modeling."
+  - Gato broadens this to multimodal, multi-task, multi-embodiment behavior: text, image observations, proprioception, discrete actions, continuous actions, and robot control.
+  - Gato does not use return-to-go conditioning. It relies on high-return trajectory filtering, prompts/demonstrations, and context.
+- **Limitations / open questions**:
+  - Still depends on the quality and coverage of the offline dataset.
+  - If high-return behavior is absent from the dataset, return conditioning cannot invent it reliably.
+  - For long-horizon tasks, finite context length limits how much trajectory history and goal information the model can use.
 
 ## [2023] Bigger, Better, Faster (BBF): Human-level Atari with human-level efficiency
 
