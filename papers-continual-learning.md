@@ -1,7 +1,7 @@
 # Continual Learning
 
 - **Created**: 2026-03-01
-- **Last Updated**: 2026-05-01
+- **Last Updated**: 2026-05-05
 - **Status**: `In Progress`
 
 ---
@@ -15,19 +15,35 @@ The umbrella topic of learning from a non-stationary stream of tasks. Three sub-
 ---
 
 - [ ] [1989] Catastrophic Interference in Connectionist Networks: The Sequential Learning Problem - [paper](https://www.sciencedirect.com/science/chapter/bookseries/abs/pii/S0079742108605368)
+- [ ] [1995] Catastrophic Forgetting, Rehearsal and Pseudorehearsal - [paper](https://www.tandfonline.com/doi/abs/10.1080/09540099550039318)
+- [ ] [2007] An empirical evaluation of deep architectures on problems with many factors of variation - [paper](https://doi.org/10.1145/1273496.1273556)
+- [ ] [2013] [Goodfellow,Bengio] An Empirical Investigation of Catastrophic Forgetting in Gradient-Based Neural Networks - [paper](https://arxiv.org/abs/1312.6211)
 - [ ] [2016] [deepmind] EWC: Overcoming catastrophic forgetting in neural networks - [paper](https://arxiv.org/abs/1612.00796)
 - [ ] [2016] [deepmind] Progressive Neural Networks - [paper](https://arxiv.org/abs/1606.04671)
 - [ ] [2017] Learning without Forgetting - [paper](https://arxiv.org/abs/1606.09282)
+- [ ] [2017] iCaRL: Incremental Classifier and Representation Learning - [paper](https://arxiv.org/abs/1611.07725)
 - [ ] [2017] [SuryaGanguli] Continual Learning Through Synaptic Intelligence - [paper](https://arxiv.org/abs/1703.04200)
+- [ ] [2017] [Lomonaco,Maltoni] CORe50: a New Dataset and Benchmark for Continuous Object Recognition - [paper](https://proceedings.mlr.press/v78/lomonaco17a.html)
+- [ ] [2018] Measuring Catastrophic Forgetting in Neural Networks - [paper](https://arxiv.org/abs/1708.02072)
+- [ ] [2018] [Farquhar,Gal] Towards Robust Evaluations of Continual Learning - [paper](https://arxiv.org/abs/1805.09733)
+- [ ] [2018] Re-evaluating Continual Learning Scenarios: A Categorization and Case for Strong Baselines - [paper](https://arxiv.org/abs/1810.12488)
+- [ ] [2018] Don't forget, there is more than forgetting: new metrics for Continual Learning - [paper](https://arxiv.org/abs/1810.13166)
 - [ ] [2018] [Pascanu] Progress & Compress: A scalable framework for continual learning - [paper](https://arxiv.org/abs/1805.06370)
 - [ ] [2019] [deepmind] CLEAR: Experience Replay for Continual Learning - [paper](https://arxiv.org/abs/1811.11682)
 - [ ] [2017] GEM: Gradient Episodic Memory for Continual Learning - [paper](https://arxiv.org/abs/1706.08840)
 - [ ] [2019] A-GEM: Efficient Lifelong Learning with A-GEM - [paper](https://arxiv.org/abs/1812.00420)
+- [ ] [2019] Continual Lifelong Learning with Neural Networks: A Review - [paper](https://doi.org/10.1016/j.neunet.2019.01.012)
 - [ ] [2020] PackNet: Adding Multiple Tasks to a Single Network by Iterative Pruning - [paper](https://arxiv.org/abs/1711.05769)
+- [ ] [2020] Dark Experience for General Continual Learning: a Strong, Simple Baseline - [paper](https://arxiv.org/abs/2004.07211)
 - [ ] [2020] [Hadsell,Pascanu] Embracing Change: Continual Learning in Deep Neural Networks - [paper](https://doi.org/10.1016/j.tics.2020.09.004)
 - [ ] [2020] [DoinaPrecup] Towards Continual Reinforcement Learning: A Review and Perspectives - [paper](https://arxiv.org/abs/2012.13490)
 - [x] [2021] Continual World: A Robotic Benchmark For Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2105.10919)
 - [ ] [2021] OWL: Same State, Different Task — Continual Reinforcement Learning without Interference - [paper](https://arxiv.org/abs/2106.02940)
+- [ ] [2021] [sutton] Continual Backprop: Stochastic Gradient Descent with Persistent Randomness - [paper](https://arxiv.org/abs/2108.06325)
+- [ ] [2022] [vanDeVen,Tolias] Three types of incremental learning - [paper](https://www.nature.com/articles/s42256-022-00568-3)
+- [ ] [2022] [Mirzadeh,Pascanu] Wide Neural Networks Forget Less Catastrophically - [paper](https://proceedings.mlr.press/v162/mirzadeh22a.html)
+- [ ] [2022] How catastrophic can catastrophic forgetting be in linear regression? - [paper](https://proceedings.mlr.press/v178/evron22a.html)
+- [ ] [2022] A Simple Baseline that Questions the Use of Pretrained-Models in Continual Learning - [paper](https://arxiv.org/abs/2210.04428)
 - [ ] [2023] [deepmind] A Definition of Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2307.11046)
 - [ ] [2024] [sutton] Loss of plasticity in deep continual learning - [paper](https://www.nature.com/articles/s41586-024-07711-7)
 
