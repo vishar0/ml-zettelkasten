@@ -25,7 +25,7 @@
 - [ ] [2020] [deepmind] Agent57: Outperforming the Atari Human Benchmark - [paper](https://arxiv.org/abs/2003.13350), [blog](https://deepmind.google/blog/agent57-outperforming-the-human-atari-benchmark/)
 - [ ] [2020] Atari 100K: Model-Based Reinforcement Learning for Atari - [paper](https://arxiv.org/abs/1903.00374)
 - [ ] [2020] Revisiting Fundamentals of Experience Replay - [paper](https://arxiv.org/abs/2007.06700)
-- [ ] [2021] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345)
+- [x] [2021] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345)
 - [ ] [2023] Bigger, Better, Faster (BBF): Human-level Atari with human-level efficiency - [paper](https://arxiv.org/abs/2305.19452)
 - [ ] TODO nethack
 - [ ] TODO crafter
@@ -176,6 +176,10 @@
 - **Abstract**:
   - > We introduce a framework that abstracts **Reinforcement Learning (RL) as a sequence modeling problem**. This allows us to draw upon the simplicity and scalability of the Transformer architecture, and associated advances in language modeling such as GPT-x and BERT. In particular, we present Decision Transformer, an architecture that casts the problem of RL as **conditional sequence modeling**. **Unlike prior approaches to RL that fit value functions or compute policy gradients, Decision Transformer simply outputs the optimal actions by leveraging a causally masked Transformer**. **By conditioning an autoregressive model on the desired return (reward), past states, and actions, our Decision Transformer model can generate future actions that achieve the desired return**. Despite its simplicity, Decision Transformer matches or exceeds the performance of state-of-the-art model-free offline RL baselines on Atari, OpenAI Gym, and Key-to-Door tasks.
 - **Intro**:
+  - Transformers had already shown they could model **high-dimensional semantic distributions at scale** in language and image generation. Decision Transformer asks whether that same generative modeling recipe can replace conventional RL machinery for sequential decision making, by modeling the joint sequence of **states, actions, and rewards**.
+  - The proposed paradigm shift is: instead of learning a policy through TD learning, train a transformer on collected experience with a **sequence modeling objective**. This avoids bootstrapping for long-term credit assignment, avoids discounting future rewards as a built-in assumption, and inherits the scalable training infrastructure of language/vision transformers.
+  - The paper argues that self-attention offers a different route to **credit assignment**: transformers can directly relate distant events in a trajectory, while Bellman backups propagate rewards step by step and can be distracted by irrelevant reward signals. This is why sparse or distracting rewards are an important test case.
+  - Offline RL is the natural setting for this framing: the agent must produce strong behavior from **fixed, limited, suboptimal experience**. By training autoregressively on states, actions, and returns, policy sampling becomes sequence generation; choosing the desired return token acts like a prompt specifying which behavior or "skill" to generate.
   - The core move is to remove much of the usual RL machinery: no Bellman backups, no value-function fitting, no explicit policy-gradient objective.
   - Offline RL datasets already contain sequences of states, actions, and rewards. Decision Transformer formats these as trajectories and trains a transformer with supervised autoregressive prediction.
   - This is closer in spirit to GPT-style conditional generation than to classic dynamic programming.
@@ -204,6 +208,8 @@
   - Decision Transformer shows "control can be sequence modeling."
   - Gato broadens this to multimodal, multi-task, multi-embodiment behavior: text, image observations, proprioception, discrete actions, continuous actions, and robot control.
   - Gato does not use return-to-go conditioning. It relies on high-return trajectory filtering, prompts/demonstrations, and context.
+  - Return-to-go conditioning is awkward for Gato's heterogeneous setting because reward scales and meanings differ across Atari, DM Control, BabyAI, robot stacking, etc., and many vision/language datasets have no reward at all.
+  - Gato's high-return filtering is a simpler alternative: use reward only to curate high-quality trajectories per task, then train a behavior-cloning model without inserting reward tokens into every sequence.
 - **Limitations / open questions**:
   - Still depends on the quality and coverage of the offline dataset.
   - If high-return behavior is absent from the dataset, return conditioning cannot invent it reliably.

@@ -3,6 +3,10 @@
 - **Created**: 2026-05-05
 - **Last Updated**: 2026-05-05
 - **Status**: `In Progress`
+- **Related**:
+  - [[papers-rl]]
+  - [[papers-open-ended-learning]]
+  - [[papers-world-models]]
 
 ---
 
@@ -10,10 +14,10 @@
 
 ### Core Lineage
 
-- See [[papers-rl]] for Decision Transformer
-- [ ] [2021] Open-Ended Learning Leads to Generally Capable Agents - [paper](https://arxiv.org/abs/2107.12808), [blog](https://deepmind.google/discover/blog/generally-capable-agents-emerge-from-open-ended-play/)
-- [ ] [2022] Gato: A Generalist Agent - [paper](https://arxiv.org/abs/2205.06175), [blog](https://deepmind.google/blog/a-generalist-agent/)
-- [ ] [2024] Scaling Instructable Agents Across Many Simulated Worlds - [paper](https://arxiv.org/abs/2404.10179), [blog](https://deepmind.google/discover/blog/sima-generalist-ai-agent-for-3d-virtual-environments/)
+- [2021] [[papers-rl]] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345)
+- [2021] [[papers-open-ended-learning]] XLand: Open-Ended Learning Leads to Generally Capable Agents - [paper](https://arxiv.org/abs/2107.12808), [blog](https://deepmind.google/discover/blog/generally-capable-agents-emerge-from-open-ended-play/)
+- [x] [2022] Gato: A Generalist Agent - [paper](https://arxiv.org/abs/2205.06175), [blog](https://deepmind.google/blog/a-generalist-agent/)
+- [ ] [2024] SIMA: Scaling Instructable Agents Across Many Simulated Worlds - [paper](https://arxiv.org/abs/2404.10179), [blog](https://deepmind.google/discover/blog/sima-generalist-ai-agent-for-3d-virtual-environments/)
 - [ ] [2025] SIMA 2: A Generalist Embodied Agent for Virtual Worlds - [paper](https://arxiv.org/abs/2512.04797), [blog](https://deepmind.google/blog/sima-2-an-agent-that-plays-reasons-and-learns-with-you-in-virtual-3d-worlds/)
 
 ### Minecraft / Open-World Agents
@@ -25,14 +29,13 @@
 - [ ] [2023] STEVE-1: A Generative Model for Text-to-Behavior in Minecraft - [paper](https://arxiv.org/abs/2306.00937)
 - [ ] [2023] JARVIS-1: Open-World Multi-task Agents with Memory-Augmented Multimodal Language Models - [paper](https://arxiv.org/abs/2311.05997), [website](https://craftjarvis.org/)
 
-### DeepMind Interactive Agents
+### DeepMind Interactive Agents Team
 
 - [ ] [2021] Creating Multimodal Interactive Agents with Imitation and Self-Supervised Learning - [paper](https://arxiv.org/abs/2112.03763)
 - [ ] [2022] Improving Multimodal Interactive Agents with Reinforcement Learning from Human Feedback - [paper](https://arxiv.org/abs/2211.11602), [blog](https://deepmind.google/blog/building-interactive-agents-in-video-game-worlds/)
 
 ### Optional / Adjacent
 
-- See [[papers-world-models]] for Genie and related world-model papers.
 - [ ] [2023] Generative Agents: Interactive Simulacra of Human Behavior - [paper](https://arxiv.org/abs/2304.03442) — simulation/social-agent architecture, not central to embodied control.
 
 ---
