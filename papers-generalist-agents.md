@@ -1,7 +1,7 @@
 # Generalist Agents
 
 - **Created**: 2026-05-05
-- **Last Updated**: 2026-05-05
+- **Last Updated**: 2026-05-06
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-rl]]
@@ -31,6 +31,7 @@
 
 ### DeepMind Interactive Agents Team
 
+- [ ] [2020] Imitating Interactive Intelligence - [paper](https://arxiv.org/abs/2012.05672)
 - [ ] [2021] Creating Multimodal Interactive Agents with Imitation and Self-Supervised Learning - [paper](https://arxiv.org/abs/2112.03763)
 - [ ] [2022] Improving Multimodal Interactive Agents with Reinforcement Learning from Human Feedback - [paper](https://arxiv.org/abs/2211.11602), [blog](https://deepmind.google/blog/building-interactive-agents-in-video-game-worlds/)
 
@@ -118,15 +119,67 @@
   - The important move is turning agent behavior into next-token prediction over observations, text, and actions, then relying on scale and data diversity rather than domain-specific policy architectures.
   - Its weaknesses point directly at the next problems for generalist agents: longer context, better control data, online/offline RL beyond imitation, and stronger out-of-distribution adaptation.
 
-## [2024] Scaling Instructable Agents Across Many Simulated Worlds
+## [2024] SIMA: Scaling Instructable Agents Across Many Simulated Worlds
 
-- **Date**: 2026-05-05
+- **Date**: 2026-05-06
 - **Arxiv**: <https://arxiv.org/abs/2404.10179>
 - **Blog**: <https://deepmind.google/discover/blog/sima-generalist-ai-agent-for-3d-virtual-environments/>
 
 ---
 
-- TODO
+- **Abstract**:
+  - SIMA studies generalist embodied agents that follow open-ended natural-language instructions in 3D virtual environments.
+  - The agent interface is deliberately human-like: **image observations and language instructions in, keyboard-and-mouse actions out**.
+  - The paper positions virtual worlds as a scalable training ground for embodied intelligence because they are visually rich, interactive, cheap to reset, and safer than physical robotics.
+  - The long-term ambition is an instructable agent that can do anything a human can do in a simulated 3D environment, though this paper reports early progress on short-horizon tasks.
+- **Thesis**:
+  - SIMA shifts the generalist-agent question from "can one model serialize many modalities and actions?" to "can one embodied policy follow language instructions across many rich 3D worlds through a shared human interface?"
+  - The main abstraction is not a universal token stream, as in Gato, but a universal **agent-environment interface**: screen pixels, natural language, keyboard, and mouse.
+  - The paper is less about maximal task heterogeneity and more about **language-conditioned transfer across worlds**.
+- **Design choices**:
+  - Uses rich, visually complex, open-ended 3D games and research environments rather than small fixed RL benchmarks.
+  - Treats environments as asynchronous: the game continues while the agent acts.
+  - Uses the same keyboard-and-mouse controls available to humans, instead of privileged APIs or custom action spaces.
+  - Focuses on following language instructions, not maximizing game score or producing plausible ambient behavior.
+  - Uses free-form natural language instructions, rather than a fixed command grammar.
+- **Environments**:
+  - Commercial games include Goat Simulator 3, Hydroneer, No Man's Sky, Satisfactory, Teardown, Valheim, and Wobbly Life.
+  - Research environments include Construction Lab, Playhouse, ProcTHOR, and WorldLab.
+  - The paper reports quantitative results on a subset of environments where data collection and evaluation infrastructure were mature enough.
+- **Data**:
+  - Trained primarily with behavior cloning from human gameplay.
+  - Data includes image observations, language instructions or dialogue, keyboard-and-mouse actions, and annotations of behavior or success.
+  - Collection modes include single-player free play with post-hoc annotations and two-player setter-solver interactions where one human instructs another.
+  - The authors filter and weight data across environments and collection sources to manage quality and balance.
+- **Agent**:
+  - Inputs are recent visual observations plus the natural-language instruction.
+  - Outputs are keyboard-and-mouse actions, often as short action sequences rather than single isolated actions.
+  - The architecture builds on prior DeepMind interactive-agent work, combining pretrained visual/language components with transformers trained on SIMA data.
+  - Pretrained components include SPARC-style image-text representations and Phenaki-style video prediction representations.
+  - The policy is trained with behavior cloning and an auxiliary goal-completion prediction objective.
+  - At inference, the paper uses classifier-free guidance to strengthen language conditioning by comparing action logits with and without the instruction.
+- **Evaluation**:
+  - Evaluation is hard because commercial games do not provide a universal task-success API.
+  - Some research environments provide explicit success/failure signals and distractor tests.
+  - Some game evaluations use OCR or environment-specific task-completion cues.
+  - Human evaluation is used where automatic success detection is not reliable.
+  - A central evaluation concern is whether the agent is actually following the instruction, rather than merely exploiting common environmental affordances.
+- **Results**:
+  - SIMA demonstrates positive transfer across environments: the multi-environment agent generally beats environment-specialized agents in aggregate.
+  - Removing pretrained visual/language representations hurts performance, suggesting that internet-scale pretraining helps ground behavior in these worlds.
+  - Removing language performs poorly, supporting the claim that the tasks measure instruction following rather than just generic game navigation.
+  - Zero-shot held-out-environment results are promising for generic skills, but still limited.
+  - Performance remains far below human level on harder commercial-game tasks, especially those requiring precise spatial reasoning, long-horizon tool use, combat, or construction.
+- **Relation to Gato**:
+  - Gato is the broader sequence-modeling existence proof: many modalities, many embodiments, many domains, one tokenized transformer policy.
+  - SIMA narrows the embodiment to a human computer-control interface, but makes the environments richer and the instruction-following problem more central.
+  - Gato asks whether a single model can emit many kinds of action tokens. SIMA asks whether one embodied agent can use the same action interface to act across many 3D worlds.
+  - Gato includes language and vision tasks, but its control tasks are mostly benchmark-style and prompt/demo conditioned. SIMA makes language the direct task interface.
+  - Both are mostly imitation-learning systems, but SIMA puts more pressure on data collection, grounding, evaluation, and cross-environment transfer.
+- **Takeaway**:
+  - SIMA is the natural next slide after Gato if the talk wants to move from "generalist policy as token sequence model" to "generalist embodied agent as language-conditioned computer user."
+  - The interesting conceptual jump is from modality unification to interface unification.
+  - The paper is also a reminder that generalist agents are limited less by transformer mechanics alone and more by environment coverage, instruction data, success evaluation, and long-horizon grounding.
 
 ## [2025] SIMA 2: A Generalist Embodied Agent for Virtual Worlds
 
