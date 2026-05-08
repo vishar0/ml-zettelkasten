@@ -1,7 +1,7 @@
 # Generalist Agents
 
 - **Created**: 2026-05-05
-- **Last Updated**: 2026-05-06
+- **Last Updated**: 2026-05-07
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-rl]]
@@ -17,8 +17,8 @@
 - [2021] [[papers-rl]] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345)
 - [2021] [[papers-open-ended-learning]] XLand: Open-Ended Learning Leads to Generally Capable Agents - [paper](https://arxiv.org/abs/2107.12808), [blog](https://deepmind.google/discover/blog/generally-capable-agents-emerge-from-open-ended-play/)
 - [x] [2022] Gato: A Generalist Agent - [paper](https://arxiv.org/abs/2205.06175), [blog](https://deepmind.google/blog/a-generalist-agent/)
-- [ ] [2024] SIMA: Scaling Instructable Agents Across Many Simulated Worlds - [paper](https://arxiv.org/abs/2404.10179), [blog](https://deepmind.google/discover/blog/sima-generalist-ai-agent-for-3d-virtual-environments/)
-- [ ] [2025] SIMA 2: A Generalist Embodied Agent for Virtual Worlds - [paper](https://arxiv.org/abs/2512.04797), [blog](https://deepmind.google/blog/sima-2-an-agent-that-plays-reasons-and-learns-with-you-in-virtual-3d-worlds/)
+- [x] [2024] SIMA: Scaling Instructable Agents Across Many Simulated Worlds - [paper](https://arxiv.org/abs/2404.10179), [blog](https://deepmind.google/discover/blog/sima-generalist-ai-agent-for-3d-virtual-environments/)
+- [x] [2025] SIMA 2: A Generalist Embodied Agent for Virtual Worlds - [paper](https://arxiv.org/abs/2512.04797), [blog](https://deepmind.google/blog/sima-2-an-agent-that-plays-reasons-and-learns-with-you-in-virtual-3d-worlds/)
 
 ### Minecraft / Open-World Agents
 
@@ -183,10 +183,81 @@
 
 ## [2025] SIMA 2: A Generalist Embodied Agent for Virtual Worlds
 
-- **Date**: 2026-05-05
+- **Date**: 2026-05-07
 - **Arxiv**: <https://arxiv.org/abs/2512.04797>
 - **Blog**: <https://deepmind.google/blog/sima-2-an-agent-that-plays-reasons-and-learns-with-you-in-virtual-3d-worlds/>
 
 ---
 
-- TODO
+- **Abstract**:
+  - > We introduce SIMA 2, a generalist embodied agent that understands and acts in a wide variety of 3D virtual worlds. Built upon a Gemini foundation model, SIMA 2 represents a significant step toward active, goal-directed interaction within an embodied environment. Unlike prior work (e.g., SIMA 1) limited to simple language commands, SIMA 2 acts as an interactive partner, capable of reasoning about high-level goals, conversing with the user, and handling complex instructions given through language and images.
+  - > Across a diverse portfolio of games, SIMA 2 substantially closes the gap with human performance and demonstrates robust generalization to previously unseen environments, all while retaining the base model's core reasoning capabilities. Furthermore, we demonstrate a capacity for open-ended self-improvement: by leveraging Gemini to generate tasks and provide rewards, SIMA 2 can autonomously learn new skills from scratch in a new environment. This work validates a path toward creating versatile and continuously learning agents for both virtual and, eventually, physical worlds.
+- **Thesis**:
+  - SIMA 2 moves the SIMA line from a specialized language-conditioned action policy to a Gemini-based vision-language-action agent for virtual worlds.
+  - The key jump from SIMA 1 is not just more environments or more human data. The central change is putting Gemini at the core so the agent can reason, dialogue, handle richer prompts, and still act through a human-like game interface.
+  - In relation to Gato, SIMA 2 partially returns to the foundation-model/unified-interface framing: vision, language, reasoning, dialogue, and actions are closer to one model interface. The caveat is that actions are structured text parsed into keyboard/mouse commands, not Gato-style discretized action tokens.
+- **Agent-environment interface**:
+  - Input is a stream of 720p RGB video frames plus recent interaction history, natural-language inputs, and the agent's prior internal reasoning/responses.
+  - Output is structured text that can contain internal reasoning, dialogue, and action chunks.
+  - The action space emulates a standard human computer interface: 96 keyboard keys, mouse clicks, and discretized relative mouse movement.
+  - The agent does not receive privileged game state. It acts from screen pixels and language, using keyboard/mouse controls.
+  - This makes the interface comparable to SIMA 1, but the model interface is different: SIMA 1 used a policy head over actions, while SIMA 2 routes actions through Gemini's text-generation interface.
+- **Architecture**:
+  - SIMA 2 is a VLA model built from a Gemini Flash-Lite checkpoint fine-tuned on 3D virtual-world data.
+  - The public paper does not specify model size, training budget, or exact action text schema.
+  - Baseline Gemini models without embodied fine-tuning perform poorly at acting, despite prompt engineering; the paper reports 3.2% success for Flash-Lite and 7.0% for Pro on programmatic evaluations.
+  - This supports the point that embodied competence is not simply an emergent property of internet-scale vision/language pretraining. It has to be explicitly trained.
+- **Training data**:
+  - The training mixture combines gameplay data with Gemini pretraining/non-gameplay data to retain the base model's reasoning, dialogue, vision understanding, and promptability.
+  - Human data forms most of the gameplay training data by volume and includes RGB frames, text instructions/annotations, and keyboard/mouse actions.
+  - Data collection includes single-person gameplay with post-hoc annotation and two-person setter-solver annotation, where one human instructs and another controls the game.
+  - The pipeline includes quality filtering, trajectory preprocessing, converting gameplay into shorter instruction-aligned spans, and synthetic labeling from Gemini.
+- **Bridge data**:
+  - Human gameplay does not naturally contain internal reasoning and dialogue, so SIMA 2 adds Gemini-generated bridge data.
+  - Bridge data interleaves task instructions, visual frames, actions, internal reasoning, and dialogue in a format consistent with the agent's eventual interface.
+  - This is the mechanism for using language as the interface between Gemini's reasoning and embodied action.
+  - It teaches the agent to connect high-level user intent and internal reasoning to low-level actions, rather than only imitating direct action labels.
+- **Reinforcement learning**:
+  - After SFT, SIMA 2 is further trained with online RL from verifiable rewards.
+  - A verifiable task is an initial game state, a text instruction, and a verification function.
+  - Rewards come from embodied task completion or correct answers to environment-grounded questions; some tasks add shaped rewards for instruction following and controllability.
+  - This RL phase is limited to training environments and excludes held-out environments such as ASKA and MineDojo.
+  - Important wording: this is not "self-play." The relevant phrase is self-generated experience or online RL from agent rollouts.
+- **Self-improvement**:
+  - The self-improvement loop uses Gemini as a task setter and Gemini as a reward model.
+  - The task setter proposes achievable tasks from the current environment state and can be steered toward weak skills or likely learning progress.
+  - The reward model scores video trajectories against the task, creating a dataset of scored self-generated experience.
+  - Training on this self-generated experience improves the SIMA 2 agent.
+  - In ASKA, the self-improved agent progresses farther than the initial SIMA 2 agent, despite ASKA being held out from the original SIMA 2 training.
+  - In Genie 3, self-improvement on generated urban environments transfers to held-out natural environments, suggesting a loop between world models and improving agents.
+- **Environments and evaluation**:
+  - Training environments include Construction Lab, Playhouse, WorldLab, Goat Simulator 3, Hydroneer, No Man's Sky, Satisfactory, Space Engineers, Valheim, and Wobbly Life.
+  - Held-out evaluations include ASKA and MineDojo quantitatively, and The Gunk plus Genie 3 qualitatively.
+  - Evaluation uses ground-truth success where available, programmatic/OCR/pixel/action heuristics where possible, and human raters when automatic checks are unreliable.
+  - The evaluation suite is more challenging than SIMA 1, with more programmatic tasks, stricter success persistence, constraints on post-completion actions, and sequential task chains.
+- **Results**:
+  - SIMA 2 substantially improves over SIMA 1 on training environments and across skill categories.
+  - It nearly closes the gap to human performance in some categories, especially interaction and object management, but remains weaker on resource gathering and combat.
+  - It generalizes to held-out environments: ASKA and MineDojo results show meaningful improvement over SIMA 1, and MineDojo performance covers 26 out of 50 task categories.
+  - Qualitatively, it can progress through the early portion of The Gunk and navigate photorealistic Genie 3 environments, despite training only on research and video-game worlds.
+  - Fine-tuning on embodied action data preserves much of Gemini's general capability, with only modest regressions reported on code/math/STEM benchmarks.
+- **Relation to SIMA 1**:
+  - SIMA 1 is a modular action policy: screen/language in, keyboard/mouse actions out.
+  - SIMA 2 is a Gemini-based VLA: screen/language/history in, structured text out, then parsed into reasoning, dialogue, and keyboard/mouse action chunks.
+  - SIMA 1 follows short, direct instructions. SIMA 2 can handle higher-level goals, dialogue, internal reasoning, multi-modal prompts, and more complex instructions.
+  - SIMA 1 evaluates cross-world instruction-following; SIMA 2 adds self-improvement and stronger held-out generalization.
+- **Relation to Gato**:
+  - Gato is a token-in token-out generalist policy trained by behavior cloning over text, images, observations, and action tokens.
+  - SIMA 2 is closer to modern multimodal LLM/VLA systems: it inherits a pretrained Gemini model and fine-tunes it for embodied action.
+  - The commonality is the bet on a unified model interface that can absorb heterogeneous modalities.
+  - The difference is action representation: Gato directly tokenizes actions; SIMA 2 emits structured text that is deterministically parsed into low-level keyboard/mouse commands.
+- **Limitations**:
+  - Many important details are sparse: model size, training budget, data scale, exact structured action schema, and RL algorithm/scoring details.
+  - The self-improvement result is bounded, not strong recursive self-improvement. It depends on Gemini as task setter/reward model, curated environments, and a training loop built by the researchers.
+  - Reward and verification remain bottlenecks. Where ground-truth or programmatic checks are unavailable, the setup relies on human raters or Gemini-scored trajectories.
+  - Generalization is real but still within virtual 3D worlds and human-computer interfaces; physical transfer remains aspirational.
+  - Long-horizon complex tasks, short interaction memory/context, precise low-level control, and robust visual understanding remain open challenges.
+- **Takeaway**:
+  - SIMA 2 is the strongest "Gato-like" idea in the talk after modern multimodal foundation models: instead of training a generalist token policy from scratch, start with Gemini and fine-tune it into an embodied VLA.
+  - The most important concept is the loop: bootstrap from human data, use language as the bridge between reasoning and action, then improve from self-generated experience using task/reward models.
+  - For research strategy, the paper pushes evals beyond "can the agent solve this task?" toward "does this task expose a bottleneck that survives foundation-model scale?"
