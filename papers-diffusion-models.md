@@ -9,7 +9,7 @@
 - [ ] [2022] The Annotated Diffusion Model — [blog](https://huggingface.co/blog/annotated-diffusion)
 - [ ] [2015] Deep Unsupervised Learning using Nonequilibrium Thermodynamics — [paper](https://arxiv.org/abs/1503.03585)
 - [ ] [2020] Denoising Diffusion Probabilistic Models — [paper](https://arxiv.org/abs/2006.11239)
-- [ ] TODO
+- [ ] TODO <https://diffusion.csail.mit.edu/2026/docs/lecture_notes.pdf>
 
 ## [2022] The Annotated Diffusion Model
 
