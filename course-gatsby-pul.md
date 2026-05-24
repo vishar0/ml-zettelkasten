@@ -1,7 +1,7 @@
 # [Probabilistic and Unsupervised Learning, Gatsby](https://www.gatsby.ucl.ac.uk/teaching/courses/ml1/)
 
 - **Created**: 2026-05-09
-- **Last Updated**: 2026-05-10
+- **Last Updated**: 2026-05-24
 - **Status**: `Not Started`
 
 ---
@@ -12,25 +12,25 @@
 
 **Probabilistic and Unsupervised Learning**:
 
-- [ ] Lecture 1: [Introduction to Probabilistic Learning](assets/course-gatsby-pul-slides-2025/slides_COMP0086.pdf)
-- [ ] Lecture 2: [Latent Variable Models](assets/course-gatsby-pul-slides-2025/slides_COMP0086.pdf)
-- [ ] Lecture 3: [EM Algorithm and Latent Chain Models](assets/course-gatsby-pul-slides-2025/slides_COMP0086.pdf)
-- [ ] Lecture 4: [Markov Chains and MCMC](assets/course-gatsby-pul-slides-2025/slides_COMP0086.pdf)
-- [ ] Lecture 5: [Optimisation](assets/course-gatsby-pul-slides-2025/slides_COMP0086.pdf)
+- [x] Lecture 1: [Introduction to Probabilistic Learning](assets/course-gatsby-pul-slides-2025/lecture-01-05-probabilistic-unsupervised-learning.pdf)
+- [ ] Lecture 2: [Latent Variable Models](assets/course-gatsby-pul-slides-2025/lecture-01-05-probabilistic-unsupervised-learning.pdf)
+- [ ] Lecture 3: [EM Algorithm and Latent Chain Models](assets/course-gatsby-pul-slides-2025/lecture-01-05-probabilistic-unsupervised-learning.pdf)
+- [ ] Lecture 4: [Markov Chains and MCMC](assets/course-gatsby-pul-slides-2025/lecture-01-05-probabilistic-unsupervised-learning.pdf)
+- [ ] Lecture 5: [Optimisation](assets/course-gatsby-pul-slides-2025/lecture-01-05-probabilistic-unsupervised-learning.pdf)
 
 **Approximate Inference**:
 
-- [ ] Lecture 6: [Graphical Models](assets/course-gatsby-pul-slides-2025/lect5-slides.pdf)
-- [ ] Lecture 7: [Factored Variational Approximations and Variational Bayes](assets/course-gatsby-pul-slides-2025/lect8-slides.pdf)
-- [ ] Lecture 8: [Bayesian Model Selection, Hyperparameter Optimisation, and Gaussian Processes](assets/course-gatsby-pul-slides-2025/lect6-slides.pdf)
-- [ ] Lecture 9: [Expectation Propagation](assets/course-gatsby-pul-slides-2025/lect9-slides.pdf)
-- [ ] Lecture 10: [Belief Propagation](assets/course-gatsby-pul-slides-2025/lect10-slides.pdf)
-- [ ] Lecture 11: [Exponential Families: Convexity, Duality, and Free Energies](assets/course-gatsby-pul-slides-2025/lect11-slides.pdf)
-- [ ] Lecture 12: [Parametric Variational Methods and Recognition Models](assets/course-gatsby-pul-slides-2025/lect13-slides.pdf)
+- [ ] Lecture 6: [Graphical Models](assets/course-gatsby-pul-slides-2025/lecture-06-graphical-models.pdf)
+- [ ] Lecture 7: [Factored Variational Approximations and Variational Bayes](assets/course-gatsby-pul-slides-2025/lecture-07-factored-variational-approximations-vb.pdf)
+- [ ] Lecture 8: [Bayesian Model Selection, Hyperparameter Optimisation, and Gaussian Processes](assets/course-gatsby-pul-slides-2025/lecture-08-bayesian-model-selection-gps.pdf)
+- [ ] Lecture 9: [Expectation Propagation](assets/course-gatsby-pul-slides-2025/lecture-09-expectation-propagation.pdf)
+- [ ] Lecture 10: [Belief Propagation](assets/course-gatsby-pul-slides-2025/lecture-10-belief-propagation.pdf)
+- [ ] Lecture 11: [Exponential Families: Convexity, Duality, and Free Energies](assets/course-gatsby-pul-slides-2025/lecture-11-exponential-families-free-energies.pdf)
+- [ ] Lecture 12: [Parametric Variational Methods and Recognition Models](assets/course-gatsby-pul-slides-2025/lecture-12-parametric-variational-methods-recognition-models.pdf)
 
 ---
 
-## Lecture 1: [Introduction to Probabilistic Learning](assets/course-gatsby-pul-slides-2025/slides_COMP0086.pdf)
+## Lecture 1: [Introduction to Probabilistic Learning](assets/course-gatsby-pul-slides-2025/lecture-01-05-probabilistic-unsupervised-learning.pdf)
 
 ### Three Learning Problems
 
@@ -911,3 +911,604 @@ $$
 $$
 
 That is exactly the first-order condition for maximizing the log-likelihood. In this sense, MLE is the parameter value that makes the average score on the observed data equal zero.
+
+### Tools: Gaussian Distributions
+
+_**TL;DR:** A Gaussian is controlled by a mean and a scale; in multiple dimensions, the covariance matrix controls both the marginal spread of each coordinate and the dependence between coordinates._
+
+Slides 33-39 pause the main learning story to review Gaussian distributions, because Gaussians will appear repeatedly in probabilistic modelling, latent-variable models, approximate inference, and optimization.
+
+#### One-Dimensional Gaussian
+
+Slide 34 recalls the 1D Gaussian density:
+
+$$
+p(x;\mu,\sigma)
+=
+\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left(
+-\frac{(x-\mu)^2}{2\sigma^2}
+\right)
+$$
+
+The parameters are:
+
+- $\mu$: expected value or mean.
+- $\sigma^2$: variance.
+- $\sigma$: standard deviation.
+
+The standardized quantity
+
+$$
+\frac{x-\mu}{\sigma}
+$$
+
+measures how far $x$ is from its mean in units of standard deviation. So $\sigma$ defines the length scale of the distribution.
+
+The cumulative distribution function is:
+
+$$
+\Phi(z) = P(Z \le z) = \int_{-\infty}^z p(z')dz'
+$$
+
+For any 1D Gaussian, intervals of 1, 2, and 3 standard deviations around the mean contain fixed probability mass:
+
+- 1 standard deviation: $[\mu-\sigma,\mu+\sigma]$ contains about $68.27\%$ of the mass.
+- 2 standard deviations: $[\mu-2\sigma,\mu+2\sigma]$ contains about $95.45\%$.
+- 3 standard deviations: $[\mu-3\sigma,\mu+3\sigma]$ contains about $99.73\%$.
+
+The important point is that $\mu$ shifts the density left or right, while $\sigma$ stretches or compresses it.
+
+#### Components of a 1D Gaussian
+
+Slide 35 decomposes the Gaussian shape into simpler pieces.
+
+Starting from $x$, the Gaussian first centers the value:
+
+$$
+x - \mu
+$$
+
+Then it squares the centered distance:
+
+$$
+(x-\mu)^2
+$$
+
+Then it rescales by the variance:
+
+$$
+\left(\frac{x-\mu}{\sigma}\right)^2
+$$
+
+Then it applies the negative quadratic exponent:
+
+$$
+-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2
+$$
+
+Finally, exponentiating gives the bell shape:
+
+$$
+\exp\left(
+-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2
+\right)
+$$
+
+Intuition:
+
+- Points close to $\mu$ have small squared standardized distance, so they receive high density.
+- Points far from $\mu$ have large squared standardized distance, so the negative exponent makes their density shrink quickly.
+- The Gaussian is therefore an exponentiated negative quadratic.
+
+#### Covariance Matrices
+
+Slide 36 generalizes variance to multiple dimensions.
+
+For two random variables $X_1$ and $X_2$, covariance is:
+
+$$
+\operatorname{Cov}[X_1,X_2]
+=
+\mathbb{E}\left[
+(X_1-\mathbb{E}[X_1])
+(X_2-\mathbb{E}[X_2])
+\right]
+$$
+
+If $X_1 = X_2 = X$, covariance reduces to variance:
+
+$$
+\operatorname{Cov}[X,X] = \operatorname{Var}[X]
+$$
+
+For a random vector
+
+$$
+X = (X_1,\ldots,X_D) \in \mathbb{R}^D
+$$
+
+the covariance matrix collects every pairwise covariance:
+
+$$
+\operatorname{Cov}[X]
+=
+\left(\operatorname{Cov}[X_i,X_j]\right)_{i,j}
+=
+\begin{pmatrix}
+\operatorname{Cov}[X_1,X_1] & \cdots & \operatorname{Cov}[X_1,X_D] \\
+\vdots & \ddots & \vdots \\
+\operatorname{Cov}[X_D,X_1] & \cdots & \operatorname{Cov}[X_D,X_D]
+\end{pmatrix}
+$$
+
+The usual notation is:
+
+$$
+\Sigma = \operatorname{Cov}[X]
+$$
+
+Interpretation:
+
+- Diagonal entries $\Sigma_{ii}$ are variances of individual coordinates.
+- Off-diagonal entries $\Sigma_{ij}$ are covariances between coordinates.
+- Positive covariance means the two coordinates tend to move together.
+- Negative covariance means one tends to be high when the other is low.
+- Zero covariance means no linear dependence, though not necessarily full independence in general.
+
+#### Multivariate Gaussian
+
+Slide 37 replaces the 1D squared standardized distance with a quadratic form.
+
+In 1D, the exponent is:
+
+$$
+-\frac{(x-\mu)^2}{2\sigma^2}
+=
+-\frac{1}{2}(x-\mu)(\sigma^2)^{-1}(x-\mu)
+$$
+
+In $D$ dimensions, the scalar variance $\sigma^2$ becomes the covariance matrix $\Sigma$:
+
+$$
+p(x;\mu,\Sigma)
+=
+\frac{1}{\sqrt{(2\pi)^D|\Sigma|}}
+\exp\left(
+-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)
+\right)
+$$
+
+where $\Sigma$ must be positive definite.
+
+The term
+
+$$
+(x-\mu)^T\Sigma^{-1}(x-\mu)
+$$
+
+is the squared **Mahalanobis distance** from $x$ to $\mu$. It is the multivariate analogue of:
+
+$$
+\left(\frac{x-\mu}{\sigma}\right)^2
+$$
+
+The covariance matrix controls the shape of the Gaussian:
+
+- Large variance in a direction means the density spreads out in that direction.
+- Small variance means the density is narrow in that direction.
+- Nonzero covariance rotates the density contours away from the coordinate axes.
+
+Assuming a multivariate Gaussian model means assuming that all stochastic dependence between dimensions is captured by the covariance matrix.
+
+#### Gaussian Density Example and Contours
+
+Slides 38-39 show a 2D Gaussian with:
+
+$$
+\mu = (0,0)
+\quad
+\text{and}
+\quad
+\Sigma =
+\begin{pmatrix}
+2 & 1 \\
+1 & 2
+\end{pmatrix}
+$$
+
+The covariance has positive off-diagonal entries, so the two coordinates tend to increase together. That creates tilted elliptical contours rather than axis-aligned circles.
+
+A contour line is made by slicing the density surface at a fixed height and projecting the intersection down to the input plane. For a Gaussian, these contours are ellipses.
+
+To see where the contour equation comes from, start with the 1D Gaussian:
+
+$$
+p(x;\mu,\sigma)
+=
+\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left(
+-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2
+\right)
+$$
+
+A contour in 1D means "points with the same density." Since the normalizing constant is fixed for a given Gaussian, equal density means equal exponent:
+
+$$
+\left(\frac{x-\mu}{\sigma}\right)^2 = c
+$$
+
+Equivalently:
+
+$$
+\frac{(x-\mu)^2}{\sigma^2} = c
+$$
+
+So in 1D, a Gaussian contour picks points the same number of standard deviations away from the mean:
+
+$$
+x = \mu \pm \sqrt{c}\sigma
+$$
+
+The multivariate Gaussian replaces the 1D standardized squared distance with the covariance-adjusted squared distance:
+
+$$
+\left(\frac{x-\mu}{\sigma}\right)^2
+\quad
+\longrightarrow
+\quad
+(x-\mu)^T\Sigma^{-1}(x-\mu)
+$$
+
+So for a Gaussian with mean $\mu$, the contour equation is:
+
+$$
+(x-\mu)^T\Sigma^{-1}(x-\mu) = c
+$$
+
+Changing $c$ changes the size of the ellipse. These ellipses are the multivariate analogue of intervals around the mean in 1D.
+
+The useful intuition:
+
+- In 1D, "distance from the mean" is measured in standard deviations.
+- In multiple dimensions, distance from the mean is measured by Mahalanobis distance.
+- Gaussian contours collect points at equal Mahalanobis distance from the mean.
+- The covariance matrix determines which directions count as "long" or "short" directions for the distribution.
+
+### Tools: Spectra and Geometry of Gaussians
+
+_**TL;DR:** The eigenvectors of a Gaussian covariance matrix give the main axes of variation, and the eigenvalues give the variances along those axes._
+
+Slides 40-64 review the linear algebra behind multivariate Gaussians and then use it for Gaussian MLE and linear regression.
+
+#### Eigenvalues and Eigenvectors
+
+For a square matrix $A \in \mathbb{R}^{D \times D}$, an eigenvector $v$ and eigenvalue $\lambda$ satisfy:
+
+$$
+Av = \lambda v
+$$
+
+Applying $A$ to $v$ does not change its direction; it only rescales it by $\lambda$.
+
+The set of eigenvalues is called the **spectrum** of $A$.
+
+Symmetric matrices have especially clean eigenstructure:
+
+- all eigenvalues are real;
+- eigenvectors for distinct eigenvalues are orthogonal;
+- if $A$ has full rank, its eigenvectors form an orthonormal basis of $\mathbb{R}^D$.
+
+Why distinct eigendirections are orthogonal:
+
+If $A$ is symmetric, then $A^T=A$, so it can be moved across an inner product:
+
+$$
+\langle Ax,y\rangle = \langle x,Ay\rangle
+$$
+
+because:
+
+$$
+\langle Ax,y\rangle
+=
+(Ax)^T y
+=
+x^T A^T y
+=
+x^T A y
+=
+\langle x,Ay\rangle
+$$
+
+Let $v_i$ and $v_j$ be eigenvectors with eigenvalues $\lambda_i$ and $\lambda_j$:
+
+$$
+Av_i = \lambda_i v_i,
+\quad
+Av_j = \lambda_j v_j
+$$
+
+Then:
+
+$$
+\langle Av_i,v_j\rangle
+=
+\langle v_i,Av_j\rangle
+$$
+
+Substitute the eigenvalue equations:
+
+$$
+\lambda_i \langle v_i,v_j\rangle
+=
+\lambda_j \langle v_i,v_j\rangle
+$$
+
+So:
+
+$$
+(\lambda_i-\lambda_j)\langle v_i,v_j\rangle = 0
+$$
+
+If $\lambda_i \ne \lambda_j$, then:
+
+$$
+\langle v_i,v_j\rangle = 0
+$$
+
+So eigenvectors with distinct eigenvalues are orthogonal.
+
+Definiteness can be read from the eigenvalues:
+
+- **positive definite**: all eigenvalues are $>0$;
+- **positive semi-definite**: all eigenvalues are $\ge 0$;
+- **negative definite**: all eigenvalues are $<0$;
+- **negative semi-definite**: all eigenvalues are $\le 0$;
+- **indefinite**: mixed signs.
+
+#### Orthonormal Bases
+
+An orthonormal basis $\{v_1,\ldots,v_D\}$ satisfies:
+
+$$
+\langle v_i,v_j\rangle =
+\begin{cases}
+1 & i=j \\
+0 & i \ne j
+\end{cases}
+$$
+
+So the basis vectors are mutually perpendicular and each has length 1.
+
+If a symmetric matrix has eigenvectors $v_1,\ldots,v_D$ forming an orthonormal basis, then any vector $x$ can be written as:
+
+$$
+x = \sum_{j=1}^D \alpha_j v_j
+$$
+
+Applying $A$ gives:
+
+$$
+Ax = \sum_{j=1}^D \alpha_j \lambda_j v_j
+$$
+
+**Any matrix scales its eigenvectors. For a symmetric matrix, the eigenvectors can be chosen as an orthonormal basis, so the whole transformation is scaling along perpendicular eigen-directions.**
+
+Repeated application emphasizes the largest eigenvalue direction:
+
+$$
+A^n x = \sum_{j=1}^D \alpha_j \lambda_j^n v_j
+$$
+
+The components with larger $|\lambda_j|$ dominate as $n$ grows.
+
+#### Quadratic Forms
+
+A symmetric matrix $A$ defines a quadratic form:
+
+$$
+q_A(x) = \langle x, Ax\rangle = x^T A x
+$$
+
+This is the vector analogue of a scalar quadratic $ax^2$.
+
+Eigenvalues determine the shape:
+
+- If all eigenvalues are positive, the quadratic form curves upward in every direction.
+- If all eigenvalues are negative, it curves downward in every direction.
+- If some eigenvalues are positive and some are negative, the surface has a saddle point.
+
+For example:
+
+$$
+A =
+\begin{pmatrix}
+2 & 1 \\
+1 & 2
+\end{pmatrix}
+$$
+
+has positive eigenvalues, so its quadratic-form contours are ellipses.
+
+Changing the sign of one eigenvalue flips the curvature along that eigenvector direction, producing a saddle.
+
+#### Covariance Geometry
+
+For a Gaussian $X \in \mathbb{R}^D$ with density $p(x;\mu,\Sigma)$:
+
+$$
+\operatorname{Cov}[X] = \Sigma
+$$
+
+Covariance matrices are symmetric because:
+
+$$
+\operatorname{Cov}[X_i,X_j] = \operatorname{Cov}[X_j,X_i]
+$$
+
+Since $\Sigma$ is symmetric, it has an eigenvector orthonormal basis. In that basis:
+
+$$
+\Sigma = \operatorname{diag}(\lambda_1,\ldots,\lambda_D)
+$$
+
+The geometric interpretation:
+
+- eigenvectors of $\Sigma$ give the principal directions of the Gaussian;
+- eigenvalues $\lambda_i$ give the variances along those directions;
+- rotating into the eigenbasis turns the Gaussian into independent 1D Gaussian coordinates.
+
+So a multivariate Gaussian is a collection of independent scalar Gaussians in the right coordinate system:
+
+$$
+X_i' \sim \mathcal{N}(0,\lambda_i)
+$$
+
+after shifting by $\mu$ and rotating into the eigenbasis of $\Sigma$.
+
+#### Gaussian MLE
+
+For data:
+
+$$
+D = (x_1,\ldots,x_n), \quad x_i \in \mathbb{R}^d
+$$
+
+under a Gaussian model:
+
+$$
+M = \{g(\cdot|\mu,\Sigma) \mid \mu \in \mathbb{R}^d,\ \Sigma \succ 0\}
+$$
+
+the maximum likelihood estimates are:
+
+$$
+\hat{\mu}_{ML} = \frac{1}{n}\sum_{i=1}^n x_i
+$$
+
+and
+
+$$
+\hat{\Sigma}_{ML}
+=
+\frac{1}{n}\sum_{i=1}^n
+(x_i-\hat{\mu}_{ML})(x_i-\hat{\mu}_{ML})^T
+$$
+
+The mean estimate does not depend on $\Sigma$, so we can estimate $\hat{\mu}_{ML}$ first and then plug it into the covariance estimate.
+
+Slides 56-58 give the matrix-derivative details behind this result. The important identities are that derivatives of trace terms handle quadratic forms, and the derivative of $\log |A|$ produces $A^{-T}$.
+
+#### Multivariate Linear Regression
+
+Slides 59-63 switch from modelling $p(x)$ to modelling a conditional distribution $p(y|x)$.
+
+For paired data:
+
+$$
+D = \{(x_1,y_1),\ldots,(x_N,y_N)\}
+$$
+
+linear-Gaussian regression assumes:
+
+$$
+y = Wx + \epsilon
+$$
+
+with Gaussian noise:
+
+$$
+p(y|x,W,\Sigma_y)
+=
+|2\pi\Sigma_y|^{-\frac{1}{2}}
+\exp\left(
+-\frac{1}{2}(y-Wx)^T\Sigma_y^{-1}(y-Wx)
+\right)
+$$
+
+The conditional log-likelihood is:
+
+$$
+\ell
+=
+\sum_i \log p(y_i|x_i,W,\Sigma_y)
+$$
+
+Maximizing it gives:
+
+$$
+\hat{W}
+=
+\left(\sum_i y_i x_i^T\right)
+\left(\sum_i x_i x_i^T\right)^{-1}
+$$
+
+This is ordinary least squares written in matrix form.
+
+#### Bayesian Linear Regression and Ridge
+
+For scalar $y_i$, write the weights as a vector $w$ and use a Gaussian prior:
+
+$$
+p(w|A) = \mathcal{N}(0,A^{-1})
+$$
+
+With Gaussian observation noise of variance $\sigma_y^2$, the posterior is also Gaussian:
+
+$$
+p(w|D,A,\sigma_y)
+=
+\mathcal{N}(\mu_w,\Sigma_w)
+$$
+
+where:
+
+$$
+\Sigma_w
+=
+\left(
+A + \sigma_y^{-2}\sum_i x_i x_i^T
+\right)^{-1}
+$$
+
+and
+
+$$
+\mu_w
+=
+\Sigma_w
+\left(
+\sigma_y^{-2}\sum_i y_i x_i
+\right)
+$$
+
+Because the posterior is Gaussian, the MAP estimate and posterior mean are the same:
+
+$$
+w_{MAP}
+=
+\left(
+A\sigma_y^2 + \sum_i x_i x_i^T
+\right)^{-1}
+\sum_i y_i x_i
+$$
+
+Compare this with the ML estimate:
+
+$$
+w_{ML}
+=
+\left(
+\sum_i x_i x_i^T
+\right)^{-1}
+\sum_i y_i x_i
+$$
+
+The prior shrinks weights toward the prior mean, here zero. If $A=\alpha I$, this is ridge regression: ordinary linear regression with a squared L2 weight penalty $\alpha\|w\|_2^2$.
+
+The key modeling distinction:
+
+- Linear regression models $p(y|x)$.
+- If we also model $p(x)$, then $(x,y)$ can be treated as a joint generative model.
+- If $p(x)$ is Gaussian and $p(y|x)$ is linear-Gaussian, then $(x,y)$ is jointly Gaussian.
