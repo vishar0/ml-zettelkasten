@@ -17,6 +17,7 @@
 - [ ] [2021] DINO: Emerging Properties in Self-Supervised Vision Transformers — [paper](https://arxiv.org/abs/2104.14294)
 - [ ] [2023] DINOv2: Learning Robust Visual Features without Supervision — [paper](https://arxiv.org/abs/2304.07193)
 - [ ] [2025] DINOv3 - [paper](https://arxiv.org/abs/2508.10104)
+- [ ] [2024] VAR: Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction - [paper](https://arxiv.org/abs/2404.02905)
 - [ ] [paper](https://arxiv.org/abs/2506.22355)
 - [ ] Cambrian (Saining): <https://cambrian-mllm.github.io/>, [paper](https://arxiv.org/abs/2406.16860)
 - [ ] SAM papers
