@@ -1,10 +1,11 @@
 # [RLHF and LLM Post-Training, Nathan Lambert](https://posttrainingbook.com/)
 
 - **Created**: 2026-05-31
-- **Last Updated**: 2026-05-31
+- **Last Updated**: 2026-06-03
 - **Status**: `Not Started`
 - **Related**:
   - [[papers-post-training]]
+  - [[papers-on-policy-distillation]]
 
 ---
 
@@ -12,8 +13,8 @@
 - [X] [Chapter 2: A Tiny History of RLHF](https://rlhfbook.com/c/02-related-works)
 - [X] [Chapter 3: Training Overview](https://rlhfbook.com/c/03-training-overview)
 - [X] [Chapter 4: Instruction Fine-Tuning](https://rlhfbook.com/c/04-instruction-tuning)
-- [ ] [Chapter 5: Reward Modeling](https://rlhfbook.com/c/05-reward-models)
-- [ ] [Chapter 6: Reinforcement Learning](https://rlhfbook.com/c/06-policy-gradients)
+- [X] [Chapter 5: Reward Modeling](https://rlhfbook.com/c/05-reward-models)
+- [X] [Chapter 6: Reinforcement Learning](https://rlhfbook.com/c/06-policy-gradients)
 - [ ] [Chapter 7: Reasoning and Inference-Time Scaling](https://rlhfbook.com/c/07-reasoning)
 - [ ] [Chapter 8: Direct-Alignment Algorithms](https://rlhfbook.com/c/08-direct-alignment)
 - [ ] [Chapter 9: Rejection Sampling](https://rlhfbook.com/c/09-rejection-sampling)

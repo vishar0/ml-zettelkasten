@@ -1,10 +1,11 @@
 # Post-Training
 
 - **Created**: 2026-05-30
-- **Last Updated**: 2026-05-31
+- **Last Updated**: 2026-06-03
 - **Status**: `Not Started`
 - **Related**:
   - [[book-lambert-post-training]]
+  - [[papers-on-policy-distillation]]
 
 ---
 
@@ -15,6 +16,7 @@
 - [ ] [2022] InstructGPT: Training language models to follow instructions with human feedback - [paper](https://arxiv.org/abs/2203.02155)
 - [ ] [2022] Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback - [paper](https://arxiv.org/abs/2204.05862)
 - [ ] [2022] Constitutional AI: Harmlessness from AI Feedback - [paper](https://arxiv.org/abs/2212.08073)
+- [ ] [2023] Let's Verify Step by Step - [paper](https://arxiv.org/abs/2305.20050)
 - [ ] [2023] LIMA: Less Is More for Alignment - [paper](https://arxiv.org/abs/2305.11206)
 - [ ] [2023] DPO: Direct Preference Optimization: Your Language Model is Secretly a Reward Model - [paper](https://arxiv.org/abs/2305.18290)
 - [ ] [2024] The Llama 3 Herd of Models - [paper](https://arxiv.org/abs/2407.21783)
