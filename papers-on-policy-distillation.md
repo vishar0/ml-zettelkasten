@@ -24,6 +24,7 @@
 - [ ] [2026] The Many Faces of On-Policy Distillation: Pitfalls, Mechanisms, and Fixes - [paper](https://arxiv.org/abs/2605.11182)
 - [ ] [2026] A Survey of On-Policy Distillation for Large Language Models - [paper](https://arxiv.org/abs/2604.00626)
 - [ ] [2026] [blog] The Imitation Game: State of Policy Distillation in Language Model Training - [blog](https://chinmaykarkar.com/blog/OPD_blog/)
+- [ ] [2026] [blog] On-Policy Distillation: Promise, Pitfalls, and Prospects - [blog](https://louieworth.github.io/blog/opd_reflection/)
 
 ---
 

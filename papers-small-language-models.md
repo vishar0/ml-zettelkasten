@@ -1,4 +1,4 @@
-# Fluid Intelligence
+# Small Language Models
 
 - **Created**: 2026-05-15
 - **Last Updated**: 2026-05-17
@@ -9,6 +9,10 @@
 - [x] [2025] [FLM] Towards Fundamental Language Models: Does Linguistic Competence Scale with Model Size? - [paper](https://arxiv.org/abs/2509.02225)
 - [x] [2026] [IKP] Incompressible Knowledge Probes: Estimating Black-Box LLM Parameter Counts via Factual Capacity - [paper](https://arxiv.org/abs/2604.24827)
 - [x] [2025] [Position] Small Language Models are the Future of Agentic AI - [paper](https://arxiv.org/abs/2506.02153)
+- [ ] TODO babylm
+- [ ] TODO lmlm
+- [ ] TODO babyvlm
+- [ ] TODO reversal curse
 
 ## [2025] Towards Fundamental Language Models: Does Linguistic Competence Scale with Model Size?
 
