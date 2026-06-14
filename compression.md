@@ -15,3 +15,4 @@
 - [ ] [[papers-gln]] GLN: Gated Linear Networks
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
 - [ ] [byronknoll] gmix: <https://github.com/byronknoll/gmix>
+- [ ] [jveness] [2014] Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)

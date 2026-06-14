@@ -1,7 +1,7 @@
 # Continual Learning
 
 - **Created**: 2026-03-01
-- **Last Updated**: 2026-05-05
+- **Last Updated**: 2026-06-10
 - **Status**: `In Progress`
 
 ---
@@ -41,6 +41,7 @@ The umbrella topic of learning from a non-stationary stream of tasks. Three sub-
 - [ ] [2021] OWL: Same State, Different Task — Continual Reinforcement Learning without Interference - [paper](https://arxiv.org/abs/2106.02940)
 - [ ] [2021] [sutton] Continual Backprop: Stochastic Gradient Descent with Persistent Randomness - [paper](https://arxiv.org/abs/2108.06325)
 - [ ] [2022] [vanDeVen,Tolias] Three types of incremental learning - [paper](https://www.nature.com/articles/s42256-022-00568-3)
+- [ ] [2022] Continual Learning and Private Unlearning - [paper](https://arxiv.org/abs/2203.12817)
 - [ ] [2022] [Mirzadeh,Pascanu] Wide Neural Networks Forget Less Catastrophically - [paper](https://proceedings.mlr.press/v162/mirzadeh22a.html)
 - [ ] [2022] How catastrophic can catastrophic forgetting be in linear regression? - [paper](https://proceedings.mlr.press/v178/evron22a.html)
 - [ ] [2022] A Simple Baseline that Questions the Use of Pretrained-Models in Continual Learning - [paper](https://arxiv.org/abs/2210.04428)

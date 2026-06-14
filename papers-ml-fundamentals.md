@@ -1,7 +1,7 @@
 # ML Fundamentals
 
 - **Created**: 2025-01-04
-- **Last Updated**: 2025-07-31
+- **Last Updated**: 2026-06-10
 - **Status**: `In Progress`
 
 ---
@@ -16,6 +16,7 @@
 - [ ] titoken
 - [ ] Attention is all you need
 - [ ] [2018] The Annotated Transformer — [blog](https://nlp.seas.harvard.edu/annotated-transformer/)
+- [ ] [2019] Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context — [paper](https://arxiv.org/abs/1901.02860)
 - [X] [2018] The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks - [paper](https://arxiv.org/abs/1803.03635)
 - [ ] [2020] Efficient Transformers: A Survey — [paper](https://arxiv.org/abs/2009.06732)
 - [X] [2021] RASP: Thinking Like Transformers — [paper](https://arxiv.org/abs/2106.06981)
@@ -68,6 +69,52 @@
 - **Two methods of applying BPE for Machine Translation**:
   - **Independent BPE**: Separate tokenization for source and target vocabularies. Compact text and vocab size.
   - **Joint BPE**: A single tokenization combining the source and target vocabularies. More consistent source and target segmentations (eg., avoids segmenting the same name differently in the source and target languages, which would make it a harder translation problem to learn).
+
+## [2019] Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context
+
+- **Date**: 2026-06-10
+- **Arxiv**: <https://arxiv.org/abs/1901.02860>
+- **Code**: <https://github.com/kimiyoung/transformer-xl>
+
+---
+
+- **Abstract**:
+  - > Transformers have a potential of learning longer-term dependency, but are limited by a fixed-length context in the setting of language modeling. We propose a novel neural architecture Transformer-XL that enables learning dependency beyond a fixed length without disrupting temporal coherence. It consists of a segment-level recurrence mechanism and a novel positional encoding scheme. Our method not only enables capturing longer-term dependency, but also resolves the context fragmentation problem. As a result, Transformer-XL learns dependency that is 80% longer than RNNs and 450% longer than vanilla Transformers, achieves better performance on both short and long sequences, and is up to 1,800+ times faster than vanilla Transformers during evaluation. Notably, we improve the state-of-the-art results of bpc/perplexity to 0.99 on enwiki8, 1.08 on text8, 18.3 on WikiText-103, 21.8 on One Billion Word, and 54.5 on Penn Treebank (without finetuning). When trained only on WikiText-103, Transformer-XL manages to generate reasonably coherent, novel text articles with thousands of tokens. Our code, pretrained models, and hyperparameters are available in both Tensorflow and PyTorch.
+- **Problem**:
+  - Vanilla Transformer LMs train and evaluate with fixed-length segments. Tokens in one segment cannot attend to hidden states from previous segments unless the previous tokens are reprocessed.
+  - This creates two issues:
+    - **Fixed context limit**: dependencies longer than the window are inaccessible.
+    - **Context fragmentation**: training segments are cut into chunks, so dependencies crossing a segment boundary are harder to learn.
+- **Core idea**:
+  - Transformer-XL adds **segment-level recurrence**: cache hidden states from previous segments and let the current segment attend to them.
+  - During training, gradients are stopped through the cached memory. The model gets longer context without backpropagating through the whole history.
+  - During evaluation, cached memory avoids recomputing the full prefix, making generation much faster than naively sliding a vanilla Transformer over long contexts.
+- **Segment-level recurrence**:
+  - For current segment $s_\tau$ and previous segment $s_{\tau-1}$, the model reuses hidden states from $s_{\tau-1}$ as memory.
+  - Current-token queries attend over keys/values derived from both:
+    - cached previous hidden states,
+    - current segment hidden states.
+  - This is similar in spirit to inference-time KV caching, but the paper frames it as an architectural/training mechanism using cached hidden activations across segments.
+- **Relative positional encoding**:
+  - Absolute positional embeddings are awkward when reusing hidden states from previous segments, because cached states were computed under old absolute positions.
+  - Transformer-XL uses relative positional information so attention can depend on distance rather than absolute index.
+  - This makes segment recurrence coherent: a token can attend to something "5 steps back" or "80 steps back" even when that token came from a previous cached segment.
+- **Why it matters**:
+  - Long-context autoregressive modeling needs both:
+    - a way to access long history,
+    - a way to evaluate/generate efficiently.
+  - Transformer-XL was an important bridge from fixed-window Transformers toward recurrent/cached long-context sequence modeling.
+  - This is also why Transformer-XL is relevant to neural compression systems such as [[nncp]], which need efficient next-symbol prediction over long byte/token streams.
+- **Results**:
+  - Reported state-of-the-art language modeling results include:
+    - `0.99 bpc` on enwiki8,
+    - `1.08 bpc` on text8,
+    - `18.3` perplexity on WikiText-103,
+    - `21.8` perplexity on One Billion Word,
+    - `54.5` perplexity on Penn Treebank.
+  - The paper reports longer learned dependencies than both RNNs and vanilla Transformers, and much faster evaluation than vanilla Transformers for long sequences.
+- **Takeaway**:
+  - Transformer-XL's main contribution is not just "longer context"; it is a coherent recipe for recurrence in a Transformer LM: cache previous hidden states, use relative positions, stop gradients through memory, and reuse memory during evaluation.
 
 ## [2021] RASP: Thinking Like Transformers
 
