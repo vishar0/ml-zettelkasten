@@ -1,14 +1,18 @@
 # Diffusion Models
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2025-08-19
-- **Status**: `Not Started`
+- **Last Updated**: 2026-06-15
+- **Status**: `In Progress`
 
 ---
 
 - [ ] [2022] The Annotated Diffusion Model — [blog](https://huggingface.co/blog/annotated-diffusion)
 - [ ] [2015] Deep Unsupervised Learning using Nonequilibrium Thermodynamics — [paper](https://arxiv.org/abs/1503.03585)
 - [ ] [2020] Denoising Diffusion Probabilistic Models — [paper](https://arxiv.org/abs/2006.11239)
+- [ ] [2021] Structured Denoising Diffusion Models in Discrete State-Spaces - [paper](https://arxiv.org/abs/2107.03006)
+- [ ] [2024] Simple and Effective Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2406.07524)
+- [ ] [2024] IRED: Learning Iterative Reasoning through Energy Diffusion - [paper](https://arxiv.org/abs/2406.11179)
+- [ ] [2025] Large Language Diffusion Models - [paper](https://arxiv.org/abs/2502.09992)
 - [ ] TODO <https://diffusion.csail.mit.edu/2026/docs/lecture_notes.pdf>
 
 ## [2022] The Annotated Diffusion Model

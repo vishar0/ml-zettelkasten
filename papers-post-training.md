@@ -1,11 +1,12 @@
 # Post-Training
 
 - **Created**: 2026-05-30
-- **Last Updated**: 2026-06-03
-- **Status**: `Not Started`
+- **Last Updated**: 2026-06-15
+- **Status**: `In Progress`
 - **Related**:
   - [[book-lambert-post-training]]
   - [[papers-on-policy-distillation]]
+  - [[papers-latent-recursive-reasoning]]
 
 ---
 
@@ -22,3 +23,5 @@
 - [ ] [2024] The Llama 3 Herd of Models - [paper](https://arxiv.org/abs/2407.21783)
 - [ ] [2024] Tulu 3: Pushing Frontiers in Open Language Model Post-Training - [paper](https://arxiv.org/abs/2411.15124)
 - [ ] [2025] DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning - [paper](https://arxiv.org/abs/2501.12948)
+- [ ] [2025] The Lessons of Developing Process Reward Models in Mathematical Reasoning - [paper](https://arxiv.org/abs/2501.07301)
+- [ ] [2025] Reinforcement Learning with Verifiable Rewards Implicitly Incentivizes Correct Reasoning in Base LLMs - [paper](https://arxiv.org/abs/2506.14245)
