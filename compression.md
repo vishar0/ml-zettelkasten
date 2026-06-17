@@ -13,10 +13,11 @@
 - [ ] [hutter-prize] [byronknoll] cmix: <https://github.com/byronknoll/cmix>, <https://www.byronknoll.com/cmix.html>
 - [ ] [hutter-prize] [[nncp]] NNCP: Lossless Data Compression with Neural Networks
 - [ ] [[papers-gln]] GLN: Gated Linear Networks
-- [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
 - [ ] [byronknoll] gmix: <https://github.com/byronknoll/gmix>
-- [ ] [jveness] [2014] Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
+- [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
+- [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
 - [ ] [albertgu] [2025] CompressARC: ARC-AGI Without Pretraining - [blog](https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/arc_agi_without_pretraining.html), [paper](https://arxiv.org/abs/2512.06104). cf. [[papers-latent-recursive-reasoning]]
+- [ ] [2022] Less is More: Parameter-Free Text Classification with Gzip - [paper](https://arxiv.org/abs/2212.09410)
 - [ ] TODO UAI book
 
 ---
@@ -26,7 +27,6 @@
 - **Date**: 2026-06-17
 - **Arxiv**: <https://arxiv.org/abs/1411.5326>
 - **Slides**: <https://www.hutter1.net/publ/scnc.pdf>
-- **Authors**: Veness, Bellemare, Hutter, Chua, Desjardins (Google DeepMind / ANU)
 
 ---
 
@@ -41,15 +41,34 @@
   - **The dichotomy CNC positions against** — two flavors of model-based RL. *Simulation-based* (learn a forward model, plan by search) suffers from compounding rollout error over long horizons (Talvitie 2014); *planning-as-inference* sidesteps simulation by turning planning into inference in a generative model:
     - > Simulation based techniques involve learning some kind of forward model of the environment from which future samples can be generated. Given access to such models, planning can be performed directly using search.
     - > In contrast, another family of techniques, referred to in the literature as planning as inference, attempt to side-step the issue of needing to perform accurate simulations by reducing the planning task to one of probabilistic inference within a generative model of the system.
+    - Both are *model-based* — the axis is how the model yields behavior (forward rollout + search vs. inference), not model-based-vs-model-free. Canonical: **MuZero / Dreamer** (simulation) vs. **control-as-inference** (Levine 2018; Toussaint & Storkey 2006), which conditions on an *optimality* variable (treat reward/return as evidence) and infers the action posterior. CNC's "condition on return $z$" is exactly this move — but note it learns **no forward model** $p(s'\mid s,a)$, only $p(s\mid z,a)$ and $p(z\mid a)$, which is what lets it sidestep compounding rollout error.
   - CNC is the planning-as-inference branch, made tractable via compression — this is the stated contribution (and motivates why the Atari forward-model-for-MCTS comparison below is the natural baseline to beat):
     - > Our main contribution in this paper is to show how to set up a particularly tractable form of inference problem by generalizing compression-based classification to reinforcement learning.
+- **Background (§2) — coding distributions & compression-based classification** (the blueprint §3 generalizes):
+  - **Coding ≡ probability** (§2.2): a compressor and a distribution are the *same object*. Arithmetic coding turns any coding distribution $\rho$ into a code of length $\approx -\log_2 \rho(x_{1:n})$; run backwards, any compressor $z$ defines a distribution $\rho(x) = 2^{-\ell_z(x)}$. "Bits to encode $x$" = "how (im)probable the model thinks $x$ is" — few bits ⇒ familiar/high-probability.
+    - > Given a coding distribution $\rho$ and a data sequence $x_{1:n}$, arithmetic encoding constructs a code $a_\rho$ which produces a binary codeword whose length is essentially $-\log_2 \rho(x_{1:n})$.
+  - **Compression-based classification** (§2.3, Frank/Chui/Witten 2000): a *generative* classifier where each class's input-model is a compressor. Train one coding distribution $\rho_C$ per class on that class's inputs; classify new $Y$ by Bayes $P(C\mid Y,D) \propto \rho_C(Y)\,P(C\mid D)$ — i.e. **assign $Y$ to the class whose compressor encodes it in the fewest bits** (the class that finds $Y$ least surprising). Prior $P(C\mid D)$ from empirical class frequencies. (E.g. spam filtering, Bratko 2006: a spam-trained compressor squeezes a new spam mail shorter than a ham-trained one.) It's the MDL principle — the model that describes the data most cheaply is the best explanation.
+    - > The main idea behind compression-based classification is to model $P[Y\mid C,D]$ using a coding distribution for the inputs that is trained on the subset of examples from $D$ that match class $C$. [...] Thus the overall accuracy of the classifier essentially depends upon how well the inputs can be modeled by the class conditional coding distribution.
+  - **So what (why §2.3 is here)**: it recasts a *discriminative* task (classification) as *generative modeling + Bayes* — model $P(Y\mid C)$ per class instead of learning $P(C\mid Y)$ directly. CNC is **literally this, with the "class" = the return**:
+
+| Compression-based classification | CNC (policy evaluation) |
+|---|---|
+| classify input $Y$ | evaluate state $s$ |
+| class $C$ | return–action bucket $(z, a)$ |
+| per-class compressor $\rho_C(Y)$ | per-bucket state model $\rho_S(s \mid z, a)$ |
+| class prior $P(C)$ | return model $\rho_Z(z \mid a)$ |
+| Bayes → **argmax** class | Bayes → **expectation** $\sum_z z\,P(z\mid s,a) = Q$ |
+
+- The only twist: classification takes an **argmax** over classes; value estimation takes the **expectation**. So $Q(s,a)$ = "which return-bucket's compressor finds this state least surprising?", return-weighted.
+- Headline payoff: **no feature engineering** — operate on raw bytes; the compressor finds task-relevant structure itself. Wins where features are hard to specify (formatted text, DNA, game frames).
+- **The catch** (advantages/disadvantages): generative modeling of the input is *harder* than learning a discriminative boundary — you model the whole input distribution, far more than a decision boundary needs. CNC inherits exactly this trade-off vs. model-free value approximation: more general, possibly harder.
+  - > On one hand, it is straightforward to apply generic compression techniques [...] to complicated input types such as richly formatted text or DNA strings [...]. On the other hand, learning a probabilistic model of the input may be significantly more difficult than directly applying standard discriminative classification techniques. Our approach to policy evaluation [...] raises similar questions.
 - **The core idea**:
   - Want $Q^\pi(s,a) = \sum_z z\, P(Z = z \mid s, a)$, where $Z$ is the (finite, $m$-horizon) return. Instead of modeling $P(Z \mid s,a)$ directly, **flip it with Bayes**:
     $$\hat{Q}^\pi(s,a) = \sum_{z \in \mathcal{Z}} z\,\frac{\rho_S(s \mid z, a)\,\rho_Z(z \mid a)}{\sum_{z' \in \mathcal{Z}} \rho_S(s \mid z', a)\,\rho_Z(z' \mid a)}$$
     - $\rho_S(s \mid z, a)$ — a density/compression model over **states**, conditioned on the return-action pair ("what do states that led to return $z$ under action $a$ look like?").
     - $\rho_Z(z \mid a)$ — a model over **returns** given action.
   - **The counterintuitive part**: $\rho_S$ conditions on the *future* return. This is made rigorous via the **augmented "snake" Markov chain** (Lemmas 1–2): stack $(A_t, S_t, R_t)$ tuples over an $m$-window into a single HMC state. Under (IR+EA+PR) — irreducible, essentially-aperiodic, positive-recurrent — that chain has a unique **stationary** distribution $\nu$ with a well-defined joint over $(Z, S, A)$. Conditioning on the future is fine once you reason about a stationary distribution rather than a forward simulation. This is in the spirit of **planning-as-inference** (Attias 2003; Botvinick & Toussaint 2012), but with the conditioning done against an explicitly-constructed stationary distribution.
-- **Connection to compression-based classification (Frank/Chui/Witten 2000)**: CNC is the RL generalization of compression-based classification. There you classify by training one compressor per class and asking which compresses the input best ($2^{-\ell_z(x)}$ as a coding distribution); here the "classes" are return-action buckets and the compressed object is the state.
 - **Algorithm (online, embarrassingly simple)**:
   - Maintain $|\mathcal{Z}|\cdot|\mathcal{A}|$ buckets, each holding an instance of compressor $\rho_S$, plus $|\mathcal{A}|$ buckets of $\rho_Z$.
   - As experience streams in, route each state into the bucket matching its realized $(z, a)$ and update that compressor; route each return into its $a$-bucket.
