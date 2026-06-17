@@ -9,7 +9,7 @@
 - [x] [2019] NNCP: Lossless Data Compression with Neural Networks - [paper](https://bellard.org/nncp/nncp.pdf)
 - [ ] [2019] Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context - [paper](https://arxiv.org/abs/1901.02860). Used by NNCP v2. [[papers-ml-fundamentals]]
 - [ ] [2021] NNCP v2: Lossless Data Compression with Transformer - [paper](https://bellard.org/nncp/nncp_v2.1.pdf)
-- [ ] NNCP v3/v3.3 - pure C version; LibNC for tensorops not open?
+- [x] NNCP v3/v3.3 - pure C version; LibNC for tensorops not open?
 
 ## [2019] NNCP: Lossless Data Compression with Neural Networks
 

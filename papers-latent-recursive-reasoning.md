@@ -189,3 +189,37 @@
   - **It's fundamentally transductive test-time training.** The post concludes HRM is "a zero-pretraining test-time training approach, **similar to Liao and Gu's 'ARC-AGI without pretraining'**" — i.e. closer to a per-puzzle program-synthesis substrate than a pretrained reasoner. Speculates ~21% pass@2 if truly task-isolated. → see CompressARC in [[compression]].
   - **Numbers**: ARC-AGI-1 ≈ **32%** semi-private / 41% public-eval (claimed); ARC-AGI-2 ≈ **2%**.
 - **So what**: reframes HRM's contribution — the depth/refinement loop + test-time training carry the ARC result, not the brain-inspired hierarchy. Sets up TRM's "drop the hierarchy" move and is the reason to treat the §4 dimensionality story as *correlational*.
+
+## [2025] TRM: Less is More: Recursive Reasoning with Tiny Networks
+
+- **Date**: 2026-06-16
+- **Arxiv**: <https://arxiv.org/abs/2510.04871>
+- **Code**: <https://github.com/SamsungSAILMontreal/TinyRecursiveModels>
+- **Author**: Alexia Jolicoeur-Martineau (Samsung SAIL Montreal)
+
+---
+
+- **Abstract**:
+  - > Hierarchical Reasoning Model (HRM) is a novel approach using two small neural networks recursing at different frequencies... We propose Tiny Recursive Model (TRM), a much simpler recursive reasoning approach that achieves significantly higher generalization than HRM, while using a single tiny network with only 2 layers. With only 7M parameters, TRM obtains 45% test-accuracy on ARC-AGI-1 and 8% on ARC-AGI-2, higher than most LLMs (e.g., Deepseek R1, o3-mini, Gemini 2.5 Pro) with less than 0.01% of the parameters.
+- **One-liner**: HRM stripped to its essentials — **one tiny 2-layer net (7M)** recursing over a latent $z$ and an answer $y$, trained by deep supervision with **full backprop through the recursion** (no fixed-point/IFT, no hierarchy, no biology). Simpler *and* generalizes better.
+- **Killer Figs/Tables**:
+  - **Fig 1**: the whole model in one picture — start from embedded question $x$, answer $y$, latent $z$; for up to $N_{\sup}=16$ steps: (i) update $z$ $n$ times from $(x, y, z)$ [latent reasoning], then (ii) update answer $y$ from $(y, z)$. Progressive answer refinement.
+  - **Fig 3**: TRM pseudocode (`latent_recursion`, `deep_recursion`, deep-supervision loop) — short enough to reimplement from.
+  - **Table 1** (the money table): Sudoku-Extreme ablation, **HRM 55.0% → TRM 87.4%**, isolating each design choice's contribution (see below).
+  - **Tables 4 & 5**: main results vs HRM and frontier LLMs across Sudoku/Maze/ARC.
+- **Headline results** (vs HRM, 4× fewer params at 7M): Sudoku-Extreme **55→87%**, Maze-Hard **75→85%**, ARC-AGI-1 **40→45%**, ARC-AGI-2 **5→8%**. Beats DeepSeek-R1 / o3-mini / Gemini-2.5-Pro on ARC with <0.01% of their params (though Grok-4 / Bespoke-Grok still far ahead at ARC-1 67–80%).
+- **What TRM keeps from HRM**: deep supervision (outer refine loop, detach between segments), recursion for effective depth, ACT-style halting. **What it throws out**: the IFT/1-step gradient, the two-module hierarchy, the second network, half the layers, the extra ACT forward pass, and (for small-context tasks) self-attention.
+- **The fixes (each a Table-1 ablation; baseline = full TRM 87.4%)**:
+  - **No fixed-point theorem / full-gradient recursion (§4.1) — the biggest win.** HRM only backprops through the last 2 of 6 recursions, justified by IFT (assumes a fixed point). TRM's critique: HRM never iterates *to* a fixed point (just forward passes; only ~4 recursions before the 1-step), so the IFT justification is shaky. TRM instead **backprops through the entire recursion process** (run $T{-}1$ recursion processes with no-grad to improve $(z,y)$, then 1 *with* gradients). Reverting to HRM's 1-step gradient collapses Sudoku **87.4% → 56.5%**.
+  - **Single network (§4.3)**: since $z \leftarrow f(x, y, z)$ includes $x$ but $y \leftarrow f(y, z)$ doesn't, the *task* (update latent vs. update answer) is signalled by whether $x$ is in the input — so **one net does both**. Two-net → one-net: **82.4% → 87.4%**, half the params.
+  - **No hierarchy / simpler $z$ (§4.2)**: drop the high/low biological framing — $z$ is just a latent scratchpad, $y$ the answer. Splitting $z$ into multiple/per-recursion features *hurt*. "It does not have to be hierarchical."
+  - **Less is more — 2 layers (§4.4)**: *adding* layers **decreased** generalization (overfitting on ~1k examples). Shrinking to 2 layers while scaling recursions $n$ to hold effective depth fixed: **79.5% → 87.4%**, half the params again. (2-layer optimum echoes Bai & Melas-Kyriazi's fixed-point diffusion finding.)
+  - **Attention-free for small fixed context (§4.5)**: when sequence length $L \le D$, replace self-attention with an **MLP-Mixer-style MLP over the sequence** — cheaper. Sudoku 9×9: **74.7% → 87.4%**. But *worse* on large 30×30 grids (Maze, ARC), so they keep self-attention there. (TRM-MLP vs TRM-Att reported for all tasks.)
+  - **Cheaper ACT (§4.6)**: **drop the continue-loss → drop the second forward pass.** Keep only a halting head trained by BCE on "is the current answer correct." No accuracy loss (86.1% → 87.4%). **← directly validates the HRM "is this really RL?" note above ("halt head is just a classifier; the continue/bootstrap is the dispensable part") — TRM literally deletes the bootstrap and keeps the classifier.**
+  - **EMA (§4.7)**: exponential moving average of weights (à la GANs/diffusion) stops the sharp overfit-then-diverge on tiny data: **79.9% → 87.4%**.
+  - **Recursion sweep (§4.8)**: $T=3, n=6$ (≈42 effective recursions) optimal on Sudoku; bigger $n$ OOMs because TRM backprops through the full recursion (the one real cost of dropping the 1-step gradient).
+- **Connections / takeaways**:
+  - **Confirms the ARC-Prize verdict**: TRM cites [the Hidden Drivers analysis](https://arcprize.org/blog/hrm-analysis) — deep supervision is the driver (19%→39%), the hierarchical recursion barely helped (35.7%→39%). TRM acts on exactly this: double down on outer refinement + full-gradient recursion, delete the hierarchy.
+  - **Why does recursion beat just going deeper/bigger?** Author's honest answer: probably **overfitting avoidance under scarce data**, but "we have no theory to back this." Open question.
+  - **Limits**: choices aren't universally optimal (MLP only helps small context); it's **supervised + deterministic** — one answer per question, not generative; scaling laws still needed.
+  - **Lineage**: HRM (hierarchy + IFT) → **TRM (single tiny net, full-grad recursion, no hierarchy)**. The simplification the Hidden Drivers critique (above) pointed toward.
