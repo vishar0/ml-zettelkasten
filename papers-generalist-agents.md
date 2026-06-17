@@ -14,8 +14,8 @@
 
 ### Core Lineage
 
-- [2021] [[papers-rl]] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345)
-- [2021] [[papers-open-ended-learning]] XLand: Open-Ended Learning Leads to Generally Capable Agents - [paper](https://arxiv.org/abs/2107.12808), [blog](https://deepmind.google/discover/blog/generally-capable-agents-emerge-from-open-ended-play/)
+- [[papers-generative-decision-making]] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345)
+- [[papers-open-ended-learning]] XLand: Open-Ended Learning Leads to Generally Capable Agents - [paper](https://arxiv.org/abs/2107.12808), [blog](https://deepmind.google/discover/blog/generally-capable-agents-emerge-from-open-ended-play/)
 - [x] [2022] Gato: A Generalist Agent - [paper](https://arxiv.org/abs/2205.06175), [blog](https://deepmind.google/blog/a-generalist-agent/)
 - [x] [2024] SIMA: Scaling Instructable Agents Across Many Simulated Worlds - [paper](https://arxiv.org/abs/2404.10179), [blog](https://deepmind.google/discover/blog/sima-generalist-ai-agent-for-3d-virtual-environments/)
 - [x] [2025] SIMA 2: A Generalist Embodied Agent for Virtual Worlds - [paper](https://arxiv.org/abs/2512.04797), [blog](https://deepmind.google/blog/sima-2-an-agent-that-plays-reasons-and-learns-with-you-in-virtual-3d-worlds/)
