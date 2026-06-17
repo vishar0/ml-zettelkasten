@@ -1,8 +1,10 @@
-# Foundational LLMs
+# Foundation Models
 
 - **Created**: 2025-01-04
 - **Last Updated**: 2025-01-06
 - **Status**: `Paused`
+
+Catalog of specific foundation-model families and their technical reports. For the empirical science of how loss scales with compute/data/params, see [[papers-scaling-laws]].
 
 ---
 
@@ -57,7 +59,7 @@
 
 ---
 
-- 1. Overview
+- (1) Overview
   - Llama2 (pretrained): Differences from llama1
     - 40% larger pretraining corpus: 1.4 trillion tokens (llama1) -> 2 trillion tokens (llama2)
     - 2x context length
@@ -66,11 +68,11 @@
       - TODO: follow up on the above
   - Llama2-chat (finetuned): supervised finetuning followed by RLHF (rejection sampling, PPO)
     - Understand fig 4 better - rejection sampling, PPO
-- 2. Pretraining
+- (2) Pretraining
   - 2 trillion tokens
   - Tokenizer: Same as llama1. BPE algorithm using SentencePiece implementation.
   - Most others are same as llama1
-- 3. Finetuning
+- (3) Finetuning
   - 3.1 Supervised Fine-Tuning (SFT)
     - Bootstrapping with instruction finetuning data.
     - Supervised in the sense that both the prompt and the response are provided by the annotator.
