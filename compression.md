@@ -1,7 +1,7 @@
 # Compression
 
 - **Created**: 2026-06-07
-- **Last Updated**: 2026-06-17
+- **Last Updated**: 2026-06-20
 - **Status**: `In Progress`
 
 ---
@@ -15,7 +15,7 @@
 - [ ] [[papers-gln]]
 - [ ] [byronknoll] gmix: <https://github.com/byronknoll/gmix>
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
-- [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
+- [x] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
 - [ ] [albertgu] [2025] CompressARC: ARC-AGI Without Pretraining - [blog](https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/arc_agi_without_pretraining.html), [paper](https://arxiv.org/abs/2512.06104). cf. [[papers-latent-recursive-reasoning]]
 - [ ] [2022] Less is More: Parameter-Free Text Classification with Gzip - [paper](https://arxiv.org/abs/2212.09410)
 - [ ] TODO UAI book
@@ -98,9 +98,18 @@
   - To evaluate: query each bucket for its code-length of the candidate state, exponentiate ($\rho = 2^{-\ell}$), normalize per Eq. above. Cost $O(|\mathcal{Z}|)$ per query.
 - **Theory**: consistent value estimation if $\rho_S, \rho_Z$ are consistent density estimators (Thm 1), with absolute error $\in O_P(n^{-1/2})$. Holds for the **frequency estimator** (Thm 2, tabular) and for **factored multi-alphabet Context Tree Weighting (CTW)** (Thm 3), which scales to larger state spaces. Caveat: the clean theory is for policy *evaluation* of a **stationary** policy; on-policy control violates stationarity and is empirical only.
 - **Experiments**:
-  - **Blackjack** (validation): CNC tracks first-visit Monte Carlo, slightly better early due to Dirichlet smoothing; MSE $\to 0$ as predicted.
-  - **Atari / ALE on-policy control** ($\epsilon$-greedy, horizon $m=80 \approx 5$s): swap different models in for $\rho_S$ — factored **SAD** (Sparse Adaptive Dirichlet), autoregressive **logistic regression**, **Lempel-Ziv**, and **SkipCTS**. Under Lempel-Ziv, $\rho_S(s \mid \text{hist}) := 2^{-[\ell_{LZ}(\text{hist}\cdot s) - \ell_{LZ}(\text{hist})]}$ — literally the marginal code-length of appending the state. SkipCTS reaches **near-optimal Pong**; competitive on Freeway and Q\*bert.
-  - **The striking result**: SkipCTS as a *forward model* for MCTS was useless (couldn't beat $-14$ in Pong), but the **same model** under CNC worked well with orders of magnitude less compute. CNC never rolls the model forward, so modeling errors don't **compound** over the horizon (the Talvitie 2014 problem) — it appears "more forgiving of modeling inaccuracies."
+  - **§4.1 Blackjack** (validation of the theory): CNC tracks first-visit Monte Carlo, slightly better early due to Dirichlet smoothing; MSE $\to 0$ as predicted by §3.4. Small, exactly-solvable problem to confirm consistency.
+  - **§4.2 On-policy control (Atari/ALE) — the core "compression for control" demonstration**:
+    - **Goal & caveat.** Show CNC does *real on-policy control* and *scales* across very different density estimators. **Theorem 1 does not apply** here — ε-greedy + an improving policy violates the stationary-policy assumption, so all of §4.2 is **empirical**, outside the guarantee. The loop is implicit **generalized policy iteration**: act ε-greedily w.r.t. the current $\hat Q$ read from the buckets → collect experience → update buckets → $\hat Q$ sharpens → policy improves → repeat.
+    - **Setup.** ALE Atari, mainly **Pong** (3 actions {UP, DOWN, NOOP}; reward ±1 per point; episode ends at 21; score $\in[-21,21]$). 4-frame time steps; **ε decays $1.0 \to 0.02$ over 200k steps**; **horizon $m=80$ ($\approx$5s)**; **10 trials $\times$ 2M steps**. $\rho_Z$ = SAD for *all* agents (the cheap, small piece) — all variation is in the state model $\rho_S$.
+    - **Four $\rho_S$ models — the "any compressor works" point.** The *same* CNC machinery, four deliberately different compressors:
+      - **Factored SAD** — count-based: 16×16 screen regions, a per-region SAD estimator over patches, screen prob = product over patches.
+      - **Autoregressive logistic regression** — discriminative/online: per-pixel prob from local context (online ADAGRAD, random-search hyperparams), screen prob = product over pixels.
+      - **Lempel-Ziv** — dictionary compressor; $\rho_S(s\mid\text{hist}) = 2^{-[\ell_{LZ}(\text{hist}\cdot s)-\ell_{LZ}(\text{hist})]}$ — a *non-probabilistic* compressor turned into a density via codelength.
+      - **SkipCTS** — a Context Tree Weighting derivative with an ALE-tailored context function (the strongest model).
+    - **Results (last-50-episode average in Pong).** **Factored SAD +3.29** (std err 2.49) — *the simplest model, best of the three*; **Lempel-Ziv −0.09** (std err 1.79) — roughly even, ~50% win rate; **logistic regression −17.87** (std err 0.38) — *failed* (authors blame insufficient training). All ran **real-time or better**. **CNC+SkipCTS → near-optimal Pong**, and competitive on **Freeway / Q\*bert** vs DQN and BASS (DQN is a different training regime, included only illustratively). Notable: the *count-based* model beat the *learned/discriminative* one — echoes "simple compression-style models are surprisingly strong; online discriminative density modeling is finicky."
+    - **The result that matters most — CNC vs. forward-model planning.** The **same SkipCTS model** used as a *forward model for MCTS* (even with double progressive widening) was **useless**: the best simulation agent couldn't beat **−14** in Pong and was **no better than random** on Q\*bert/Freeway. Inside CNC the same model was **near-optimal, with orders of magnitude less compute**. Same model, opposite outcomes — forward rollout *compounds* error over the horizon (Talvitie 2014), CNC *never rolls forward* (one Bayes inversion of a stationary distribution), so it is **"more forgiving of modeling inaccuracies."** This is the empirical backbone of the planning-as-inference $>$ simulation argument in the Framing section.
+    - **What it implies (and the gaps to target).** Existence proof that *any* compressor in the $\rho_S$ slot + ε-greedy yields a controller — the modular generality the abstract promises. But it also maps the exact limits: **stationarity violated** (buckets accumulate stale early-random experience, *no forgetting* → the online-but-not-adaptive gap); **small finite action & return spaces** (Pong: 3 actions enumerated for the argmax, score $\in[-21,21]$) — the favorable regime, large/continuous spaces break it (§5); **ε-greedy is the only exploration** (no principled exploration). These are precisely the openings for an *adaptive* compression-for-control objective.
 - **Why it matters (compression $=$ control)**: this is the cleanest demonstration that value estimation can be *entirely* reduced to coding length. Choosing a density model $=$ "committing to a particular kind of compression-based similarity metric over the state space." **It opens RL to the full toolbox of density modeling / statistical compression.**
 - **Limitations / open questions**:
   - Return space $\mathcal{Z}$ must be **small and finite** — cost scales with $|\mathcal{Z}|$, and **discounting introduces exponential dependence on the horizon**. Proposed fix: tree discretization of the return space (depth $d \gtrsim \log_2(m(r_{\max}-r_{\min})/\epsilon)$) or Monte Carlo approximation of Eq. 4.

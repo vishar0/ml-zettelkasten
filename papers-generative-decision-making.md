@@ -14,7 +14,7 @@
 - [x] [2021] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345), [code](https://github.com/kzl/decision-transformer)
 - [ ] [2022] Decision Diffuser: Is Conditional Generative Modeling all you need for Decision-Making? - [paper](https://arxiv.org/abs/2211.15657)
 - [ ] [2021] Trajectory Transformer: Offline RL as One Big Sequence Modeling Problem - [paper](https://arxiv.org/abs/2106.02039)
-- [ ] [2019] [Schmidhuber] Upside-Down RL - [paper](https://arxiv.org/abs/1912.02875), [training agents](https://arxiv.org/abs/1912.02877)
+- [ ] [2019] [Schmidhuber] Reinforcement Learning Upside Down: Don't Predict Rewards, Just Map Them to Actions - [paper](https://arxiv.org/abs/1912.02875), [training agents](https://arxiv.org/abs/1912.02877)
 - [ ] [2021] RvS: What is Essential for Offline RL via Supervised Learning? - [paper](https://arxiv.org/abs/2112.10751)
 - [ ] [2010] [jveness] Reinforcement Learning via AIXI Approximation (MC-AIXI-CTW) - [paper](https://arxiv.org/abs/1007.2049)
 - [ ] [2024] [jveness] Generative Reinforcement Learning with Transformers - [paper](https://openreview.net/forum?id=6qtDu7hVPF)
