@@ -11,8 +11,8 @@
 - [ ] [hutter-prize] [gwern] [2026] Towards a Better Hutter Prize, <https://gwern.net/hutter-prize>
 - [ ] [hutter-prize] [byronknoll] [2011] PAQ8: A Machine Learning Perspective on Predictive Coding with PAQ, <https://arxiv.org/abs/1108.3298>
 - [ ] [hutter-prize] [byronknoll] cmix: <https://github.com/byronknoll/cmix>, <https://www.byronknoll.com/cmix.html>
-- [ ] [hutter-prize] [[nncp]] NNCP: Lossless Data Compression with Neural Networks
-- [ ] [[papers-gln]] GLN: Gated Linear Networks
+- [ ] [hutter-prize] [[nncp]]
+- [ ] [[papers-gln]]
 - [ ] [byronknoll] gmix: <https://github.com/byronknoll/gmix>
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
 - [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
@@ -49,26 +49,49 @@
     - > Given a coding distribution $\rho$ and a data sequence $x_{1:n}$, arithmetic encoding constructs a code $a_\rho$ which produces a binary codeword whose length is essentially $-\log_2 \rho(x_{1:n})$.
   - **Compression-based classification** (§2.3, Frank/Chui/Witten 2000): a *generative* classifier where each class's input-model is a compressor. Train one coding distribution $\rho_C$ per class on that class's inputs; classify new $Y$ by Bayes $P(C\mid Y,D) \propto \rho_C(Y)\,P(C\mid D)$ — i.e. **assign $Y$ to the class whose compressor encodes it in the fewest bits** (the class that finds $Y$ least surprising). Prior $P(C\mid D)$ from empirical class frequencies. (E.g. spam filtering, Bratko 2006: a spam-trained compressor squeezes a new spam mail shorter than a ham-trained one.) It's the MDL principle — the model that describes the data most cheaply is the best explanation.
     - > The main idea behind compression-based classification is to model $P[Y\mid C,D]$ using a coding distribution for the inputs that is trained on the subset of examples from $D$ that match class $C$. [...] Thus the overall accuracy of the classifier essentially depends upon how well the inputs can be modeled by the class conditional coding distribution.
-  - **So what (why §2.3 is here)**: it recasts a *discriminative* task (classification) as *generative modeling + Bayes* — model $P(Y\mid C)$ per class instead of learning $P(C\mid Y)$ directly. CNC is **literally this, with the "class" = the return**:
+  - **So what (why §2.3 is here)**: it recasts a *discriminative* task (classification) as *generative modeling + Bayes* — model $P(Y\mid C)$ per class instead of learning $P(C\mid Y)$ directly. CNC is **literally this, run per action $a$, with the "class" = the return $z$**:
 
-| Compression-based classification | CNC (policy evaluation) |
+| Compression-based classification | CNC (policy evaluation), *per action $a$* |
 |---|---|
-| classify input $Y$ | evaluate state $s$ |
-| class $C$ | return–action bucket $(z, a)$ |
-| per-class compressor $\rho_C(Y)$ | per-bucket state model $\rho_S(s \mid z, a)$ |
-| class prior $P(C)$ | return model $\rho_Z(z \mid a)$ |
-| Bayes → **argmax** class | Bayes → **expectation** $\sum_z z\,P(z\mid s,a) = Q$ |
+| classify input $Y$ | classify state $s$ |
+| class $C$ | return $z$ |
+| — | action $a$: conditioning context that *selects the classifier* (indexes the $(z,a)$ buckets), not a predicted label — like $D$ in the Bayes formula |
+| class-conditional model $\rho_C(Y)$ | $\rho_S(s \mid z, a)$ |
+| class prior $P(C)$ | return prior $\rho_Z(z \mid a)$ |
+| Bayes → **argmax** over classes | Bayes → **expectation** over $z$: $\sum_z z\,P(z\mid s,a) = Q$ |
 
-- The only twist: classification takes an **argmax** over classes; value estimation takes the **expectation**. So $Q(s,a)$ = "which return-bucket's compressor finds this state least surprising?", return-weighted.
+- $a$ is on the *conditioning* side of the bar (you're given it — it's the action being evaluated), so it isn't a class; the posterior $P(z\mid s,a)$ normalizes over $z$ with $a$ fixed (Eq. 5). The $|\mathcal{Z}||\mathcal{A}|$ buckets $=$ $|\mathcal{A}|$ separate classifiers (one per action), each with $|\mathcal{Z}|$ return-classes.
+- The only twist vs. classification: take the **expectation** over return-classes, not the **argmax**. So $Q(s,a)$ = return-weighted "which return-class's compressor finds this state least surprising?".
 - Headline payoff: **no feature engineering** — operate on raw bytes; the compressor finds task-relevant structure itself. Wins where features are hard to specify (formatted text, DNA, game frames).
 - **The catch** (advantages/disadvantages): generative modeling of the input is *harder* than learning a discriminative boundary — you model the whole input distribution, far more than a decision boundary needs. CNC inherits exactly this trade-off vs. model-free value approximation: more general, possibly harder.
   - > On one hand, it is straightforward to apply generic compression techniques [...] to complicated input types such as richly formatted text or DNA strings [...]. On the other hand, learning a probabilistic model of the input may be significantly more difficult than directly applying standard discriminative classification techniques. Our approach to policy evaluation [...] raises similar questions.
+- **§3 at a glance (plain terms)** — one line per subsection (details in the bullets below):
+  - **§3.1 Overview** — value = average return, $Q(s,a)=\sum_z z\,P(z\mid s,a)$. Don't model $P(Z\mid S,A)$ directly; model states-per-return $P(S\mid Z,A)$ + return-frequencies $P(Z\mid A)$ and invert with Bayes. The only weird bit (justified in §3.2) is conditioning on the *future* return.
+  - **§3.2 Transformation** — the return spans $m$ steps, so it's not a property of one moment. Bundle an $m$-step window into one "super-state" (the snake); now the return lives inside a single state, the bundled process settles to a unique equilibrium, and $P(Z\mid S,A)$ is read off from it. (This is what *earns the right* to condition on the future return.)
+  - **§3.3 Online Policy Evaluation** — the bucket algorithm: keep one compressor per (return, action) bucket; file each state under the return it actually got; to value an action, see which return-bucket compresses the current state most cheaply, weight by return-frequency, average the returns. Online, no train/test split; an experience can only be filed once its $m$ future rewards are seen.
+  - **§3.4 Analysis** — if the compressors are *consistent*, the value estimate converges to the true $Q$ at rate $\sim 1/\sqrt n$; both counting (frequency) and CTW qualify.
+- **Markov-chain glossary** (the jargon the lemmas use):
+  - **(Homogeneous) Markov chain (HMC)** — a memoryless random process (next state depends only on the current one) whose transition rule doesn't change over time.
+  - **Stationary distribution $\nu$** — the long-run equilibrium: the fraction of time spent in each state if you run forever; a fixed point of the dynamics ($\nu P=\nu$). (Like a deck of cards after enough shuffles — uniform regardless of the start.)
+  - **IR (irreducible)** — every state is reachable from every other; one connected piece, no stranded islands.
+  - **PR (positive recurrent)** — from any state you always return, with *finite expected return time*; nothing drifts off and never comes back.
+  - **AP / EA (aperiodic / essentially aperiodic)** — returns aren't locked to a fixed cycle, so the chain actually *settles* to $\nu$ rather than oscillating forever. (EA is a mild relaxation that also tolerates transient states.)
+  - **IR + EA + PR ⇒ "ergodic"** — there's a *unique* $\nu$, the chain converges to it from any start, and — the property CNC relies on — **time-averages along one long run equal averages under $\nu$** (the *ergodic theorem*), which is what lets CNC pool experience over time into buckets.
 - **The core idea**:
   - Want $Q^\pi(s,a) = \sum_z z\, P(Z = z \mid s, a)$, where $Z$ is the (finite, $m$-horizon) return. Instead of modeling $P(Z \mid s,a)$ directly, **flip it with Bayes**:
     $$\hat{Q}^\pi(s,a) = \sum_{z \in \mathcal{Z}} z\,\frac{\rho_S(s \mid z, a)\,\rho_Z(z \mid a)}{\sum_{z' \in \mathcal{Z}} \rho_S(s \mid z', a)\,\rho_Z(z' \mid a)}$$
     - $\rho_S(s \mid z, a)$ — a density/compression model over **states**, conditioned on the return-action pair ("what do states that led to return $z$ under action $a$ look like?").
     - $\rho_Z(z \mid a)$ — a model over **returns** given action.
+    - > In the spirit of compression-based classification, CNC estimates this distribution by using Bayes rule to combine learnt density models of both $P(S \mid Z, A)$ and $P(Z \mid A)$. Although it might seem initially strange to learn a model that conditions on the future return, the next section shows how this counterintuitive idea can be made rigorous. (§3.1)
+  - **Predictive vs. generative (terminology)**: $\rho_S, \rho_Z$ are *predictive* coding distributions (compressors) — $\rho_S(s\mid z,a)$ is queried as the predictive probability of the next state given the past states in bucket $(z,a)$. "Generative" here refers to the generative-*classifier* strategy (model $P(s\mid z,a)$, Bayes-invert), implemented via those predictors *used as density estimators* — **no sampling**. The paper calls them both "coding distributions" (§3.3, predictive) and "density models" (§3.1, generative); the equivalence is the point. See the **Predictive vs. generative** section at the end of this note for the full discussion.
   - **The counterintuitive part**: $\rho_S$ conditions on the *future* return. This is made rigorous via the **augmented "snake" Markov chain** (Lemmas 1–2): stack $(A_t, S_t, R_t)$ tuples over an $m$-window into a single HMC state. Under (IR+EA+PR) — irreducible, essentially-aperiodic, positive-recurrent — that chain has a unique **stationary** distribution $\nu$ with a well-defined joint over $(Z, S, A)$. Conditioning on the future is fine once you reason about a stationary distribution rather than a forward simulation. This is in the spirit of **planning-as-inference** (Attias 2003; Botvinick & Toussaint 2012), but with the conditioning done against an explicitly-constructed stationary distribution.
+    - > [closing remarks, §6] The most interesting aspect of this approach is the way in which it uses a learnt probabilistic model that conditions on the future return; remarkably, this counterintuitive idea can be justified both in theory and in practice.
+  - **The snake construction unpacked (§3.2)** — two augmentations turn a multi-step return into a function of *one* Markov state:
+    - **Aug 1 (Lemma 1) — fold the reward in.** Reward isn't normally part of the state; it's a function of the transition. Glue it on: $X_t=(A_t,S_t) \to Y_t=(A_t,S_t,R_t)$. Lemma 1's content is that $Y_t$ is *still* an (IR+EA+PR) HMC — ergodicity preserved.
+    - **Aug 2 (Lemma 2) — stack a window (the "snake").** The $m$-horizon return $Z=\sum R$ spans $m$ steps, so it's a function of *no single* $Y_t$. Pack a sliding window into one super-state $W_t=(Y_t,\dots,Y_{t+m})$; now $Z$ is a deterministic function of $W_t$. Lemma 2: $W_t$ is also an (IR+EA+PR) HMC.
+    - **Payoff.** Ergodic ⇒ unique stationary $\nu'$ over $(\mathcal A\times\mathcal S\times\mathcal R)^{m+1}$ ⇒ a joint $\nu$ over $\mathcal Z\times(\dots)$ ⇒ $P(Z\mid S_0,A_1)$ is well-defined & time-independent (Eq. 2–3). The point: a *trajectory* question (multi-step return) becomes a *stationary-distribution* question about one bigger chain.
+    - **Why $m$ must be finite.** Structurally, $W_t$ is only a finite-dimensional Markov state if $m<\infty$ (infinite horizon ⇒ infinite-dim state, construction collapses). And finite $m$ + finite $\mathcal R$ ⇒ finite return space $|\mathcal Z|\le m\,|r_{\max}-r_{\min}|$, which the bucketing + $O(|\mathcal Z|)$ value sum need (discounting/continuous returns blow this up — see Limitations).
+  - **Why time-independence is required**: CNC pools experience across *all* timesteps into $(z,a)$ buckets, so $P(Z\mid S,A)$ must be *one fixed distribution* (not $P_t$) for the pooled estimate to converge — by the ergodic theorem, time-averages → stationary-distribution expectations. It's manufactured by **time-homogeneous MDP + stationary policy + fixed $m$-horizon** (always summing $m$ rewards, so no shrinking return-to-go), which makes the snake chain time-homogeneous → unique stationary $\nu$ → time-independent conditional → time-independent $Q(s,a)$. NB: "stationary policy" (no $t$) ≠ "stationary distribution" (fixed point $\nu P=\nu$); CNC needs both. **Breaks under on-policy control**: $\epsilon$-greedy with decaying $\epsilon$ is non-stationary, so Thm 1 doesn't apply (empirical only) — the lossless/offline → adaptive gap (see *Adaptive / non-stationary* under Limitations).
 - **Algorithm (online, embarrassingly simple)**:
   - Maintain $|\mathcal{Z}|\cdot|\mathcal{A}|$ buckets, each holding an instance of compressor $\rho_S$, plus $|\mathcal{A}|$ buckets of $\rho_Z$.
   - As experience streams in, route each state into the bucket matching its realized $(z, a)$ and update that compressor; route each return into its $a$-bucket.
@@ -78,9 +101,10 @@
   - **Blackjack** (validation): CNC tracks first-visit Monte Carlo, slightly better early due to Dirichlet smoothing; MSE $\to 0$ as predicted.
   - **Atari / ALE on-policy control** ($\epsilon$-greedy, horizon $m=80 \approx 5$s): swap different models in for $\rho_S$ — factored **SAD** (Sparse Adaptive Dirichlet), autoregressive **logistic regression**, **Lempel-Ziv**, and **SkipCTS**. Under Lempel-Ziv, $\rho_S(s \mid \text{hist}) := 2^{-[\ell_{LZ}(\text{hist}\cdot s) - \ell_{LZ}(\text{hist})]}$ — literally the marginal code-length of appending the state. SkipCTS reaches **near-optimal Pong**; competitive on Freeway and Q\*bert.
   - **The striking result**: SkipCTS as a *forward model* for MCTS was useless (couldn't beat $-14$ in Pong), but the **same model** under CNC worked well with orders of magnitude less compute. CNC never rolls the model forward, so modeling errors don't **compound** over the horizon (the Talvitie 2014 problem) — it appears "more forgiving of modeling inaccuracies."
-- **Why it matters (compression $=$ control)**: this is the cleanest demonstration that value estimation can be *entirely* reduced to coding length. Choosing a density model $=$ "committing to a particular kind of compression-based similarity metric over the state space." It opens RL to the full toolbox of density modeling / statistical compression.
+- **Why it matters (compression $=$ control)**: this is the cleanest demonstration that value estimation can be *entirely* reduced to coding length. Choosing a density model $=$ "committing to a particular kind of compression-based similarity metric over the state space." **It opens RL to the full toolbox of density modeling / statistical compression.**
 - **Limitations / open questions**:
   - Return space $\mathcal{Z}$ must be **small and finite** — cost scales with $|\mathcal{Z}|$, and **discounting introduces exponential dependence on the horizon**. Proposed fix: tree discretization of the return space (depth $d \gtrsim \log_2(m(r_{\max}-r_{\min})/\epsilon)$) or Monte Carlo approximation of Eq. 4.
+    - > So far we have only applied CNC to undiscounted, finite horizon problems with finite action spaces, and more importantly, finite (and rather small) return spaces. This setting is favorable for CNC, since the per-step running time depends on $|\mathcal{Z}| \le m|r_{\max} - r_{\min}|$ [...]. However, even modest changes to the above setting can change the situation drastically. For example, using discounted return can introduce an exponential dependence on the horizon. Thus an important topic for future work is to further develop the CNC approach for large or continuous return spaces. (§5)
   - **No bootstrapping** — pure Monte Carlo return as the only learning signal; incorporating TD-style bootstrapping is open.
   - Whole approach rests on the **quality of the density estimator**, itself a hard problem; no guidance on when CNC beats model-free function approximation.
   - **Adaptive / non-stationary** extension flagged: convert a stationary coder into a piecewise-stationary one via expert-tracking meta-algorithms (György–Linder–Lugosi 2012; Partition Tree Weighting).
@@ -88,3 +112,44 @@
   - **Return-conditioned generative control**: the $\rho_S(s \mid z, a)$ "condition on a desired return, invert to a policy" move is the tabular/CTW ancestor of upside-down RL and **Decision Transformer / Decision Diffuser** (return-conditioned sequence/diffusion models for control).
   - **AIXI / algorithmic IT**: the authors note the open question of a formal link to Hutter's AIXI (2005) unification of algorithmic information theory and RL. cf. [[nncp]], the Hutter-prize line above.
   - **cf. CompressARC** above — the other face of "compression as objective": CompressARC compresses a single task's structure for reasoning (per-instance, no pretraining); CNC compresses the state-distribution-given-return for control. Both replace a learned task head with a coding-length computation. See also [[papers-latent-recursive-reasoning]].
+
+### Predictive vs. generative, and what CNC actually models
+
+> Context: working through CNC (Compress and Control). Question that kept coming up — the "better predictor = better compressor" duality is about *predictive* models, but CNC's formula is described as *generative*. Which is it? Resolution below.
+
+**Predictive and generative aren't opposites.**
+
+The thing the duality cares about is: does the model assign a likelihood ρ(x) to data, so that −log₂ ρ(x) is a codelength? Autoregressive/predictive models are the cleanest case, via the chain rule:
+
+```
+ρ(x₁:ₙ) = ∏ᵢ ρ(xᵢ | x<ᵢ)        →    −log ρ(x₁:ₙ) = −Σᵢ log ρ(xᵢ | x<ᵢ)
+   (joint = "generative")              (codelength = sum of per-step prediction surprisals)
+```
+
+A next-symbol predictor is a generative model of the joint sequence — you recover the joint by multiplying conditionals, and you can sample it left-to-right. GPT is simultaneously "a next-token predictor" and "a generative model of text." So "predictive" (the conditionals) and "generative" (the joint) are the same object read two ways; the duality "better predictor = better compressor" is really "better likelihood = shorter code," and predictive models supply the likelihood by chaining.
+
+(Where it gets subtle: VAEs/diffusion are "generative" but don't give an exact tractable likelihood — they give a bound (ELBO), so they only compress via bits-back/bound coding. Flows and autoregressive models give exact likelihoods, so they compress cleanly. CNC's models are in the clean autoregressive camp.)
+
+**What CNC's models actually are.**
+
+They're predictive. The paper defines ρ_S and ρ_Z (§3.3) as coding distributions — sequences of conditional PMFs ρ(xₙ | x<ₙ). Concretely:
+
+- ρ_S(s | z, a) is queried as ρ_S(s | s^{z,a}_{0:n−1}) — the predictive probability of the next state s given the past states that fell in bucket (z, a). The Lempel-Ziv version is literally a codelength difference 2^(−[ℓ(hist·s)−ℓ(hist)]). Pure sequential predictor.
+- ρ_Z(z | a) likewise predicts the next return given the past returns in action-bucket a.
+
+So: yes, the machinery is predictive coding distributions / compressors, and the duality applies to them directly. There's no separate "generative model" being trained.
+
+**So why do the paper say "generative"?** Two reasons, both legitimate, neither about sampling:
+
+1. **"Generative classifier" is a factorization claim, not a sampling claim.** The discriminative-vs-generative distinction (Ng & Jordan) is: discriminative learns P(C | Y) directly; generative learns P(Y | C) and P(C), then inverts with Bayes. CNC does the latter — it models P(state | return, action) and P(return | action) and Bayes-flips. That is the textbook meaning of "generative" here, and it's what "generative classifier" / "generative decision-making" refer to. It has nothing to do with whether you sample.
+2. **The predictor is being used as a density estimator.** What CNC needs from ρ_S is an estimate of the class-conditional density ν(s | z, a) — "how probable is state s among states of class (z,a)." A sequential predictor over a bucket's (roughly exchangeable) stream converges to exactly that marginal: the frequency estimator ρ(s|hist)=count(s)/(n−1) literally is the empirical class-conditional density; CTW/Dirichlet are smoothed versions (that's what Theorems 2–3 prove). So a predictive object is doing a generative/density-estimation job.
+
+And note CNC only ever evaluates ρ_S at the observed s (a likelihood query) and Bayes-combines — it never samples. So "generative" here means "models the input distribution P(s | z, a)," not "produces samples."
+
+**The clean statement.**
+
+- The duality is about likelihood: better predictor ⇒ better likelihood ⇒ shorter code. ✓
+- CNC's ρ_S, ρ_Z are predictive coding distributions (compressors) — the duality applies to them as-is.
+- CNC is a generative classifier: it uses those predictors as estimates of the class-conditional density P(state | return, action) and the prior P(return | action), then inverts with Bayes. "Generative" = the modeling-the-inputs-and-Bayes-inverting strategy, implemented with predictive/compression models.
+
+The paper signals exactly this by calling them both "coding distributions" (§3.3, predictive) and "density models" (§3.1, generative) — the equivalence is the whole point.
