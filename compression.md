@@ -14,7 +14,10 @@
 - [ ] [hutter-prize] [[nncp]]
 - [ ] [[papers-gln]]
 - [ ] [byronknoll] gmix: <https://github.com/byronknoll/gmix>
+- [ ] [talk] [ilya] [2023] An Observation on Generalization (Simons Institute) - [video](https://www.youtube.com/live/AKMuA_TVz3A)
+- [ ] [talk] [jackrae] [2023] Compression for AGI (Stanford MLSys) - [video](https://www.youtube.com/watch?v=dO4TPJkeaaU)
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
+- [ ] [2024] Compression Represents Intelligence Linearly - [paper](https://arxiv.org/abs/2404.09937)
 - [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
 - [ ] [albertgu] [2025] CompressARC: ARC-AGI Without Pretraining - [blog](https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/arc_agi_without_pretraining.html), [paper](https://arxiv.org/abs/2512.06104). cf. [[papers-latent-recursive-reasoning]]
 - [ ] [2022] Less is More: Parameter-Free Text Classification with Gzip - [paper](https://arxiv.org/abs/2212.09410)
@@ -24,10 +27,9 @@
 
 ---
 
-## [2014] [jveness] Compress and Control
+## [2014] [jveness] [CNC: Compress and Control](https://arxiv.org/abs/1411.5326)
 
 - **Date**: 2026-06-17
-- **Arxiv**: <https://arxiv.org/abs/1411.5326>
 - **Slides**: <https://www.hutter1.net/publ/scnc.pdf>
 
 ---
@@ -164,3 +166,61 @@ And note CNC only ever evaluates ρ_S at the observed s (a likelihood query) and
 - CNC is a generative classifier: it uses those predictors as estimates of the class-conditional density P(state | return, action) and the prior P(return | action), then inverts with Bayes. "Generative" = the modeling-the-inputs-and-Bayes-inverting strategy, implemented with predictive/compression models.
 
 The paper signals exactly this by calling them both "coding distributions" (§3.3, predictive) and "density models" (§3.1, generative) — the equivalence is the whole point.
+
+## [talk] [ilya] [2023] [An Observation on Generalization (Simons Institute)](https://www.youtube.com/live/AKMuA_TVz3A)
+
+- **Date**: 2026-06-21
+
+---
+
+- **One-liner**: a mathematical account of *why unsupervised learning works* — compressing data **jointly** extracts the shared structure downstream tasks need; formalized as (conditional) Kolmogorov complexity, with SGD-over-nets as the tractable stand-in. Compression = prediction = a theory of unsupervised learning.
+- A mathematical formulation with guarantees exists for supervised learning (low train error + more data than parameters ⇒ low test error). What's the equivalent for unsupervised learning?
+- **Unsupervised learning: you optimize one objective, but you care about a different objective. And yet it works. How?**
+  - Distribution matching as an example (eg., substitution ciphers, unsupervised machine translation).
+    - Given datasets X and Y, find F such that distribution(F(X)) ~ distribution(Y).
+- Compression to the rescue
+  - **Compression is prediction, every compressor can be a predictor and vice versa**.
+  - One-to-one correspondence between all predictors and all compressors.
+- **Compression for reasoning about unsupervised learning**
+  - Given: two datasets X and Y, and a good compression algorithm C(data).
+  - Compress X and Y jointly.
+  - What will a "sufficiently good compressor" do?
+    - Use patterns that exist in X to help compress Y (and vice versa)
+    - $\lvert C(\text{concat}(X,Y)) \rvert \le \lvert C(X) \rvert + \lvert C(Y) \rvert + O(1)$ (this upper bound always holds; the strict gain shows up only when there's structure to share)
+    - Any additional compression that was gained by concatenation was some kind of shared structure the compressor knows. The better your compressor is, there is more shared structure to extract.
+    - Gap = "shared structure" = algorithmic mutual information.
+    - Generalizes distribution matching. If there exists an F such that distribution(F(X)) ~= Distribution(Y), then a good compressor will notice and exploit this.
+- Can we formalize this?
+  - Consider an algorithm A that tries to compress Y. Say it has access to X.
+  - What is our regret of using this algorithm?
+    - And regret relative to what?
+    - Low regret = "we got all the value" out of the unlabelled data X. And nobody could get much more value that we did!
+    - X can be a uniform distribution that we can learn nothing from, or X actually has structure that's useful to compress Y. Either way, a low-regret algorithm will have done the maximum to exploit X to compress Y.
+- **Kolmogorov complexity as the ultimate compressor**
+  - Gives the ultimate low-regret algorithm (ideal, not computable).
+  - K(X) = length of the shortest program that outputs X.
+  - If C is a computable compressor, then, for all X, $K(X) \lt \lvert C(X) \rvert + K(C) + O(1)$
+    - See connection to Hutter Prize and [[nncp]].
+  - K(X) is not tractable as it searches over all programs.
+  - But training a neural network with SGD is not unlike doing a program search.
+  - Simulation argument. A neural net is a simulator of computer programs. Architecture research is thus hard (one neural net can simulate another) except in rare cases (eg., RNN to transformer, as RNN has a severe bottelneck) when there's a big jump.
+- **Conditional Kolmogorov complexity as the solution to unsupervised learning**
+  - $K(Y|X) \lt \lvert C(Y|X) \rvert + K(C) + O(1)$
+  - What is the absolute shortest way to describe dataset Y, assuming I have complete access to dataset X?
+  - This is ultimate low-regret solution to unsupervised learning except that it's not computable.
+- **"Just compress everything" also works**
+  - $K(X,Y) = K(X) + K(Y|X) + O(\log(K(X,Y)))$
+  - Chain rule (symmetry of information): the joint decomposes into $K(X)$ + the *conditional* $K(Y|X)$. So a good **joint** compressor automatically captures $K(Y|X)$ — i.e. plain next-token pretraining on one big concatenated pile picks up the transferable conditional structure *for free*, with no explicit conditioning and no paired data. That's why "just compress everything together" is already unsupervised learning that transfers.
+- **Can we show universality of GPT-compression?**
+  - Can we expect it to always work? (text clearly works; does the compression story generalize across modalities?)
+  - Vision — lots of work on SSL for vision.
+  - **iGPT (Image GPT, Chen et al. 2020)**: a GPT trained to autoregressively predict pixels with no labels; its features (linear probe) rival self-supervised CNNs on ImageNet. Evidence the *AR-prediction → good-representation* story isn't text-specific — it transfers to vision, supporting universality of the compression account.
+- Linear representations
+  - The compression theory does not immediately explain why representations are nice and linearly separable.
+  - But linear representations are so pervasive that the reason for their formation must be deep and profound. (Flagged as an open puzzle.)
+  - AR models seem to have better representations than BERT. **Intuition**: next-token prediction uses *left context only*, so the *hardest* predictions force integrating long-range structure; BERT's masked infilling sees *both sides*, so most masks are locally determined and easy. Representation quality is driven by the hardest prediction problems → AR's are harder → richer representations. (Offered as intuition, not proof.)
+- Anything that turns a neural net into a probabilistic model assigning probabilities to inputs is **implicitly maximum likelihood = compression**, so the compression account applies to it — not just to autoregressive models. The differences between methods (AR, BERT, diffusion) are then about *how well/efficiently* they compress and *what representations* that induces, not whether the theory covers them.
+- On diffusion
+  - The other big family of likelihood models is diffusion. The diffusion models used in high-quality image generators don't actually maximize the likelihood of their inputs — they optimize a different (denoising) objective — but their original formulation *is* likelihood maximization.
+  - Speculation: diffusion should also have *worse* representations than next-token prediction, for the same reason as BERT (the denoising/infilling task is easier than the hardest next-token prediction).
+- **Connection**: the *theory* leg of the compression-thesis cluster in this file — pairs with *Language Modeling is Compression* (empirical: LLMs are SOTA compressors), *Compression Represents Intelligence Linearly* (compression rate ⇒ capability), and Jack Rae's *Compression for AGI* talk. Note the whole account is **passive / offline / lossless**; extending it to **control / decision-making** (cf. CNC above) and to **bounded-resource efficiency** (compression *per unit compute*, not just ratio) are the natural open directions.
