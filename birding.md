@@ -37,4 +37,4 @@
 - [ ] [2026] [Sara Hooker, "On the Slow Death of Scaling"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5877662)
 - [x] [2026] [Jim Fan, "The Second Pre-training Paradigm"](https://x.com/DrJimFan/status/2018754323141054786)
 - [x] [2026] [Maithra Raghu, "The Post-Scaling Era of Frontier AI"](https://x.com/maithra_raghu/status/2024154498961420509)
-- [ ] [2026] [a16z, "Why We Need Continual Learning"](https://a16z.com/why-we-need-continual-learning/)
+- [x] [2026] [a16z, "Why We Need Continual Learning"](https://a16z.com/why-we-need-continual-learning/)

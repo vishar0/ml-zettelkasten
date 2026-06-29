@@ -15,7 +15,7 @@
 
 ## Theoretical & Mechanistic Explanations
 
-- [ ] [2024] The Factorization Curse: Which Tokens You Predict Underlie the Reversal Curse and More - [paper](https://arxiv.org/abs/2406.05183)
+- [ ] [2024] [MikeRabbat,MarkIbrahim] The Factorization Curse: Which Tokens You Predict Underlie the Reversal Curse and More - [paper](https://arxiv.org/abs/2406.05183)
 - [ ] [2024] Towards a Theoretical Understanding of the "Reversal Curse" via Training Dynamics - [paper](https://arxiv.org/abs/2405.04669)
 - [ ] [2023] Physics of Language Models: Part 3.1, Knowledge Storage and Extraction - [paper](https://arxiv.org/abs/2309.14316)
 - [ ] [2023] Physics of Language Models: Part 3.2, Knowledge Manipulation - [paper](https://arxiv.org/abs/2309.14402) - [openreview](https://openreview.net/forum?id=oDbiL9CLoS)
