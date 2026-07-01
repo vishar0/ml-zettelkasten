@@ -3,6 +3,8 @@
 - **Created**: 2026-05-15
 - **Last Updated**: 2026-06-10
 - **Status**: `In Progress`
+- **Related**:
+  - [[papers-reversal-curse]]
 
 ---
 
@@ -13,7 +15,6 @@
 - [x] [2025] LMLM: Pre-training Limited Memory Language Models with Internal and External Knowledge - [paper](https://arxiv.org/abs/2505.15962)
 - [ ] [2025] BabyVLM: Data-Efficient Pretraining of VLMs Inspired by Infant Learning - [paper](https://arxiv.org/abs/2504.09426)
 - [ ] [2026] EgoBabyVLM: Benchmarking Cross-Modal Learning from Naturalistic Egocentric Video Data - [paper](https://arxiv.org/abs/2605.19130)
-- [ ] [2023] The Reversal Curse: LLMs trained on "A is B" fail to learn "B is A" - [paper](https://arxiv.org/abs/2309.12288)
 
 ## [2025] Towards Fundamental Language Models: Does Linguistic Competence Scale with Model Size?
 
