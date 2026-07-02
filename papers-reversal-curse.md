@@ -21,6 +21,10 @@
 - [ ] [2023] Physics of Language Models: Part 3.2, Knowledge Manipulation - [paper](https://arxiv.org/abs/2309.14402) - [openreview](https://openreview.net/forum?id=oDbiL9CLoS)
 - [ ] [2025] Is the Reversal Curse a Binding Problem? Uncovering Limitations of Conceptual Binding in LLMs - [paper](https://arxiv.org/abs/2504.01928)
 
+## In-Context Learning vs Finetuning Generalization
+
+- [ ] [2025] [GDM,McClelland] On the Generalization of Language Models from In-Context Learning and Finetuning: A Controlled Study - [paper](https://arxiv.org/abs/2505.00661)
+
 ## Mitigations for Autoregressive Models
 
 - [ ] [2024] Reverse Training to Nurse the Reversal Curse - [paper](https://arxiv.org/abs/2403.13799)
