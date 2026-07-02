@@ -21,6 +21,8 @@
 - [ ] [2024] [jveness] Amortized Planning with Large-Scale Transformers: A Case Study on Chess - [paper](https://arxiv.org/abs/2402.04494)
 - [ ] [2023] Diffusion Policy: Visuomotor Policy Learning via Action Diffusion - [paper](https://arxiv.org/abs/2303.04137)
 - [ ] [2021] [GDM,PedroOrtega,Nando] Shaking the Foundations: Delusions in Sequence Models for Interaction and Control - [paper](https://arxiv.org/abs/2110.10819)
+- [ ] [2022] You Can't Count on Luck: Why Decision Transformers and RvS Fail in Stochastic Environments - [paper](https://arxiv.org/abs/2205.15967)
+- [ ] [2026] [PedroOrtega,Nando] Continual, Interactive, Causal Agents - [paper](https://love4all.ai/files/continual-interactive-causal-agents.pdf)
 
 ---
 
