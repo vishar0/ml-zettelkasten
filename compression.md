@@ -1,8 +1,12 @@
 # Compression
 
 - **Created**: 2026-06-07
-- **Last Updated**: 2026-06-20
+- **Last Updated**: 2026-07-02
 - **Status**: `In Progress`
+- **Related**:
+  - [[papers-generative-decision-making]]
+  - [[nncp]]
+  - [[papers-gln]]
 
 ---
 
@@ -19,8 +23,10 @@
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
 - [ ] [2024] Compression Represents Intelligence Linearly - [paper](https://arxiv.org/abs/2404.09937)
 - [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
+- [ ] [jveness] [2025] ActivePTW: Partition Tree Weighting for Non-Stationary Stochastic Bandits - [paper](https://arxiv.org/abs/2502.19325), [code](https://github.com/google-deepmind/active_ptw)
 - [ ] [albertgu] [2025] CompressARC: ARC-AGI Without Pretraining - [blog](https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/arc_agi_without_pretraining.html), [paper](https://arxiv.org/abs/2512.06104). cf. [[papers-latent-recursive-reasoning]]
 - [ ] [2022] Less is More: Parameter-Free Text Classification with Gzip - [paper](https://arxiv.org/abs/2212.09410)
+- [x] [2025] zip2zip: Inference-Time Adaptive Tokenization via Online Compression - [paper](https://arxiv.org/abs/2506.01084)
 - [ ] [schmidhuber] [2009] Driven by Compression Progress: A Simple Principle Explains Essential Aspects of Subjective Beauty, Novelty, Surprise, Interestingness, Attention, Curiosity, Creativity, Art, Science, Music, Jokes - [paper](https://arxiv.org/abs/0812.4360). cf. [[papers-open-ended-learning]]
 - [ ] [2019] BB-ANS: Practrcal Lossless Compression with Latent Variables using Bits Back Coding - [paper](https://arxiv.org/abs/1901.04866). orig. Hinton & van Camp 1993; bridges VAE/diffusion ELBO → real compression; cf. [[papers-vae]] [[papers-diffusion-models]]
 - [ ] TODO UAI book
@@ -167,6 +173,32 @@ And note CNC only ever evaluates ρ_S at the observed s (a likelihood query) and
 
 The paper signals exactly this by calling them both "coding distributions" (§3.3, predictive) and "density models" (§3.1, generative) — the equivalence is the whole point.
 
+## [2025] [jveness] [ActivePTW: Partition Tree Weighting for Non-Stationary Stochastic Bandits](https://arxiv.org/abs/2502.19325)
+
+- **Date**: 2026-07-02
+- **Code**: <https://github.com/google-deepmind/active_ptw>
+
+---
+
+- **Abstract**:
+  - > This paper considers a generalisation of universal source coding for interaction data, namely data streams that have actions interleaved with observations. Our goal will be to construct a coding distribution that is both universal *and* can be used as a control policy. Allowing for action generation needs careful treatment, as naive approaches which do not distinguish between actions and observations run into the self-delusion problem in universal settings. We showcase our perspective in the context of the challenging non-stationary stochastic Bernoulli bandit problem. Our main contribution is an efficient and high performing algorithm for this problem that generalises the Partition Tree Weighting universal source coding technique for passive prediction to the control setting.
+- **One-liner**: derive the agent itself from **universal source coding** — build a coding distribution over the whole interaction stream (actions *and* percepts) and **sample actions from it**. Where CNC (above) used compression for policy *evaluation*, this uses it for the full *policy*, in a **non-stationary** setting. Same lineage (Veness/Hutter): CTW → PTW → CNC → this.
+- **Framing**: agent design from Maximum Expected Utility (RL) vs. from *minimizing the expected bits to losslessly describe agent-environment interactions*. Loss = code length $-\log_2 \nu^\pi(h)$; regret = **redundancy**, which decomposes additively into *environment redundancy* (percept prediction) + *policy redundancy* (distance from the desired policy).
+- **The self-delusion problem** (the durable conceptual point):
+  - Naive approach: one Bayesian mixture over interaction measures, condition on everything observed — *including your own actions*. This fails: the posterior treats the agent's own actions as **evidence about the environment**, so the agent "confirms" hypotheses by acting as those hypotheses' policies would — believing its own outputs as if the world had produced them (Ortega et al. 2021).
+  - Fix: the $\Vert$ notation — actions are **interventions (given), never coded as evidence**: $\nu(e_{1:t} \Vert a_{1:t})$. The posterior over environments updates **only on percepts**.
+  - Resulting policy = **Bayesian Control Rule** (Ortega & Braun 2008): $\hat\pi(a_t \mid h) = \sum_\rho w^\rho_{t-1}\, \pi_\rho(a_t \mid h)$ — mix each candidate environment's *desired policy*, weighted by a percept-only posterior. Sampling from this **is Thompson sampling** — TS drops out of pure coding principles.
+  - Design constraint for any generative decision-making system: **actions must enter the model as interventions, not observations** — a conditional generative model that conditions on actions the same way it conditions on frames walks into this trap the moment it goes on-policy.
+- **PTW construction** (non-stationarity *inside* the model class, not bolted on):
+  - Per-arm **KT estimators** (Beta(½,½) sequential predictors) code a stationary Bernoulli arm; redundancy ≤ (|A|/2)·log n + |A|.
+  - **Partition Tree Weighting**: Bayesian mixture over *all binary temporal partitions* of time (all ways the world might have segmented into stationary regimes), prior weight $2^{-\Gamma_D(\mathcal{P})}$ — shorter tree description ⇒ higher weight, i.e. a **compression prior over change-point structures**. Fresh KT estimators within each segment.
+  - Tractability: ~$2^{2^D}$ partitions, but at time $t$ only $D{+}1$ **active segments** matter (lengths 1, 2, 4, …, $2^D$, from the binary structure of $t$) ⇒ exact posterior in **O(log T) time/space per step**.
+  - **ActivePTW** = generalized Thompson sampling: sample an active segment from the PTW posterior ("when did the current regime start?") → sample arm parameters from that segment's Beta posteriors → act with that environment's reference policy (greedy MEU, or MEU + forced exploration).
+- **Forced exploration serves the coder**: constructed failure mode — a change-point where the previously-best arm's payoff stays the same while another arm silently becomes better; greedy play yields *zero evidence* of the change. Forced exploration at rate $1/\sqrt{l}$ within a segment fixes it (and is what the concentration analysis needs). Pure exploitation can starve the compressor of the data needed to detect change.
+- **Results**: generally beats Sliding-Window UCB (even with oracle window), MASTER, Thompson sampling, UCB across change-point regimes. In stationary environments it *collapses to Thompson sampling* (posterior concentrates on the single-segment partition) — the adaptivity costs essentially nothing when the world is static.
+- **Limits**: bandits only — no state, no long-horizon credit assignment; regret theory for the full algorithm deferred (redundancy bounds + concentration lemmas proven); needs a *reference policy per environment* (trivial for bandits, nontrivial for MDPs — the gap where CNC-style Q-estimation would plug in). BCR mixes reference policies one step at a time, which may under-explore over long horizons (cf. Leike et al. 2016 general TS, BayesEXP).
+- **Connections**: [[nncp]] (adaptive coding of a passive stream ↔ this: adaptive coding of an *interaction* stream); CNC above (evaluation → full policy); PTW's partition posterior *forgets* old segments when the world changes — a compression-native answer to non-stationary/continual adaptation. Wiener's cybernetics (agent as entropy-constrained adaptive process) cited as the spiritual ancestor.
+
 ## [talk] [ilya] [2023] [An Observation on Generalization (Simons Institute)](https://www.youtube.com/live/AKMuA_TVz3A)
 
 - **Date**: 2026-06-21
@@ -224,3 +256,28 @@ The paper signals exactly this by calling them both "coding distributions" (§3.
   - The other big family of likelihood models is diffusion. The diffusion models used in high-quality image generators don't actually maximize the likelihood of their inputs — they optimize a different (denoising) objective — but their original formulation *is* likelihood maximization.
   - Speculation: diffusion should also have *worse* representations than next-token prediction, for the same reason as BERT (the denoising/infilling task is easier than the hardest next-token prediction).
 - **Connection**: the *theory* leg of the compression-thesis cluster in this file — pairs with *Language Modeling is Compression* (empirical: LLMs are SOTA compressors), *Compression Represents Intelligence Linearly* (compression rate ⇒ capability), and Jack Rae's *Compression for AGI* talk. Note the whole account is **passive / offline / lossless**; extending it to **control / decision-making** (cf. CNC above) and to **bounded-resource efficiency** (compression *per unit compute*, not just ratio) are the natural open directions.
+
+## [2025] [zip2zip: Inference-Time Adaptive Tokenization via Online Compression](https://arxiv.org/abs/2506.01084)
+
+- **Date**: 2026-07-02
+
+---
+
+- **tl;dr**: runs LZW online over the BPE token stream so the tokenizer adapts to each input at inference — merging recurring runs into "hypertokens" that cut sequence length 15–40% — i.e. adaptive compression pushed down to the *tokenizer* layer for efficiency.
+  - LZW runs online over BPE tokens, merging recurring runs into per-input "hypertokens" that shorten the sequence at inference.
+  - Not free / not magic: a one-time (~10 GPU-hr) finetune makes the model fluent in hypertokens; ~50% fewer tokens but only ~5–30% real speedup.
+  - Why LZW over a bigger fixed BPE vocab (causal, per-input recurrence, self-synchronizing) is the same static-vs-adaptive lesson as [[nncp]] / continual learning.
+- **Abstract**:
+  - > Tokenization efficiency plays a critical role in the performance and cost of large language models (LLMs), yet most models rely on static tokenizers optimized on general-purpose corpora. These tokenizers' fixed vocabularies often fail to adapt to domain- or language-specific inputs, leading to longer token sequences and higher computational costs. We introduce zip2zip, a novel method for achieving context-adaptive tokenization in LLMs at inference time. Leveraging an online data compression algorithm (Lempel-Ziv-Welch), zip2zip dynamically expands its active vocabulary at inference time by continuously replacing fragmented token sequences with more compact hypertokens, which it can immediately output during generation. In doing so, the model refines its internal tokenization scheme to match the token distribution of the current context, reducing redundancy and improving representational efficiency. zip2zip consists of three key components: (1) a tokenizer based on Lempel-Ziv-Welch compression that incrementally merges co-occurring tokens into reusable hypertokens on the fly; (2) a dynamic embedding (and unembedding) layer that computes embeddings for newly formed hypertokens at runtime; and (3) a variant of autoregressive language modeling that pretrains the model to handle hypertokenized, compressed text sequences as inputs and outputs. We show that an existing LLM can be uptrained for zip2zip in 10 GPU-hours via parameter-efficient finetuning. The resulting LLM performs test-time adaptation, learning to use hypertokens in unseen contexts and reducing input and output tokens by 15-40%.
+- **Pipeline**: BPE tokens → LZW forms hypertokens online (dictionary grows within each input) → a small **hyper-embedder** composes each hypertoken's embedding from its constituent token embeddings → transformer → next-token prediction over the static ∪ dynamic vocab → decode. A one-time (~10 GPU-hr) finetune on LZW-compressed data teaches the model to read/write hypertokens; the hyper-embedder is *trained then, only run at inference* (not test-time training).
+- **Result**: up to ~50% fewer tokens, <1% perplexity hit — but composing embeddings + a dynamic vocab adds overhead, so real **speedup is much smaller than the token reduction** (~5–30%, hardware-dependent). Token count ≠ latency.
+- **Why LZW, not a fixed/expanded BPE vocab** (the design crux, static vs. adaptive):
+  - BPE captures **global frequency** over a *training corpus* (fit once, frozen); LZW captures **recurrence within this specific input** — local repetition (a phrase repeated 80× in one document) that no fixed vocab can pre-enumerate regardless of how it's trained.
+  - LZW is **online/causal** — it builds its dictionary left-to-right, so it works *during* generation when the document doesn't exist yet; per-document BPE is two-pass/batch and can't.
+  - LZW is **self-synchronizing** — decoder rebuilds the identical dictionary from the stream (no side-channel), and hypertokens self-describe via their constituents (so the hyper-embedder can compose them). Per-document BPE would need a transmitted merge table + embeddings for arbitrary new tokens.
+  - Note LZW tracks **recurrence, not frequency** — no counters; a pattern earns a shorter code by recurring, gradually, not by being globally frequent.
+- **Pushbacks**:
+  - On *raw ratio* for a single, complete, known document, BPE-fit-on-that-doc can **beat** LZW (global view, no LZW warm-up cost). LZW is chosen for causality + decoder-sync, **not** compression ratio.
+  - "If you finetune anyway, why not just expand the BPE vocab from the finetune data?" — only helps if the finetune corpus already covers the deployment domain; misses per-document repetition either way. LZW is what *physically shortens* the sequence (the payoff); the finetune only makes the model *tolerate* shortened input.
+  - Is the added complexity worth it over a fixed vocab, and does data-dependent tokenization break clean apples-to-apples eval (BPE is fixed a priori; a dynamic tokenizer is input-dependent)? Open.
+- **Connection**: classic LZ-family compressor bolted onto an NLP task — same genre as the gzip text-classification entry above, and the adaptive-coding sibling of [[nncp]]. Open directions: pruning (not just growing) the dynamic vocab; lossy/learned alternatives to LZW.

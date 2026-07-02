@@ -1,7 +1,7 @@
 # Generative Decision-Making
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-06-17
+- **Last Updated**: 2026-07-02
 - **Status**: `In Progress`
 - **Related**:
   - [[compression]]
@@ -20,6 +20,7 @@
 - [ ] [2024] [jveness] Generative Reinforcement Learning with Transformers - [paper](https://openreview.net/forum?id=6qtDu7hVPF)
 - [ ] [2024] [jveness] Amortized Planning with Large-Scale Transformers: A Case Study on Chess - [paper](https://arxiv.org/abs/2402.04494)
 - [ ] [2023] Diffusion Policy: Visuomotor Policy Learning via Action Diffusion - [paper](https://arxiv.org/abs/2303.04137)
+- [ ] [2021] [GDM,PedroOrtega,Nando] Shaking the Foundations: Delusions in Sequence Models for Interaction and Control - [paper](https://arxiv.org/abs/2110.10819)
 
 ---
 
@@ -73,3 +74,17 @@
   - Still depends on the quality and coverage of the offline dataset.
   - If high-return behavior is absent from the dataset, return conditioning cannot invent it reliably.
   - For long-horizon tasks, finite context length limits how much trajectory history and goal information the model can use.
+
+## [2021] Shaking the Foundations: Delusions in Sequence Models for Interaction and Control
+
+- **Date**: 2026-07-02
+- **Arxiv**: <https://arxiv.org/abs/2110.10819>
+
+---
+
+- **tl;dr**: The theory-of-failure paper for this entire file — using a sequence model *as a policy* (Decision Transformer, goal/return-conditioning, behavior cloning from demos) breaks whenever latent confounders exist, because the model treats its own sampled actions as evidence about the world; the fix is causal: condition on observations, **intervene** (do) on self-generated actions.
+  - Under a hidden task parameter θ (a confounder of actions and observations), conditioning on your own sampled action collapses the posterior — P(θ | a) acts as if an expert who *saw* θ chose a — so the agent becomes certain of a world state it invented (self-delusion); prediction and imitation are only equivalent when nothing is latent.
+  - Treating past self-generated actions as interventions, P(A_{t+1} | do(a_{1:t}), o_{1:t}), cuts the a→θ evidence flow so the agent learns only from its actions' *effects* — and the resulting adaptive policy is Thompson sampling, derived from first principles rather than as a heuristic. Remark 6 is a direct hit on return/goal-conditioned policies: *choosing* the goal/return to condition on is itself an action, so conditioning on it is delusion.
+  - Practical recipe: **factual teaching** (log-loss on observed data) trains conditioning; **counterfactual teaching** (score the model's action prediction against the expert's revealed action, stop-gradient through the sampled action) trains intervening — but this needs an expert available *online*; doing it purely from offline demonstrations is an open problem, since demos are confounded by θ (you can't continue a trajectory whose expert action you didn't take).
+- **Abstract**:
+  - > The recent phenomenal success of language models has reinvigorated machine learning research, and large sequence models such as transformers are being applied to a variety of domains. One important problem class that has remained relatively elusive however is purposeful adaptive behavior. Currently there is a common perception that sequence models "lack the understanding of the cause and effect of their actions" leading them to draw incorrect inferences due to auto-suggestive delusions. In this report we explain where this mismatch originates, and show that it can be resolved by treating actions as causal interventions. Finally, we show that in supervised learning, one can teach a system to condition or intervene on data by training with factual and counterfactual error signals respectively.

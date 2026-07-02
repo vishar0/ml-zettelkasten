@@ -1,7 +1,7 @@
 # Reinforcement Learning
 
 - **Created**: 2019-04
-- **Last Updated**: 2026-05-05
+- **Last Updated**: 2026-07-02
 - **Status**: `In Progress`
 
 ---
@@ -12,6 +12,7 @@
 
 - TODO papers in <https://spinningup.openai.com/en/latest/spinningup/keypapers.html>
 - [ ] [2000] [AndrewNg] Algorithms for Inverse Reinforcement Learning - [paper](https://ai.stanford.edu/~ang/papers/icml00-irl.pdf)
+- [ ] [2016] [Ho,Ermon] GAIL: Generative Adversarial Imitation Learning - [paper](https://arxiv.org/abs/1606.03476)
 - [ ] [2013] Guided Policy Search - [paper](https://graphics.stanford.edu/projects/gpspaper/gps_full.pdf)
 - [ ] [2014] [DavidSilver] DPG: Deterministic Policy Gradient Algorithms - [paper](https://proceedings.mlr.press/v32/silver14.pdf)
 - [ ] [2015] [TimLillicrap,DavidSilver] Continuous control with deep reinforcement learning - [paper](https://arxiv.org/abs/1509.02971)
