@@ -4,6 +4,7 @@
 - **Last Updated**: 2026-07-02
 - **Status**: `In Progress`
 - **Related**:
+  - [[papers-aixi]]
   - [[papers-generative-decision-making]]
   - [[nncp]]
   - [[papers-gln]]
@@ -20,6 +21,7 @@
 - [ ] [byronknoll] gmix: <https://github.com/byronknoll/gmix>
 - [x] [talk] [ilya] [2023] An Observation on Generalization (Simons Institute) - [video](https://www.youtube.com/live/AKMuA_TVz3A)
 - [ ] [talk] [jackrae] [2023] Compression for AGI (Stanford MLSys) - [video](https://www.youtube.com/watch?v=dO4TPJkeaaU)
+- [ ] [talk] [3blue1brown] [2026] Reinventing Entropy: Compression is Intelligence Part 1 - [video](https://www.youtube.com/watch?v=l6DKRf-fAAM&t=824s)
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
 - [ ] [2024] Compression Represents Intelligence Linearly - [paper](https://arxiv.org/abs/2404.09937)
 - [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)

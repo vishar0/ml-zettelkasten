@@ -22,7 +22,7 @@
 
 - Original BPE (Byte Pair Encoding) algorithm in [Neural Machine Translation of Rare Words with Subword Units](https://arxiv.org/abs/1508.07909) [[papers-ml-fundamentals]], and then popularized by GPT-2.
   - Basic BPE implementation in <https://github.com/karpathy/minbpe/blob/master/minbpe/basic.py>
-  - TODO See my independent impl at TODO
+  - See my independent impl at <https://gist.github.com/vishar0/164380801d7b21ad57e3de789fea5315>
 - Couple of additional things to handle:
   - RegexTokenizer: Preprocesses the input text by splitting it into categories (letters, numbers, puncutation) before tokenization. Avoids merges across cateogry boundaries. See regex based splitting and chunk handling in `train()` and `encode_ordinary()` of <https://github.com/karpathy/minbpe/blob/master/minbpe/regex.py>.
   - Handling special tokens like `<|promptstart|>` or `<|endoftext|>`, etc.

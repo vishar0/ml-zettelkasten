@@ -5,6 +5,7 @@
 - **Status**: `In Progress`
 - **Related**:
   - [[compression]]
+  - [[papers-aixi]]
   - [[papers-rl]]
   - [[papers-diffusion-models]]
   - [[papers-generalist-agents]]
