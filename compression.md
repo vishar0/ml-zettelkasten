@@ -30,6 +30,7 @@
 - [ ] [2022] Less is More: Parameter-Free Text Classification with Gzip - [paper](https://arxiv.org/abs/2212.09410)
 - [x] [2025] zip2zip: Inference-Time Adaptive Tokenization via Online Compression - [paper](https://arxiv.org/abs/2506.01084)
 - [ ] [schmidhuber] [2009] Driven by Compression Progress: A Simple Principle Explains Essential Aspects of Subjective Beauty, Novelty, Surprise, Interestingness, Attention, Curiosity, Creativity, Art, Science, Music, Jokes - [paper](https://arxiv.org/abs/0812.4360). cf. [[papers-open-ended-learning]]
+- [ ] [2018] [FAIR] Description Length of Deep Learning Models — [papers](https://arxiv.org/abs/1802.07044)
 - [ ] [2019] BB-ANS: Practical Lossless Compression with Latent Variables using Bits Back Coding - [paper](https://arxiv.org/abs/1901.04866). orig. Hinton & van Camp 1993; bridges VAE/diffusion ELBO → real compression; cf. [[papers-vae]] [[papers-diffusion-models]]
 - [ ] UAI book (Hutter et al. 2024) → see [[papers-aixi]]
 - [ ] TODO <https://www.adaptiveagents.org/_media/universal-ai-as-imitation.pdf>

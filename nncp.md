@@ -6,9 +6,13 @@
 
 ---
 
+- [ ] [1987] Arithmetic Coding for Data Compression - [paper](https://web.stanford.edu/class/ee398a/handouts/papers/WittenACM87ArithmCoding.pdf)
+- [ ] [2000] [Mahoney] Fast Text Compression with Neural Networks — [paper](https://mattmahoney.net/dc/mmahoney00.pdf)
 - [x] [2019] NNCP: Lossless Data Compression with Neural Networks - [paper](https://bellard.org/nncp/nncp.pdf)
-- [x] [2019] Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context - [paper](https://arxiv.org/abs/1901.02860). Used by NNCP v2. [[papers-ml-fundamentals]]
+- [x] [[papers-ml-fundamentals]] [2019] Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context - [paper](https://arxiv.org/abs/1901.02860)
 - [ ] [2021] NNCP v2: Lossless Data Compression with Transformer - [paper](https://bellard.org/nncp/nncp_v2.1.pdf)
+- [ ] [code] <https://github.com/nayuki/Reference-arithmetic-coding>
+- [ ] [2021] [code] NNCP v2 code - <https://bellard.org/nncp/>
 - [x] NNCP v3/v3.3 - pure C version; LibNC for tensorops not open?
 
 ## [2019] NNCP: Lossless Data Compression with Neural Networks
