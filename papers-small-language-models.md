@@ -1,17 +1,19 @@
 # Small Language Models
 
 - **Created**: 2026-05-15
-- **Last Updated**: 2026-06-10
+- **Last Updated**: 2026-07-07
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-reversal-curse]]
   - [[papers-memory-architectures]]
+  - [[compression]]
 
 ---
 
 - [x] [2025] FLM: Towards Fundamental Language Models: Does Linguistic Competence Scale with Model Size? - [paper](https://arxiv.org/abs/2509.02225)
 - [x] [2026] IKP: Incompressible Knowledge Probes: Estimating Black-Box LLM Parameter Counts via Factual Capacity - [paper](https://arxiv.org/abs/2604.24827)
 - [x] [2025] [Position] Small Language Models are the Future of Agentic AI - [paper](https://arxiv.org/abs/2506.02153)
+- [ ] [2025] [jxmo,FAIR] How Much Do Language Models Memorize? - [paper](https://arxiv.org/abs/2505.24832). ~3.6 bits/param capacity; separates unintended memorization from generalization via compression; upstream of IKP. cf. [[compression]]
 - [ ] [2025] BabyLM: Findings of the BabyLM Challenge: Sample-Efficient Pretraining on Developmentally Plausible Corpora - [paper](https://arxiv.org/abs/2504.08165)
 - [ ] [2025] BabyVLM: Data-Efficient Pretraining of VLMs Inspired by Infant Learning - [paper](https://arxiv.org/abs/2504.09426)
 - [ ] [2026] EgoBabyVLM: Benchmarking Cross-Modal Learning from Naturalistic Egocentric Video Data - [paper](https://arxiv.org/abs/2605.19130)

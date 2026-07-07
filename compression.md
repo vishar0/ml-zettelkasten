@@ -22,11 +22,12 @@
 - [x] [talk] [ilya] [2023] An Observation on Generalization (Simons Institute) - [video](https://www.youtube.com/live/AKMuA_TVz3A)
 - [ ] [talk] [jackrae] [2023] Compression for AGI (Stanford MLSys) - [video](https://www.youtube.com/watch?v=dO4TPJkeaaU)
 - [ ] [talk] [3blue1brown] [2026] Reinventing Entropy: Compression is Intelligence Part 1 - [video](https://www.youtube.com/watch?v=l6DKRf-fAAM&t=824s)
-- [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668)
+- [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668), [code](https://github.com/google-deepmind/language_modeling_is_compression)
 - [ ] [2024] Compression Represents Intelligence Linearly - [paper](https://arxiv.org/abs/2404.09937)
 - [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
 - [ ] [jveness] [2025] ActivePTW: Partition Tree Weighting for Non-Stationary Stochastic Bandits - [paper](https://arxiv.org/abs/2502.19325), [code](https://github.com/google-deepmind/active_ptw)
 - [ ] [albertgu] [2025] CompressARC: ARC-AGI Without Pretraining - [blog](https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/arc_agi_without_pretraining.html), [paper](https://arxiv.org/abs/2512.06104). cf. [[papers-latent-recursive-reasoning]]
+- [ ] [[papers-small-language-models]] [2025] [jxmo,FAIR] How Much Do Language Models Memorize? - [paper](https://arxiv.org/abs/2505.24832)
 - [ ] [2022] Less is More: Parameter-Free Text Classification with Gzip - [paper](https://arxiv.org/abs/2212.09410)
 - [x] [2025] zip2zip: Inference-Time Adaptive Tokenization via Online Compression - [paper](https://arxiv.org/abs/2506.01084)
 - [ ] [schmidhuber] [2009] Driven by Compression Progress: A Simple Principle Explains Essential Aspects of Subjective Beauty, Novelty, Surprise, Interestingness, Attention, Curiosity, Creativity, Art, Science, Music, Jokes - [paper](https://arxiv.org/abs/0812.4360). cf. [[papers-open-ended-learning]]
@@ -36,6 +37,32 @@
 - [ ] TODO <https://www.adaptiveagents.org/_media/universal-ai-as-imitation.pdf>
 
 ---
+
+## [2023] [jveness] [Language Modeling is Compression](https://arxiv.org/abs/2309.10668)
+
+- **Date**: 2026-07-07
+- **Code**: <https://github.com/google-deepmind/language_modeling_is_compression>
+
+---
+
+- **Abstract**:
+  - > **It has long been established that predictive models can be transformed into lossless compressors and vice versa**. Incidentally, in recent years, the machine learning community has focused on training increasingly large and powerful self-supervised (language) models. Since these large language models exhibit impressive predictive capabilities, they are well-positioned to be strong compressors. In this work, we advocate for viewing the prediction problem through the lens of compression and evaluate the compression capabilities of large (foundation) models. We show that **large language models are powerful general-purpose predictors and that the compression viewpoint provides novel insights into scaling laws, tokenization, and in-context learning**. For example, Chinchilla 70B, while trained primarily on text, compresses ImageNet patches to 43.4% and LibriSpeech samples to 16.4% of their raw size, beating domain-specific compressors like PNG (58.5%) or FLAC (30.3%), respectively. Finally, we show that the **prediction-compression equivalence allows us to use any compressor (like gzip) to build a conditional generative model**.
+- **Intro**:
+  - The Shannon foundation — likelihood maximization ≡ code-length minimization:
+    - > Information theory and machine learning are inextricably linked and have even been referred to as "two sides of the same coin" (MacKay, 2003). One particularly elegant connection is the essential equivalence between probabilistic models of data and lossless compression. The source coding theorem (Shannon, 1948) is the fundamental theorem describing this idea, i.e., **the expected message length in bits of an optimal entropy encoder is equal to the negative log2-likelihood of the statistical model**. In other words, **maximizing the log2-likelihood (of the data) is equivalent to minimizing the number of bits required per message**. Indeed, lossless compression with a probabilistic model can be achieved in a variety of different ways, including Huffman coding (Huffman, 1952), arithmetic coding (Pasco, 1977; Rissanen, 1976), and asymmetric numeral systems (Duda, 2009).
+  - Why arithmetic coding: the coder is already optimal, so compression quality = model quality:
+    - > **Arithmetic coding, in particular, is known to be optimal in terms of coding length, meaning that the overall compression performance depends on the capabilities of the probabilistic model** (see Fig. 1 for an overview of arithmetic coding)
+  - Online vs offline — the paper studies the *offline* side (NNCP/Bellard is the online side); frozen weights ⇒ all per-file adaptation happens in-context:
+    - > **In the online setting, a pseudo-randomly initialized model is directly trained on the stream of data that is to be compressed, while the offline setting, which we consider in our work, trains the model on an external dataset before employing it to compress a (potentially different) data stream. Consequently, offline compression is performed in-context, with a fixed set of model parameters**
+  - Context length is the binding constraint of offline compression (and evaporates at chunk boundaries — 2048-byte chunks are compressed independently):
+    - > **The context length is a key limiting factor in offline compression, as it dictates the maximum number of bytes a model can compress at a time.** Transformers can only compress a few kilobytes (each "token" being coded with 2 or 3 bytes), while requiring a lot of compute. Correspondingly, many challenging predictive tasks (e.g., algorithmic reasoning or long-term memory) require long contexts (Delétang et al., 2023), and thus extending these models' context lengths is a key challenge which is gaining increased attention (Zaheer et al., 2020; Guo et al., 2022; Bulatov et al., 2023). **The in-context compression view provides insights into the failure modes of current foundation models.**
+  - Scaling laws with the L(M) twist — the compression view is the log-loss view *plus model-size accounting*:
+    - > we shed new light on scaling laws (Kaplan et al., 2020), showing that they also hold true for compression but that measuring the adjusted compression rates instead of the log loss adds a twist: **Scaling beyond a certain point will deteriorate the compression performance since the model parameters need to be accounted for in the compressed output.**
+  - The thesis line:
+    - > we advocate for framing (self-supervised) prediction through the lens of compression as it encompasses generalization: **a model that compresses well generalizes well** (Hutter, 2006).
+  - Tokenization = pre-compression (contribution bullet; detailed in §3.6):
+    - > We demonstrate that **tokenization, which can be viewed as a pre-compression, does, in general, not improve compression performance, but allows models to increase the information content in their context** and is thus generally employed to improve prediction performance.
+- TODO
 
 ## [2014] [jveness] [CNC: Compress and Control](https://arxiv.org/abs/1411.5326)
 
