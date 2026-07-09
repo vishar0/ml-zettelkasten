@@ -13,10 +13,14 @@
 ---
 
 - [ ] [2019] [Schmidhuber] Reinforcement Learning Upside Down: Don't Predict Rewards, Just Map Them to Actions - [paper](https://arxiv.org/abs/1912.02875), [training agents](https://arxiv.org/abs/1912.02877)
+- [ ] [2019] [SergeyLevine] Reward Conditioned Policies - [paper](https://arxiv.org/abs/1912.13465)
+- [ ] [2019] [SergeyLevine] GCSL: Learning to Reach Goals via Iterated Supervised Learning - [paper](https://arxiv.org/abs/1912.06088)
 - [ ] [2021] [SergeyLevine] Trajectory Transformer: Offline RL as One Big Sequence Modeling Problem - [paper](https://arxiv.org/abs/2106.02039)
 - [x] [2021] [PieterAbbeel] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345), [code](https://github.com/kzl/decision-transformer)
+- [ ] [2022] [FAIR,AmyZhang,AdityaGrover] Online Decision Transformer - [paper](https://arxiv.org/abs/2202.05607)
 - [ ] [2022] [JoshTenenbaum,PulkitAgarwal] Decision Diffuser: Is Conditional Generative Modeling all you need for Decision-Making? - [paper](https://arxiv.org/abs/2211.15657)
 - [x] [2021] [SergeyLevine] RvS: What is Essential for Offline RL via Supervised Learning? - [paper](https://arxiv.org/abs/2112.10751)
+- [ ] [2024] Accelerating Goal-Conditioned RL Algorithms and Research - [paper](https://arxiv.org/abs/2408.11052), [code](https://github.com/MichalBortkiewicz/JaxGCRL)
 - [ ] [2022] [JimmyBa] You Can't Count on Luck: Why Decision Transformers and RvS Fail in Stochastic Environments - [paper](https://arxiv.org/abs/2205.15967)
 - [ ] [2010] [jveness] MC-AIXI-CTW: Reinforcement Learning via AIXI Approximation - [paper](https://arxiv.org/abs/1007.2049)
 - [ ] [2024] [jveness] Generative Reinforcement Learning with Transformers - [paper](https://openreview.net/forum?id=6qtDu7hVPF)
@@ -133,6 +137,43 @@
 
 - **Abstract**:
   - > Recently, methods such as Decision Transformer [1] that reduce reinforcement learning to a prediction task and solve it via supervised learning (RvS) [2] have become popular due to their simplicity, robustness to hyperparameters, and strong overall performance on offline RL tasks. **However, simply conditioning a probabilistic model on a desired return and taking the predicted action can fail dramatically in stochastic environments since trajectories that result in a return may have only achieved that return due to luck.** In this work, we describe the limitations of RvS approaches in stochastic environments and propose a solution. Rather than simply conditioning on the return of a single trajectory as is standard practice, our proposed method, **ESPER, learns to cluster trajectories and conditions on average cluster returns, which are independent from environment stochasticity.** Doing so allows ESPER to achieve strong alignment between target return and expected performance in real environments. We demonstrate this in several challenging stochastic offline-RL tasks including the challenging puzzle game 2048, and Connect Four playing against a stochastic opponent. In all tested domains, ESPER achieves significantly better alignment between the target return and achieved return than simply conditioning on returns. ESPER also achieves higher maximum performance than even value-based baselines.
+- **One-liner**: return-conditioning (DT/RvS) breaks in stochastic environments because a high realized return can be *luck*, not skill; the fix (ESPER) is to condition on a learned statistic that is **independent of environment stochasticity** — the *expected* return of a trajectory's behavior — recovered by adversarially clustering trajectories.
+- **Intro**:
+  - What an RvS agent is really asking:
+    - > These agents ask the question "**if I assume the desired outcome will happen, in my experience what action do I typically take next.**"
+  - The failure, and that it is fundamental (not a data/scale issue):
+    - > methods that condition on outcomes such as return **can make incorrect decisions in stochastic environments regardless of scale or the amount of data they are trained on**.
+    - > This is because implicitly these methods assume that **actions that end up achieving a particular goal are optimal for achieving that goal**.
+    - > This assumption is not true in stochastic environments, where it is possible that the actions taken in the trajectory were actually sub-optimal and that the **outcome was only achieved due to lucky environment transitions**
+  - The gambling example (Fig. 1):
+    - > Though there may be many episodes in which an agent gets a positive return from gambling ($a_0$ or $a_1$), gambling is sub-optimal since it results in a negative return in expectation while $a_2$ always results in a positive return. **Since RvS takes all of these trajectories as expert examples of how to achieve the goal, RvS will act sub-optimally.**
+  - Why it's ill-posed (there's no policy that generates the conditioned data):
+    - > when conditioning on trajectories that achieve a positive reward, the model doesn't get to see any of the trajectories where the same sequence of actions leads to a negative reward. Due to these unrealistic dynamics, **there is no policy that would generate this set of trajectories in the real environment, so it doesn't make sense to treat them as expert trajectories.**
+  - The insight → the fix:
+    - > Our insight is that there are **certain functions of the trajectory other than return that, when conditioned on, will better preserve the dynamics of the environment.**
+    - > ESPER ... conditioning on outcomes that are **fully determined by the actions of the agent and independent of the uncontrollable stochasticity of the environment**. While trajectory return is not such an outcome, we show that the **expected return of behavior shown in a trajectory is**, and how to learn such a value.
+  - *Intuition*: deterministic tasks can be solved by replaying a good action sequence; stochastic tasks need *reactive* policies, and most real tasks (driving, dialogue) are stochastic — so this is not a corner case.
+  - *Intuition (the bug in one line)*: RvS treats **every** trajectory that hit return $R$ as an expert demo of "how to get $R$." In a stochastic env some hit $R$ by luck *despite* bad actions, so conditioning on $R$ imitates the lucky-but-bad actions.
+- **Formalization (§2)**:
+  - RvS minimizes a distance between a target $z$ and a trajectory statistic $I(\tau)$: $\min_\pi \mathbb{E}_{z\sim p(z),\,\tau\sim p^\pi_z(\tau)}\big[D(I(\tau), z)\big]$. Decision Transformer is the case $I(\tau)=\sum_t \gamma^t r_t$ (return), $D$ = squared error.
+  - **Consistently Achievable (Def 2.1)**: goal $z$ is consistently achievable from $s_0$ under $\pi$ if $\mathbb{E}_{\tau\sim p^\pi_z(\tau\mid s_0)}[D(I(\tau),z)]=0$.
+  - *Intuition*: the statistic you condition on must be one the policy can *reliably hit*. Realized return isn't (luck makes it unachievable-on-demand); expected return is. That's the whole design constraint.
+- **ESPER (three phases)** — models trained alongside the vanilla RvS policy $\pi_\xi$:
+  - clustering model $I(\tau)\sim p_\theta(I(\tau)\mid\tau)$ (discrete cluster id); action predictor $p_\theta(a_t\mid s_t, I(\tau))$; return predictor $\hat R=f_\psi(I(\tau))$; transition (dynamics) predictor $p_\phi(s_{t+1}\mid s_{\le t}, a_{\le t}, I(\tau))$.
+  - **Phase 1 — adversarial clustering**: alternate two losses so $I(\tau)$ carries no information that helps the dynamics model predict next states ⇒ $I(\tau)\perp$ environment stochasticity. A **policy-reconstruction loss** (the action predictor) is added so the trivial constant (luck-free but useless) cluster is avoided and $I(\tau)$ still encodes the *behavior*.
+  - **Phase 2 — cluster average returns**: $\mathcal{L}(\psi)=\mathbb{E}_{I(\tau)\sim p_\theta}\big[\lVert R - f_\psi(I(\tau))\rVert_2^2\big]$.
+  - **Phase 3 — train RvS on predicted returns**: $\mathcal{L}(\xi)=\mathbb{E}_{s_t,a_t,\hat R_t\sim D}\big[-\log \pi_\xi(a_t\mid s_t,\hat R_t)\big]$; deploy by conditioning on a high $\hat R$.
+  - *Intuition (the "cheat" test)*: if the cluster id helps a dynamics model predict the *random* next states, the id has leaked luck. The adversary drives that leakage to 0, so the cluster captures only the **controllable** part of behavior. Its average return is then luck-averaged, i.e. consistently achievable.
+- **Experiments (key points)**:
+  - Domains: a **gambling** toy (Fig. 1), **2048** (reward 1 for making a 128-tile; offline data = random + PPO-expert mix), and **Connect Four vs a stochastic opponent** (opponent misplays 20% of the time).
+  - Metric = **alignment**: does conditioning on target return $R$ actually yield performance $\approx R$?
+  - **Return-conditioned RvS is misaligned and uncontrollable**: e.g. Connect Four caps ~0.2 avg return (~60% win) regardless of target; 2048 stuck ~60% win. **ESPER is aligned and controllable** (Connect Four tunable 30–80% win) and reaches **higher max than CQL** (a strong value-based baseline).
+  - **Not a data problem**: 5%→100% data doesn't help RvS; ESPER improves with data (Fig. 6 left).
+  - **Independence *causes* performance** (Fig. 6 right, confirms Thm 2.1): agents whose statistics let the dynamics model "cheat" (low dynamics loss) perform *worse*.
+  - *Intuition*: ESPER makes the target-return knob mean something — ask for $R$, get $\approx R$; under return-conditioning that knob is a lie in stochastic envs, and no amount of scale/data fixes it.
+- **Positioning vs the delusion line** (Related Work — its own statement of the [[papers-generative-decision-making]] connection to Shaking the Foundations):
+  - > Ortega et al. [30] give a high level view of how sequence modeling can be affected by delusions in various problem settings when not treating actions as interventions. Our contribution is **a more precise characterization of the problem within the framework of RvS which relates the choice of goal to environmental stochasticity** and directly evokes an efficient algorithm for using RvS in stochastic environments **without the need for explicit causal inference or intervention by carefully choosing the goals on which the agents conditions.**
+  - *Intuition*: same disease as Shaking the Foundations (self-delusion from mistreating actions), but the cure here is **choose a luck-independent conditioning statistic** rather than apply do-calculus — a causal fix without the causal machinery. Contrast CIC, which takes the interventional route (mask self-actions from the loss).
 
 ## [2026] [PedroOrtega,Nando] [CIC: Continual, Interactive, Causal Agents](https://love4all.ai/files/continual-interactive-causal-agents.pdf)
 
