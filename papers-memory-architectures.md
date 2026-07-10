@@ -16,7 +16,7 @@ Architectural mechanisms for holding and accessing information *beyond* the stan
 
 The original external-memory wave: a neural controller learns to read/write a separate memory via differentiable (or supervised) addressing.
 
-- [ ] [2014] [AlexGraves,GregWayne] Neural Turing Machines - [paper](https://arxiv.org/abs/1410.5401)
+- [ ] [[papers-ml-fundamentals]] [2014] [AlexGraves,GregWayne] Neural Turing Machines - [paper](https://arxiv.org/abs/1410.5401)
 - [ ] [2014] [FAIR] Memory Networks - [paper](https://arxiv.org/abs/1410.3916)
 - [ ] [2015] [FAIR] End-To-End Memory Networks - [paper](https://arxiv.org/abs/1503.08895)
 - [ ] [2016] [AlexGraves,GregWayne] DNC: Hybrid Computing Using a Neural Network with Dynamic External Memory - [paper](https://www.nature.com/articles/nature20101)
