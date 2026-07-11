@@ -4,7 +4,7 @@
 - **Last Updated**: 2026-06-15
 - **Status**: `In Progress`
 - **Related**:
-  - [[papers-diffusion-models]]
+  - [[papers-diffusion]]
   - [[papers-post-training]]
 
 ---

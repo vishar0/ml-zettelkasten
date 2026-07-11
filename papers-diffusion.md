@@ -1,4 +1,4 @@
-# Diffusion Models
+# Diffusion
 
 - **Created**: 2025-08-19
 - **Last Updated**: 2026-06-15
@@ -14,6 +14,8 @@
 - [ ] [2024] IRED: Learning Iterative Reasoning through Energy Diffusion - [paper](https://arxiv.org/abs/2406.11179)
 - [ ] [2025] Large Language Diffusion Models - [paper](https://arxiv.org/abs/2502.09992)
 - [ ] TODO <https://diffusion.csail.mit.edu/2026/docs/lecture_notes.pdf>
+- [ ] TODO nando's tutorial <https://love4all.ai/blog/diffusion-and-flow-matching-tutorial/>
+- [ ] TODO something on twitter i bookmarked, jacob shared on slack as well (about diffusion tutorial)
 
 ## [2022] The Annotated Diffusion Model
 
