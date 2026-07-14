@@ -1,7 +1,7 @@
 # Compression
 
 - **Created**: 2026-06-07
-- **Last Updated**: 2026-07-02
+- **Last Updated**: 2026-07-14
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-aixi]]
@@ -62,7 +62,114 @@
     - > we advocate for framing (self-supervised) prediction through the lens of compression as it encompasses generalization: **a model that compresses well generalizes well** (Hutter, 2006).
   - Tokenization = pre-compression (contribution bullet; detailed in §3.6):
     - > We demonstrate that **tokenization, which can be viewed as a pre-compression, does, in general, not improve compression performance, but allows models to increase the information content in their context** and is thus generally employed to improve prediction performance.
-- TODO
+- **Background (§2)**:
+  - **Notation / setup**:
+    - Data is a finite sequence $x_{1:n} := x_1x_2\ldots x_n \in \mathcal{X}^n$ over a finite alphabet $\mathcal{X}$. $x_{<j}=x_{1:j-1}$ is the prefix before symbol $j$; $\epsilon$ is the empty string; $sr$ denotes concatenation.
+  - **Coding distributions** — a probabilistic model over the whole sequence tree:
+    - $\rho$ is a sequence of probability mass functions satisfying the prefix-consistency condition
+      $$\rho_n(x_{1:n})=\sum_{y\in\mathcal{X}}\rho_{n+1}(x_{1:n}y),\qquad \rho_0(\epsilon)=1.$$
+      The probability assigned to a prefix must equal the total probability of all its one-symbol continuations: probability mass is neither created nor destroyed as the tree branches.
+    - This makes the next-symbol conditional well-defined:
+      $$\rho(x_n\mid x_{<n})=\frac{\rho(x_{1:n})}{\rho(x_{<n})}.$$
+      Repeatedly applying it gives the chain rules
+      $$\rho(x_{1:n})=\prod_{i=1}^n\rho(x_i\mid x_{<i}),\qquad
+      \rho(x_{j:k}\mid x_{<j})=\prod_{i=j}^k\rho(x_i\mid x_{<i}).$$
+      For an autoregressive LM, these are exactly its successive next-token predictions.
+  - **Lossless compression**:
+    - A binary source code $c:\mathcal{X}^*\to\{0,1\}^*$ maps every possible input sequence $x$ to a bitstring $c(x)$ of integer length $\ell_c(x)$. Lossless means the mapping is uniquely decodable: the original input is recoverable exactly. (Unique decodability is also what forces the Shannon bound below, via Kraft–McMillan: any uniquely decodable code satisfies $\sum_x 2^{-\ell_c(x)}\le 1$.)
+    - The goal is to minimize expected length $L=\mathbb{E}_{x\sim\rho}[\ell_c(x)]$: frequent sequences receive short descriptions and rare sequences long ones.
+    - Shannon's source-coding lower bound is
+      $$L\ge H(\rho),\qquad H(\rho)=\mathbb{E}_{x\sim\rho}[-\log_2\rho(x)].$$
+      This is an *expected* lower bound. The per-sequence ideal $-\log_2\rho(x)$ is real-valued, while a physical codeword has an integer number of bits.
+  - **Arithmetic Coding**:
+    - > Arithmetic Coding Given a coding distribution ρ and a sequence x1:n, arithmetic coding (Pasco, 1977; Rissanen, 1976) constructs a code with almost optimal length. It directly connects coding and compression with prediction and modeling: compressing well means modeling well in a logloss sense and vice-versa. Assuming infinite precision for the arithmetic operations involved, the arithmetic code has length −⌈log ρ(x1:n)⌉ + 1 bits, whereas the optimal code length is − log ρ(x1:n) bits. A practical implementation that is subject to B bit precision adds further O(n2−B) bits (Howard & Vitter, 1991), which is negligible for 32- or 64-bit arithmetic. In the following we consider infinite precision arithmetic coders and refer to Witten et al. (1987) for the finite-precision implementation.
+  - **Why arithmetic coding turns prediction loss into bits**:
+    - Begin with $I_0=[0,1)$. At step $k$, partition the current interval $I_{k-1}=[l_{k-1},u_{k-1})$ into one subinterval per possible next symbol $y$, with width
+      $$|I_k(y)|=|I_{k-1}|\,\rho(y\mid x_{<k}).$$
+      Keep the subinterval for the actual symbol $x_k$ and repeat. Therefore
+      $$|I_n|=\prod_{i=1}^n\rho(x_i\mid x_{<i})=\rho(x_{1:n}).$$
+    - An interval of width $w$ takes about $\log_2(1/w)=-\log_2w$ bits to identify. Hence
+      $$-\log_2\rho(x_{1:n})
+      =-\log_2\prod_{i=1}^n\rho(x_i\mid x_{<i})
+      =\sum_{i=1}^n-\log_2\rho(x_i\mid x_{<i}).$$
+      The right-hand side is cumulative next-token log-loss in bits; arithmetic coding is the mechanical bridge from that sum to an actual bitstream.
+  - **Arithmetic encoder — what the emitted bits mean**:
+    - Under Fig. 1's convention, an $\ell$-bit prefix names a rigid *dyadic interval*
+      $$D_{k,\ell}=\left[k2^{-\ell},(k+1)2^{-\ell}\right)$$
+      of width $2^{-\ell}$. For example, `010` names $[0.010_2,0.011_2)=[0.25,0.375)$. These cells lie on a fixed binary grid; they cannot be slid to an arbitrary position.
+    - The selected dyadic cell must be fully contained in the final arithmetic interval $I_n$. Mere overlap is ambiguous: some binary continuations would lie outside $I_n$ and could decode to another sequence.
+  - **The constant per-stream termination/alignment cost**:
+    - Width alone is insufficient because of grid alignment. If $I=[0.30,0.55)$ has width $w=1/4$, no width-$1/4$ two-bit cell fits: $[0.25,0.50)$ protrudes left and $[0.50,0.75)$ protrudes right.
+    - A cell width $d\le w/2$ is always sufficient. From $I$'s left edge $a$, the next grid boundary is at most $d$ away; the complete cell after it ends by $a+2d\le a+w$, so it lies inside $I$.
+    - Since $d=2^{-\ell}$, the worst-case guarantee is
+      $$2^{-\ell}\le\frac{w}{2}
+      \quad\Longrightarrow\quad
+      \ell\ge-\log_2w+1,$$
+      hence a code of at most
+      $$\boxed{\ell\le\left\lceil-\log_2\rho(x_{1:n})\right\rceil+1
+      <-\log_2\rho(x_{1:n})+2}$$
+      bits is guaranteed. The ceiling pays for whole bits; the extra bit halves the dyadic cell to survive worst-case grid alignment. This is an upper bound from width alone, not necessarily the shortest code for a favorably aligned interval.
+    - **Fig. 1 check**: `AIXI` ends at $I=[0.322,0.341)$, so $w=0.019$ and $-\log_2w\approx5.72$. The six-bit cell `010101` is $[0.328125,0.34375)$ and protrudes past $I$; the seven-bit cell `0101010` is $[0.328125,0.3359375)\subset I$. Thus $\lceil5.72\rceil+1=7$ bits, matching the figure.
+    - **Apparent formula typo/inconsistency**: the printed $-\lceil\log\rho(x)\rceil+1$ gives 6 bits for the figure's $\rho(x)=0.019$, whereas Fig. 1's full-cell-containment convention requires 7. The consistent worst-case bound is $\lceil-\log_2\rho(x)\rceil+1$, i.e. less than two bits above ideal log-loss. Termination conventions can shift the exact constant, but not the $O(1)$ conclusion.
+    - This cost is paid **once per independently terminated arithmetic-coding stream**, because fractional symbol costs accumulate before the final interval is rounded to a legal binary prefix. One 1GB stream pays it once; 1,000 independently reset chunks can pay it 1,000 times. This paper's own experiments do exactly that (§3.1: independent 2048-byte chunks), and the cost is still nothing: ~2 bits per 2048-byte chunk ≈ 0.001 bpb. Contrast Huffman coding, whose integer rounding can waste up to nearly one bit *per symbol*.
+  - **Finite-precision cost — separate from termination**:
+    - The mathematical encoder divides real intervals exactly. A practical coder represents bounds and cumulative probabilities on a $B$-bit integer grid, so each subdivision must be rounded. With a deliberately tiny $B=3$, a desired probability $0.3$ corresponds to $2.4$ of 8 units and might become $2/8=0.25$, changing the step cost from $-\log_2 0.3\approx1.737$ to $-\log_2 0.25=2$ bits. At $B=32$, the grid has $2^{32}$ units, so an analogous one-unit error is on the scale of $2^{-32}$.
+    - Tiny rounding errors can occur at every one of the $n$ coding steps, giving the paper's additional $O(n2^{-B})$ bits. This is a scaling statement with hidden constants, not an exact equality; at 32 or 64 bits it is negligible for ordinary stream sizes.
+    - The interval does not eventually become too small for the register: whenever the lower and upper bounds acquire fixed common leading bits, the coder emits those bits and **renormalizes** the unresolved suffix back across the integer range. Witten–Neal–Cleary (1987) supplies the bounded-integer algorithm, including the middle-half case and deferred/pending bits.
+    - Clean distinction: **termination/alignment** is $O(1)$ once per stream; **finite precision** is a minute $O(2^{-B})$ rounding loss per step, accumulating to $O(n2^{-B})$.
+  - **Arithmetic decoder**:
+    - Given the encoded value/prefix and the same $\rho$, start again at $I_0=[0,1)$. At step $k$, find which model-defined subinterval contains the encoded value; its label is $x_k$. Restrict to that interval and repeat.
+    - Encoder and decoder must produce exactly the same conditional probabilities, symbol ordering, quantization, and updates. No symbols need to be transmitted separately: the shared model plus the bits reconstructs them, which is why the procedure is lossless.
+  - **Likelihood maximization = compression-rate minimization**:
+    - > Likelihood Maximization In practice, the source distribution $\rho$ is usually unknown and is instead estimated with a parametric probabilistic model $\hat\rho$. Thus, instead of achieving code length $-\sum_{i=1}^n \log_2 \rho(x_i \mid x_{<i})$ for the sequence $x_{1:n}$, we obtain the suboptimal length $-\sum_{i=1}^n \log_2 \hat\rho(x_i \mid x_{<i})$. As a result, the expected (suboptimal) number of bits is the cross-entropy:
+      > $$H(\rho,\hat\rho):=\mathbb{E}_{x\sim\rho}\left[\sum_{i=1}^n-\log_2\hat\rho(x_i\mid x_{<i})\right]. \tag{2}$$
+      > Thus, we can minimize the expected length of the encoded data stream with symbols distributed according to $\rho$ by minimizing the cross-entropy with respect to some $\hat\rho$, which is equivalent to likelihood maximization (MacKay, 2003). However, Eq. (2) is exactly the same objective used to train current foundation models, i.e., the log-loss. Thus, minimizing the log-loss is equivalent to minimizing the compression rate of that model used as a lossless compressor with arithmetic coding, i.e., current language model training protocols use a maximum-compression objective.
+    - The true source $\rho$ is unknown, so use a model $\hat\rho$. Encoding data drawn from $\rho$ with $\hat\rho$ costs
+      $$H(\rho,\hat\rho)
+      =\mathbb{E}_{x\sim\rho}\left[\sum_{i=1}^n-\log_2\hat\rho(x_i\mid x_{<i})\right].$$
+    - **Why cross-entropy = entropy + KL** — let $x$ denote a complete sequence and expand the expectation:
+      $$H(\rho,\hat\rho)=-\sum_x\rho(x)\log_2\hat\rho(x).$$
+      Add and subtract the true log-probability $\log_2\rho(x)$:
+      $$\begin{aligned}
+      H(\rho,\hat\rho)
+      &=-\sum_x\rho(x)\log_2\rho(x)
+      +\sum_x\rho(x)\log_2\frac{\rho(x)}{\hat\rho(x)}\\
+      &=H(\rho)+D_{\mathrm{KL}}(\rho\Vert\hat\rho).
+      \end{aligned}$$
+    - **Compression meaning**: $H(\rho)$ is the unavoidable expected cost when the true source is known; $D_{\mathrm{KL}}(\rho\Vert\hat\rho)$ is the expected number of **extra bits caused by using the imperfect model** $\hat\rho$. KL is nonnegative and is zero when the model matches the source. Because $H(\rho)$ does not depend on $\hat\rho$, minimizing cross-entropy is exactly minimizing this excess-bit penalty.
+    - For an autoregressive model, the sequence-level probability ratio splits across tokens:
+      $$\log_2\frac{\rho(x_{1:n})}{\hat\rho(x_{1:n})}
+      =\sum_{i=1}^n\log_2\frac{\rho(x_i\mid x_{<i})}{\hat\rho(x_i\mid x_{<i})}.$$
+      Thus the total KL/compression penalty accumulates from the model's next-token probability errors at each context.
+    - Minimizing cross-entropy/log-loss in $\hat\rho$ is therefore the same optimization as minimizing its expected arithmetic-coded length. Standard next-token maximum-likelihood training is already a **maximum-compression objective**, even if no coder is run.
+  - **Compression-Based Sequence Prediction — run the equivalence backwards**:
+    - > Compression-Based Sequence Prediction Analogous to how a predictive distribution can be used for lossless compression via arithmetic coding (described above), any compressor can be employed for sequence prediction (Frank et al., 2000). The main idea is to define $\rho(x_{1:n})$ as the coding distribution $2^{-\ell_c(\cdot)}$, where $\ell_c(x_{1:n})$ is the length of sequence $x_{1:n}$ when encoded with compressor $c$ (e.g., gzip). We thus recover the conditional distribution $\rho(x_i \mid x_{<i})$ by computing $2^{\ell_c(x_{<i})-\ell_c(x_{<i}x_i)}$, for all $x_i$.
+    - If a compressor $c$ gives sequence $x$ a code length $\ell_c(x)$, associate short codes with high probability via $\rho(x)\propto2^{-\ell_c(x)}$. The paper writes the induced conditional as
+      $$\rho(x_i\mid x_{<i})
+      =2^{\ell_c(x_{<i})-\ell_c(x_{<i}x_i)}.$$
+      The exponent is the *incremental compressed length* of appending candidate $x_i$: candidates that add fewer bits receive higher predictive weight. In practice, normalize across candidates if the compressor-derived scores are not already a proper probability mass function.
+    - This is how a non-generative-looking compressor such as gzip can be used as a next-symbol predictor/generative model: tentatively append each candidate, measure the change in compressed length, convert bit costs to weights with $2^{-\Delta\ell}$, then sample or choose from the resulting distribution.
+  - **Universal Coding**:
+    - > Universal Coding Above we discussed optimal (arithmetic) coding with respect to data sampled from a fixed distribution $\rho$. In contrast, universal (optimal) source coding with respect to all computable sampling distributions can, in theory, be achieved by choosing $\ell_c(x_{1:n})$ as the Kolmogorov complexity of $x_{1:n}$ (Kolmogorov, 1998; Li & Vitányi, 2019). For this choice, the conditional distribution described above is universally optimal over $x_{<i}$, recovering the Solomonoff predictor (Solomonoff, 1964a;b; Rathmanner & Hutter, 2011). The Solomonoff predictor is a Bayesian mixture of all predictors that can be programmed in a chosen Turing-complete programming language. More precisely, for a predictor $q$ of program-length $\ell_c(q)$ bits, the Solomonoff predictor assigns a prior weight of $2^{-\ell_c(q)}$ to predictor $q$. That is, if $Q$ is the set of all predictors that can be programmed and computed, the Solomonoff predictor assigns probability $S(x_{1:n}) = \sum_{q\in Q} 2^{-\ell_c(q)}q(x_{1:n})$ to a sequence $x_{1:n}$. Therefore, $S(x_{1:n}) \ge 2^{-\ell_c(q)}q(x_{1:n})$ for all $q \in Q$, and thus $-\log_2 S(x_{1:n}) \le -\log_2 q(x_{1:n}) + \ell_c(q)$. Observe that $\ell_c(q)$ is a constant of $q$ that is independent of the sequence length. Therefore, compressing optimally is equivalent to predicting optimally and vice versa (Hutter, 2005).
+    - **Fixed-distribution vs. universal coding**: ordinary arithmetic coding is optimal *relative to a supplied $\rho$*. It does not tell us which $\rho$ to use when the source is unknown. Universal coding asks for one predictor/code that competes with every distribution in a model class; here the class is all computable predictors.
+    - **Kolmogorov complexity** $K(x)$ is the length of the shortest program for a fixed universal Turing machine that outputs $x$. Using $K(x)$ as codelength embodies the strongest possible version of “regular data gets a short description”: whichever computable pattern generated $x$, its shortest program supplies the code. The choice of universal machine changes $K$ only by an additive constant, but $K$ is uncomputable (a consequence of the halting problem), so this is an ideal limit rather than an implementable compressor.
+    - **Solomonoff induction is Bayesian model averaging over programs**:
+      $$S(x_{1:n})=\sum_{q\in Q}\underbrace{2^{-\ell_c(q)}}_{\text{simplicity prior}}\underbrace{q(x_{1:n})}_{\text{predictor likelihood}}.$$
+      Short programs receive exponentially more prior weight: every extra program bit halves the prior. With prefix-free program descriptions, Kraft's inequality ensures the weights fit within total mass 1 (more precisely, Solomonoff induction is generally a semimeasure).
+    - **Why the dominance inequality matters**: the mixture contains the nonnegative contribution of every individual $q$, so for any chosen computable predictor,
+      $$S(x_{1:n})\ge 2^{-\ell_c(q)}q(x_{1:n}).$$
+      Applying $-\log_2$ reverses the inequality and turns the product into a sum:
+      $$\boxed{-\log_2S(x_{1:n})\le -\log_2q(x_{1:n})+\ell_c(q).}$$
+      The left side is Solomonoff's cumulative log-loss/codelength. The right side is a **two-part description**: transmit the predictor in $\ell_c(q)$ bits, then encode the data under it in $-\log_2q(x_{1:n})$ bits.
+    - **The universal guarantee**: relative to any computable $q$, Solomonoff pays at most the one-time model-description penalty $\ell_c(q)$—a constant independent of $n$. Per symbol,
+      $$\frac{-\log_2S(x_{1:n})}{n}
+      \le
+      \frac{-\log_2q(x_{1:n})}{n}+\frac{\ell_c(q)}{n},$$
+      and $\ell_c(q)/n\to0$. Thus the universal predictor asymptotically matches the average log-loss/compression rate of whichever computable predictor is best for the stream, without being told that predictor in advance.
+    - **Why optimal compression = optimal prediction again**: $S$ induces next-symbol probabilities $S(x_i\mid x_{<i})=S(x_{1:i})/S(x_{<i})$, and their cumulative log-loss telescopes:
+      $$\sum_{i=1}^n-\log_2S(x_i\mid x_{<i})=-\log_2S(x_{1:n}).$$
+      A universal codelength therefore gives a universal sequential predictor, while a universal predictor gives a universal arithmetic code. This is the theoretical endpoint; practical universal compressors such as Lempel–Ziv or CTW make computable guarantees only for restricted source classes.
+  - **Connection**: the Solomonoff dominance bound $-\log_2 S(x)\le-\log_2 q(x)+\ell_c(q)$ *is* the two-part code $L(M)+L(X\mid M)$ — the same accounting as this paper's "adjusted compression rate" (§3.2) and the $L(M)$ caveats elsewhere in this file; the universal-coding paragraph is the theory behind the metric. The Solomonoff mixture is the ideal-row anchor for the compression=prediction thesis (cf. [[papers-aixi]]). Witten–Neal–Cleary 1987 is the reference implementation for a finite-precision coder (renormalization, carry/pending bits); cf. [[nncp]].
 
 ## [2014] [jveness] [CNC: Compress and Control](https://arxiv.org/abs/1411.5326)
 
