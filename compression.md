@@ -1,7 +1,7 @@
 # Compression
 
 - **Created**: 2026-06-07
-- **Last Updated**: 2026-07-14
+- **Last Updated**: 2026-07-17
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-aixi]]
@@ -25,7 +25,7 @@
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668), [code](https://github.com/google-deepmind/language_modeling_is_compression)
 - [ ] [2024] Compression Represents Intelligence Linearly - [paper](https://arxiv.org/abs/2404.09937)
 - [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
-- [ ] [jveness] [2025] ActivePTW: Partition Tree Weighting for Non-Stationary Stochastic Bandits - [paper](https://arxiv.org/abs/2502.19325), [code](https://github.com/google-deepmind/active_ptw)
+- [x] [jveness] [2025] ActivePTW: Partition Tree Weighting for Non-Stationary Stochastic Bandits - [paper](https://arxiv.org/abs/2502.19325), [code](https://github.com/google-deepmind/active_ptw)
 - [ ] [albertgu] [2025] CompressARC: ARC-AGI Without Pretraining - [blog](https://iliao2345.github.io/blog_posts/arc_agi_without_pretraining/arc_agi_without_pretraining.html), [paper](https://arxiv.org/abs/2512.06104). cf. [[papers-latent-recursive-reasoning]]
 - [ ] [[papers-small-language-models]] [2025] [jxmo,FAIR] How Much Do Language Models Memorize? - [paper](https://arxiv.org/abs/2505.24832)
 - [ ] [2022] Less is More: Parameter-Free Text Classification with Gzip - [paper](https://arxiv.org/abs/2212.09410)
@@ -320,22 +320,78 @@ The paper signals exactly this by calling them both "coding distributions" (§3.
 
 - **Abstract**:
   - > This paper considers a generalisation of universal source coding for interaction data, namely data streams that have actions interleaved with observations. Our goal will be to construct a coding distribution that is both universal *and* can be used as a control policy. Allowing for action generation needs careful treatment, as naive approaches which do not distinguish between actions and observations run into the self-delusion problem in universal settings. We showcase our perspective in the context of the challenging non-stationary stochastic Bernoulli bandit problem. Our main contribution is an efficient and high performing algorithm for this problem that generalises the Partition Tree Weighting universal source coding technique for passive prediction to the control setting.
-- **One-liner**: derive the agent itself from **universal source coding** — build a coding distribution over the whole interaction stream (actions *and* percepts) and **sample actions from it**. Where CNC (above) used compression for policy *evaluation*, this uses it for the full *policy*, in a **non-stationary** setting. Same lineage (Veness/Hutter): CTW → PTW → CNC → this.
-- **Framing**: agent design from Maximum Expected Utility (RL) vs. from *minimizing the expected bits to losslessly describe agent-environment interactions*. Loss = code length $-\log_2 \nu^\pi(h)$; regret = **redundancy**, which decomposes additively into *environment redundancy* (percept prediction) + *policy redundancy* (distance from the desired policy).
-- **The self-delusion problem** (the durable conceptual point):
-  - Naive approach: one Bayesian mixture over interaction measures, condition on everything observed — *including your own actions*. This fails: the posterior treats the agent's own actions as **evidence about the environment**, so the agent "confirms" hypotheses by acting as those hypotheses' policies would — believing its own outputs as if the world had produced them (Ortega et al. 2021).
-  - Fix: the $\Vert$ notation — actions are **interventions (given), never coded as evidence**: $\nu(e_{1:t} \Vert a_{1:t})$. The posterior over environments updates **only on percepts**.
-  - Resulting policy = **Bayesian Control Rule** (Ortega & Braun 2008): $\hat\pi(a_t \mid h) = \sum_\rho w^\rho_{t-1}\, \pi_\rho(a_t \mid h)$ — mix each candidate environment's *desired policy*, weighted by a percept-only posterior. Sampling from this **is Thompson sampling** — TS drops out of pure coding principles.
-  - Design constraint for any generative decision-making system: **actions must enter the model as interventions, not observations** — a conditional generative model that conditions on actions the same way it conditions on frames walks into this trap the moment it goes on-policy.
-- **PTW construction** (non-stationarity *inside* the model class, not bolted on):
-  - Per-arm **KT estimators** (Beta(½,½) sequential predictors) code a stationary Bernoulli arm; redundancy ≤ (|A|/2)·log n + |A|.
-  - **Partition Tree Weighting**: Bayesian mixture over *all binary temporal partitions* of time (all ways the world might have segmented into stationary regimes), prior weight $2^{-\Gamma_D(\mathcal{P})}$ — shorter tree description ⇒ higher weight, i.e. a **compression prior over change-point structures**. Fresh KT estimators within each segment.
-  - Tractability: ~$2^{2^D}$ partitions, but at time $t$ only $D{+}1$ **active segments** matter (lengths 1, 2, 4, …, $2^D$, from the binary structure of $t$) ⇒ exact posterior in **O(log T) time/space per step**.
-  - **ActivePTW** = generalized Thompson sampling: sample an active segment from the PTW posterior ("when did the current regime start?") → sample arm parameters from that segment's Beta posteriors → act with that environment's reference policy (greedy MEU, or MEU + forced exploration).
-- **Forced exploration serves the coder**: constructed failure mode — a change-point where the previously-best arm's payoff stays the same while another arm silently becomes better; greedy play yields *zero evidence* of the change. Forced exploration at rate $1/\sqrt{l}$ within a segment fixes it (and is what the concentration analysis needs). Pure exploitation can starve the compressor of the data needed to detect change.
-- **Results**: generally beats Sliding-Window UCB (even with oracle window), MASTER, Thompson sampling, UCB across change-point regimes. In stationary environments it *collapses to Thompson sampling* (posterior concentrates on the single-segment partition) — the adaptivity costs essentially nothing when the world is static.
-- **Limits**: bandits only — no state, no long-horizon credit assignment; regret theory for the full algorithm deferred (redundancy bounds + concentration lemmas proven); needs a *reference policy per environment* (trivial for bandits, nontrivial for MDPs — the gap where CNC-style Q-estimation would plug in). BCR mixes reference policies one step at a time, which may under-explore over long horizons (cf. Leike et al. 2016 general TS, BayesEXP).
-- **Connections**: [[nncp]] (adaptive coding of a passive stream ↔ this: adaptive coding of an *interaction* stream); CNC above (evaluation → full policy); PTW's partition posterior *forgets* old segments when the world changes — a compression-native answer to non-stationary/continual adaptation. Wiener's cybernetics (agent as entropy-constrained adaptive process) cited as the spiritual ancestor.
+- **One-liner**: **ActivePTW is Thompson sampling with uncertainty about when the world last changed.** It uses compression to maintain a soft belief over which portion of the past still belongs to the current regime, samples one such history, and acts from it.
+- **Problem being solved**:
+  - A Bernoulli bandit has several arms, each returning success/failure with an unknown probability. Here those probabilities occasionally jump at **unknown change-points**. Between jumps the world is stationary; the agent knows neither when a jump occurred nor the new probabilities.
+  - A stationary learner remembers too much and is poisoned by stale observations. A sliding-window learner forgets, but requires a hand-chosen window size. A hard-reset learner must decide exactly when to restart. **ActivePTW avoids committing to one memory length or one restart schedule.**
+- **The compression framing**:
+  - Describe the entire agent-environment interaction as a code. Its excess length relative to an environment-specific agent splits naturally into two costs:
+    - **environment redundancy** — extra bits because the agent predicts the world's observations poorly;
+    - **policy redundancy** — extra bits because its actions differ from the policy desired for that environment.
+  - A universal agent tries to make both costs sublinear for every environment in its chosen class. “Universal” is therefore **relative to a model class** — here piecewise-stationary Bernoulli bandits — not “universally intelligent.”
+  - The paper's useful reframing is that a good compressor should not merely learn the environment; its predictive distribution can also be turned into a distribution over actions. But this requires two pieces that compression alone does not supply: a causal separation between actions and observations, and a desired **reference policy** for every candidate environment.
+- **The causality wall / self-delusion problem**:
+  - Observations come from the world and are evidence about it. Actions come from the agent and are **interventions**. The agent must remember which action preceded an observation — a reward after pulling arm 2 tells us about arm 2 — but the fact that it chose arm 2 cannot itself count as evidence that the world favors arm 2.
+  - A naive joint sequence model can get this wrong: “I acted as though hypothesis X were true, therefore my action confirms X.” Its belief then tracks its own outputs instead of the environment.
+  - The paper's $\Vert$ notation marks this distinction: actions are given to the percept predictor, but the posterior over environments is updated only by percepts. This is a general design constraint for learned models of interaction, not a bandit-specific trick.
+- **Where the goal enters — an important qualification to “control from compression”**:
+  - For each possible environment $\rho$, the construction assumes a **reference policy** $\pi_\rho$: the behavior we would want if $\rho$ were known to be true. In a bandit this is easy — play the arm with the highest success probability.
+  - The universal policy averages these reference policies according to the current posterior over environments. Equivalently: sample a plausible environment, then behave as though it were true. With stationary Beta-Bernoulli bandits and greedy reference policies, this is exactly **Thompson sampling**.
+  - So compression supplies the beliefs and the uncertainty-aware hedge; the reference policy supplies the **goal and what to do with those beliefs**. ActivePTW relocates rather than eliminates the control objective. This becomes a major obstacle beyond bandits, where “the best action if the environment were known” may itself require expensive planning.
+- **PTW intuition — a soft, learned memory length**:
+  - Imagine many explanations of the past running in parallel: “nothing has changed,” “the current regime began recently,” “it began much earlier,” etc. Each explanation starts fresh per-arm success/failure counts at its proposed segment boundary.
+  - Each segment is scored by how well its per-arm **KT estimator** compresses the rewards observed within it. KT is just a smoothed Beta-Bernoulli predictor: an arm begins uncertain and becomes confident as successes and failures arrive.
+  - Simpler change histories receive more prior weight. A new segment must earn its extra complexity by compressing the recent data enough better than the old, longer segment. This is the MDL trade-off in concrete form: **pay bits for declaring a change; recover those bits if the post-change data really behave differently.**
+  - PTW restricts the candidate histories to a binary tree of nested time segments. That seems restrictive, but any arbitrary segmentation can be covered with only a logarithmic increase in the number of segments. The payoff is large: only about $\log T$ candidate segments are active at any moment rather than an exploding number of complete change histories.
+  - Operationally this behaves like **soft resetting**. In a stable world, posterior mass moves toward one long segment and nearly all history is reused. After a change, shorter segments explain the recent data better, gain posterior mass, and old observations automatically stop influencing actions. No explicit change detector fires and no data are irrevocably deleted.
+- **ActivePTW in plain English** — each step:
+  1. Sample a plausible active segment: “How far back does the current regime extend?”
+  2. Using only observations inside that segment, sample a success probability for every arm from its Beta posterior.
+  3. Apply the reference policy for that sampled environment — normally play the sampled-best arm.
+  4. Observe the reward and update all relevant segment statistics.
+  - Compared with ordinary Thompson sampling, the only conceptual addition is **sampling the current segment before sampling the arm values**.
+  - The tree shares computations across the huge mixture of possible histories: model updates cost $O(\log T)$ per step, memory is $O(|\mathcal A|\log T)$, and sampling an action costs $O(\log T+|\mathcal A|)$.
+- **Why prediction/compression is not enough — exploration controls what can be learned**:
+  - The paper constructs the decisive failure case: the old best arm keeps exactly the same reward probability after a change, while a previously bad arm silently becomes excellent. Continuing to pull the old arm produces perfectly unsurprising data, so neither a compressor nor a change detector can discover the improvement elsewhere.
+  - The forced-exploration reference policy occasionally pulls a random arm, with exploration decaying roughly as the inverse square root of the inferred segment length. The plots call this more cautious variant **ParanoidPTW**; the greedier variant is **ActivePTW**.
+  - This exposes a fundamental difference between passive and active compression: **the agent chooses which data enter its compressor**. A perfect predictor of collected data can still support a bad policy when the policy never collects the discriminating data.
+  - Forced exploration is necessary for the paper's concentration argument and its hard example, but it is a hand-designed addition rather than something derived from source coding. It helps after hidden changes and costs reward in genuinely stationary settings.
+- **Empirical picture**:
+  - In million-step bandits with geometrically distributed change-points, the PTW variants usually beat ordinary Thompson sampling, Sliding-Window UCB, and MASTER when regimes last long enough to be learnable. Sliding-Window UCB is given the unusually favorable oracle setting $W=1/p$ — advance knowledge of the mean regime length — and ActivePTW still often wins.
+  - There is no unconditional victory: with many arms and very frequent changes, there is too little time to rediscover all arm values, and UCB can win. The problem itself becomes increasingly hostile as “number of arms × number of regimes” grows.
+  - In a stationary environment, greedy ActivePTW becomes almost indistinguishable from Thompson sampling. Its posterior favors the single long segment, so the mechanism for change adds little empirical cost when nothing changes.
+  - In the deliberately hidden-change example, greedy ActivePTW fails alongside Thompson sampling because the previously best arm remains unchanged. The forced-exploration variant detects the newly good arm and substantially reduces regret. This is the clearest experiment in the paper because it isolates the information-gathering issue rather than just comparing leaderboards.
+- **What is actually proved**:
+  - The PTW-KT **environment model** has a coding-redundancy guarantee relative to any piecewise-stationary Bernoulli bandit, and the per-arm Beta posterior concentrates when an arm is sampled often enough.
+  - The paper does **not** prove a complete regret bound for the full ActivePTW agent. The missing step is showing that interaction causes the posterior over active segments to concentrate quickly enough on useful change histories. The authors explicitly leave this for future work.
+  - The experiments use a modified PTW prior that increasingly favors simpler segmentations as the number of arms grows. Intuition: with more arms, every fresh segment is more expensive to learn, so the evidence threshold for declaring a new regime should be higher.
+- **What ActivePTW adds — and what it inherits**:
+  - **Inherited**: KT/Beta-Bernoulli prediction, the PTW mixture over tree-structured partitions, Bayesian model averaging, the Bayesian Control Rule, and its stationary-bandit equivalence to Thompson sampling.
+  - **New synthesis**: extend passive PTW to action-conditioned interaction data, compute a posterior over the currently active segment efficiently, and use that posterior inside the Bayesian Control Rule to obtain a practical non-stationary bandit policy.
+  - The algorithmic novelty is therefore not a new compressor or a new general planning method. It is the **efficient coupling of change-point uncertainty to action selection**, plus an empirical demonstration that the result is competitive and reduces to Thompson sampling in the stationary limit.
+  - The conceptual contribution is a clean worked example of how universal coding must change when the data stream contains the learner's own actions: separate environment prediction from policy generation or invite self-delusion.
+- **Relation to CNC / Compress and Control above**:
+  - **CNC** uses compressors to estimate $Q(s,a)$: compare how well return-conditioned models explain a state, recover a value by Bayes inversion, then use an external action-selection rule such as $\epsilon$-greedy. Its main contribution is **compression as policy evaluation** in stateful, finite-horizon problems.
+  - **ActivePTW** has no state or delayed credit assignment. It compresses the bandit's observed rewards, maintains uncertainty over non-stationary regimes, and generates actions by mixing supplied reference policies. Its contribution is **adaptive environment inference plus a universal policy** for the bandit class.
+  - Thus ActivePTW is not simply “CNC made non-stationary.” They solve complementary halves. CNC has a way to turn state/return density estimates into values but no native forgetting; ActivePTW has compression-native forgetting and posterior sampling but assumes the environment-specific policy is easy to obtain.
+  - A natural synthesis would put PTW-style segmentation around CNC's density models, or use CNC-like value estimation to construct reference policies in richer environments. That would still leave exploration and long-horizon planning unresolved.
+- **Other connections**:
+  - **CTW → PTW → ActivePTW**: CTW mixes predictive contexts; PTW mixes temporal restart structures; ActivePTW makes the selected structure influence actions. It is the transition from passive adaptive coding to **active adaptive coding**.
+  - **Thompson sampling**: ActivePTW is best remembered as hierarchical Thompson sampling — first sample the regime's age, then sample its arm parameters. In the stationary limit the first draw becomes irrelevant and ordinary Thompson sampling remains.
+  - **MASTER / restart methods**: rather than choose or randomly trigger one restart schedule, ActivePTW Bayesian-averages many schedules and lets compression evidence weight them.
+  - **[[nncp]] / online compression**: in a passive stream the learner receives whatever comes next; in interaction its current model changes the future training distribution through its actions. This adds the causal-wall and exploration problems that passive online compression does not face.
+  - **Cybernetics**: the paper explicitly connects the view to Wiener — an adaptive process coupled to an input/output channel, with agency framed in terms of entropy and information flow rather than beginning from reward maximization.
+- **Implications for adaptive / continual agents**:
+  - PTW is a useful model of **adaptive memory**: do not choose globally between remembering and forgetting; maintain hypotheses at several timescales and let predictive evidence decide which history is relevant now.
+  - Non-stationarity can be represented inside the model class rather than handled by an external reset heuristic. This is attractive for continual learning because the posterior can return to long memory when the world is stable and shorten memory only when the data pay for the additional change-point complexity.
+  - Yet the strongest negative lesson is equally important: **better compression of experienced data does not imply better actions**. The learner also needs a goal-bearing reference policy and actions that expose the information required to distinguish worlds.
+  - ActivePTW is therefore evidence for a narrower claim than “compression is sufficient for agency”: universal coding can provide principled belief updating, uncertainty, and adaptive forgetting, and can induce a strong controller when the environment-specific action problem is trivial. General control still contains the hard problems of objectives, exploration, state, credit assignment, and planning.
+- **Limits / open directions**:
+  - Bernoulli bandits only: no state, representation learning, delayed reward, or long-horizon credit assignment.
+  - Abrupt piecewise stationarity: gradual drift and recurring latent regimes are not modeled explicitly.
+  - A reference policy must be available for every hypothesized environment; trivial for bandits, potentially as hard as solving the original problem for MDPs.
+  - The Bayesian Control Rule mixes reference policies one step at a time and may not seek enough information over long horizons. More general Thompson-sampling agents and BayesEXP address this with substantially more expensive multi-step reasoning.
+  - Full control-regret theory remains open, and the forced-exploration schedule is supplied rather than derived.
 
 ## [talk] [ilya] [2023] [An Observation on Generalization (Simons Institute)](https://www.youtube.com/live/AKMuA_TVz3A)
 
