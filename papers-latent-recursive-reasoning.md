@@ -1,11 +1,12 @@
 # Latent / Recursive Reasoning
 
 - **Created**: 2026-06-15
-- **Last Updated**: 2026-06-15
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
+- **Description**: Models that reason through recurrent or iterative computation in latent space, including adaptive-depth and looped architectures.
 - **Related**:
-  - [[papers-diffusion]]
-  - [[papers-post-training]]
+  - [[papers-diffusion]] — Both use iterative refinement as computation.
+  - [[papers-post-training]] — Post-training can elicit and shape recursive reasoning.
 
 ---
 

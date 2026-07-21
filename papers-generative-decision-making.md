@@ -1,14 +1,15 @@
 # Generative Decision-Making
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-07-08
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
+- **Description**: Decision-making through conditional generation of actions and trajectories, including goal-, reward-, and return-conditioned models.
 - **Related**:
-  - [[compression]]
-  - [[papers-aixi]]
   - [[papers-rl]]
-  - [[papers-diffusion]]
-  - [[papers-generalist-agents]]
+  - [[papers-aixi]] — The universal limit of prediction-based decision-making.
+  - [[compression]] — A compressor's density model can be used for control.
+  - [[papers-diffusion]] — Diffusion supplies conditional action and trajectory generators.
+  - [[papers-generalist-agents]] — A single sequence model can serve as a policy across diverse tasks and embodiments.
 
 ---
 
