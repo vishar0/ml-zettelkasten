@@ -23,6 +23,7 @@
 - [ ] [talk] [jackrae] [2023] Compression for AGI (Stanford MLSys) - [video](https://www.youtube.com/watch?v=dO4TPJkeaaU)
 - [ ] [talk] [3blue1brown] [2026] Reinventing Entropy: Compression is Intelligence Part 1 - [video](https://www.youtube.com/watch?v=l6DKRf-fAAM&t=824s)
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668), [code](https://github.com/google-deepmind/language_modeling_is_compression)
+- [x] [blog] [2026] Can gzip be a language model? - [blog](https://nathan.rs/posts/gzip-lm/), [code](https://github.com/nathanrs/gzipt)
 - [ ] [2024] Compression Represents Intelligence Linearly - [paper](https://arxiv.org/abs/2404.09937)
 - [ ] [jveness] [2014] CNC: Compress and Control - [paper](https://arxiv.org/abs/1411.5326), [slides](https://www.hutter1.net/publ/scnc.pdf)
 - [x] [jveness] [2025] ActivePTW: Partition Tree Weighting for Non-Stationary Stochastic Bandits - [paper](https://arxiv.org/abs/2502.19325), [code](https://github.com/google-deepmind/active_ptw)
@@ -33,7 +34,6 @@
 - [ ] [schmidhuber] [2009] Driven by Compression Progress: A Simple Principle Explains Essential Aspects of Subjective Beauty, Novelty, Surprise, Interestingness, Attention, Curiosity, Creativity, Art, Science, Music, Jokes - [paper](https://arxiv.org/abs/0812.4360). cf. [[papers-open-ended-learning]]
 - [ ] [2018] [FAIR] Description Length of Deep Learning Models — [papers](https://arxiv.org/abs/1802.07044)
 - [ ] [2019] BB-ANS: Practical Lossless Compression with Latent Variables using Bits Back Coding - [paper](https://arxiv.org/abs/1901.04866). orig. Hinton & van Camp 1993; bridges VAE/diffusion ELBO → real compression; cf. [[papers-vae]] [[papers-diffusion]]
-- [ ] UAI book (Hutter et al. 2024) → see [[papers-aixi]]
 - [ ] TODO <https://www.adaptiveagents.org/_media/universal-ai-as-imitation.pdf>
 
 ---
