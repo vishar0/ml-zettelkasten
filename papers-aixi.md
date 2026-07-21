@@ -1,17 +1,12 @@
 # Universal AI (AIXI)
 
 - **Created**: 2026-07-02
-- **Last Updated**: 2026-07-02
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
+- **Description**: AIXI = **Solomonoff induction (prediction) + expectimax (control)**: the formal, incomputable upper bound of machine intelligence (the "universal AI" framework). Intelligence is measured by the **Legg-Hutter score** (expected cumulative reward over all computable environments, weighted by the universal prior), and AIXI is by definition its maximizer. Incomputable, so it can only be **approximated from below**.
 - **Related**:
-  - [[compression]]
-  - [[nncp]]
-  - [[papers-generative-decision-making]]
-  - [[papers-continual-learning]]
-
----
-
-AIXI = **Solomonoff induction (prediction) + expectimax (control)**: the formal, incomputable upper bound of machine intelligence (the "universal AI" framework). Intelligence is measured by the **Legg-Hutter score** (expected cumulative reward over all computable environments, weighted by the universal prior), and AIXI is by definition its maximizer. Incomputable, so it can only be **approximated from below** with more compute — which is the thread connecting this note to [[compression]] and [[papers-generative-decision-making]].
+  - [[compression]] — Solomonoff induction connects prediction to compression through the universal prior.
+  - [[papers-generative-decision-making]] — AIXI turns a generative world model into control through expectimax.
 
 ---
 
