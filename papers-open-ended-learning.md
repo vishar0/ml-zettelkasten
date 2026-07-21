@@ -1,18 +1,13 @@
 # Open-Ended Learning
 
 - **Created**: 2026-05-05
-- **Last Updated**: 2026-05-05
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
-
----
-
-This is an index note for papers about agents that learn through open-ended environments, curricula, exploration, environment design, or long-horizon open-world interaction.
-
-Primary paper notes stay in their domain files:
-
-- [[papers-rl]] for RL methods, exploration, curricula, and benchmarks.
-- [[papers-world-models]] for learned/generative environments.
-- [[papers-generalist-agents]] for Gato, SIMA, and Minecraft/open-world agent context.
+- **Description**: Agents that learn through open-ended environments, curricula, exploration, environment design, and long-horizon open-world interaction.
+- **Related**:
+  - [[papers-rl]] — Open-ended learning extends RL beyond fixed tasks through exploration, automatic curricula, and environment design.
+  - [[papers-world-models]] — Generated worlds can provide the expanding environment distribution that open-ended learning requires.
+  - [[papers-generalist-agents]] — Training over an expanding task distribution can produce broad, transferable competence.
 
 ---
 
