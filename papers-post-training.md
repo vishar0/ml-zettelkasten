@@ -1,12 +1,13 @@
 # Post-Training
 
 - **Created**: 2026-05-30
-- **Last Updated**: 2026-06-15
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
+- **Description**: Instruction tuning, preference optimization, reinforcement learning, and distillation.
 - **Related**:
-  - [[book-lambert-post-training]]
-  - [[papers-on-policy-distillation]]
-  - [[papers-latent-recursive-reasoning]]
+  - [[book-lambert-post-training]] — A broad primer on post-training methodologies.
+  - [[papers-on-policy-distillation]] — A deep dive into on-policy distillation as a post-training methodology.
+  - [[papers-latent-recursive-reasoning]] — Post-training for reasoning typically scales test-time compute through explicit chain-of-thought, while latent recurrence offers an alternative.
 
 ---
 
