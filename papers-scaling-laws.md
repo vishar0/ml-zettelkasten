@@ -1,10 +1,12 @@
 # Scaling Laws
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-06-17
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
-
-The empirical science of how loss scales with compute, data, and parameters — and how it transfers across distributions. For specific model families and their technical reports, see [[papers-foundation-models]]. For the data-pruning angle (beating power-law scaling), see [[papers-data-centric-ml]].
+- **Description**: The empirical science of how loss scales with compute, data, and parameters, including transfer across distributions.
+- **Related**:
+  - [[papers-foundation-models]] — Scaling laws guide how foundation models allocate parameters, data, and compute.
+  - [[papers-data-centric-ml]] — Data selection can change or beat standard scaling curves.
 
 ---
 
