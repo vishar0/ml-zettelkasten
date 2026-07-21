@@ -1,16 +1,14 @@
 # Memory Architectures
 
 - **Created**: 2026-07-02
-- **Last Updated**: 2026-07-02
+- **Last Updated**: 2026-07-21
 - **Status**: `Not Started`
+- **Description**: Architectural mechanisms for storing and retrieving information beyond standard feedforward weights, including working, episodic, external, and parametric memory.
 - **Related**:
-  - [[papers-small-language-models]]
-  - [[papers-latent-recursive-reasoning]]
-  - [[papers-reversal-curse]]
+  - [[papers-small-language-models]] — External memory expands capacity without scaling model weights.
+  - [[papers-reversal-curse]] — Retrieval architecture may address asymmetric factual recall.
 
 ---
-
-Architectural mechanisms for holding and accessing information *beyond* the standard feedforward weights such as external stores, working/episodic memory, learned read/write and addressing.
 
 ## Foundations: Memory-Augmented Networks (2014–2016)
 

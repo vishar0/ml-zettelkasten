@@ -1,11 +1,12 @@
 # On-Policy Distillation
 
 - **Created**: 2026-06-03
-- **Last Updated**: 2026-06-04
+- **Last Updated**: 2026-07-21
 - **Status**: `Not Started`
+- **Description**: Teacher-guided learning from the student's own behavior, bridging knowledge distillation and on-policy learning.
 - **Related**:
-  - [[papers-post-training]]
-  - [[book-lambert-post-training]]
+  - [[papers-post-training]] — On-policy distillation is a post-training method.
+  - [[book-lambert-post-training]] — Places on-policy distillation in the broader post-training framework.
 
 ---
 
