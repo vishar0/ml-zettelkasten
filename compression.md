@@ -1,13 +1,15 @@
 # Compression
 
 - **Created**: 2026-06-07
-- **Last Updated**: 2026-07-17
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
+- **Description**: The information-theoretic view of compression, including the compression–prediction duality, arithmetic coding, minimum description length (MDL), universal coding, and compression as an objective for learning and control.
 - **Related**:
-  - [[papers-aixi]]
-  - [[papers-generative-decision-making]]
-  - [[nncp]]
-  - [[papers-gln]]
+  - [[classical-compressors]] — Mechanisms and engineering of classical codecs such as gzip, LZMA2, and zstd.
+  - [[nncp]] — Adaptive neural compression on the enwik Hutter Prize benchmarks.
+  - [[papers-aixi]] — Universal prediction and Solomonoff induction.
+  - [[papers-generative-decision-making]] — Decision-making through conditional generative modeling.
+  - [[papers-gln]] — Gated Linear Networks for online probability estimation.
 
 ---
 
