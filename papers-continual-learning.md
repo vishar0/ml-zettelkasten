@@ -1,12 +1,13 @@
 # Continual Learning
 
 - **Created**: 2026-03-01
-- **Last Updated**: 2026-06-10
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
+- **Description**: Learning from non-stationary streams while limiting **catastrophic forgetting**, enabling **forward transfer**, and avoiding **loss of plasticity** over time.
 
 ---
 
-The umbrella topic of learning from a non-stationary stream of tasks. Three sub-challenges that get conflated in the literature:
+Three sub-challenges that get conflated in the literature:
 
 - **Catastrophic forgetting**: performance on old tasks drops when training on new ones. The classic concern; most methods target this (EWC, progressive nets, synaptic intelligence, replay).
 - **Forward transfer**: new tasks should be *faster* to learn because of prior experience. Often ignored by forgetting-focused methods, which buy stability at the cost of transfer (e.g., PackNet has zero forward transfer by construction).
@@ -39,14 +40,14 @@ The umbrella topic of learning from a non-stationary stream of tasks. Three sub-
 - [ ] [2020] [DoinaPrecup] Towards Continual Reinforcement Learning: A Review and Perspectives - [paper](https://arxiv.org/abs/2012.13490)
 - [x] [2021] Continual World: A Robotic Benchmark For Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2105.10919)
 - [ ] [2021] OWL: Same State, Different Task — Continual Reinforcement Learning without Interference - [paper](https://arxiv.org/abs/2106.02940)
-- [ ] [2021] [sutton] Continual Backprop: Stochastic Gradient Descent with Persistent Randomness - [paper](https://arxiv.org/abs/2108.06325)
+- [ ] [2021] [Sutton] Continual Backprop: Stochastic Gradient Descent with Persistent Randomness - [paper](https://arxiv.org/abs/2108.06325)
 - [ ] [2022] [vanDeVen,Tolias] Three types of incremental learning - [paper](https://www.nature.com/articles/s42256-022-00568-3)
 - [ ] [2022] Continual Learning and Private Unlearning - [paper](https://arxiv.org/abs/2203.12817)
 - [ ] [2022] [Mirzadeh,Pascanu] Wide Neural Networks Forget Less Catastrophically - [paper](https://proceedings.mlr.press/v162/mirzadeh22a.html)
 - [ ] [2022] How catastrophic can catastrophic forgetting be in linear regression? - [paper](https://proceedings.mlr.press/v178/evron22a.html)
 - [ ] [2022] A Simple Baseline that Questions the Use of Pretrained-Models in Continual Learning - [paper](https://arxiv.org/abs/2210.04428)
 - [ ] [2023] [deepmind] A Definition of Continual Reinforcement Learning - [paper](https://arxiv.org/abs/2307.11046)
-- [ ] [2024] [sutton] Loss of plasticity in deep continual learning - [paper](https://www.nature.com/articles/s41586-024-07711-7)
+- [ ] [2024] [Sutton] Loss of plasticity in deep continual learning - [paper](https://www.nature.com/articles/s41586-024-07711-7)
 
 ---
 
