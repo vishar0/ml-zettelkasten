@@ -1,10 +1,12 @@
 # Foundation Models
 
 - **Created**: 2025-01-04
-- **Last Updated**: 2025-01-06
+- **Last Updated**: 2026-07-21
 - **Status**: `Paused`
-
-Catalog of specific foundation-model families and their technical reports. For the empirical science of how loss scales with compute/data/params, see [[papers-scaling-laws]].
+- **Description**: Catalog of foundation-model families and their technical reports.
+- **Related**:
+  - [[papers-scaling-laws]] — The empirical science of how loss scales with compute, data, and parameters.
+  - [[papers-post-training]]
 
 ---
 
