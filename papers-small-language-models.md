@@ -1,12 +1,12 @@
 # Small Language Models
 
 - **Created**: 2026-05-15
-- **Last Updated**: 2026-07-07
+- **Last Updated**: 2026-07-21
 - **Status**: `In Progress`
+- **Description**: Smol LMs: capability scaling, factual capacity, memorization, and deployment efficiency.
 - **Related**:
-  - [[papers-reversal-curse]]
-  - [[papers-memory-architectures]]
-  - [[compression]]
+  - [[papers-memory-architectures]] — External memory lets small language models externalize declarative knowledge while retaining procedural competence and reasoning in model weights, echoing the distinction between crystallized and fluid intelligence.
+  - [[compression]] — Compression connects memorization to bits stored per parameter.
 
 ---
 
