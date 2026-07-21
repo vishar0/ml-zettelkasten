@@ -15,7 +15,16 @@
 - **General-purpose vs domain-specific**: gzip, zstd, and xz operate on arbitrary bytes, while codecs such as PNG and FLAC build in inductive biases about images and audio. Domain-specific codecs win when those assumptions match the data.
 - **Compression pipeline**: raw data → reversible representation or transform → model (matches, deltas, or symbol probabilities) → entropy coding (Huffman, arithmetic/range, or ANS) or bit-packing → framed bitstream/file format.
 - **No free lunch**: no lossless compressor can shorten every input, and no codec is best across every source and engineering objective. Compression trades size against speed, memory, and random access by imposing assumptions that help on some data and hurt on others.
-- **Compression–prediction duality**: $p(x_t \mid x_{<t}) \propto 2^{L(x_{<t})-L(x_{\le t})}$. A continuation that adds fewer compressed bits is treated as more probable. Scoring each possible next symbol this way turns a classical compressor into a predictor and generator; [[compression]] develops the information-theoretic connection.
+- **Compression–prediction duality**: associate a sequence with code length $L(x)$ with the score $p(x)=2^{-L(x)}$. Then
+  $$
+  \begin{aligned}
+  p(x_t \mid x_{<t})
+  &= \frac{p(x_{1:t})}{p(x_{1:t-1})} \\
+  &= \frac{2^{-L(x_{1:t})}}{2^{-L(x_{1:t-1})}} \\
+  &= 2^{-\left[L(x_{1:t})-L(x_{1:t-1})\right]}.
+  \end{aligned}
+  $$
+  A continuation that adds fewer compressed bits is therefore more probable. Scoring each possible next symbol this way turns a classical compressor into a predictor and generator. [[compression]] develops the information-theoretic connection.
 
 ## Main Families
 
