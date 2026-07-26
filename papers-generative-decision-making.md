@@ -1,12 +1,12 @@
 # Generative Decision-Making
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-07-21
+- **Last Updated**: 2026-07-25
 - **Status**: `In Progress`
 - **Description**: Decision-making through conditional generation of actions and trajectories, including goal-, reward-, and return-conditioned models.
 - **Related**:
   - [[papers-rl]]
-  - [[papers-aixi]] — The universal limit of prediction-based decision-making.
+  - [[aixi]] — The universal limit of prediction-based decision-making.
   - [[compression]] — A compressor's density model can be used for control.
   - [[papers-diffusion]] — Diffusion supplies conditional action and trajectory generators.
   - [[papers-generalist-agents]] — A single sequence model can serve as a policy across diverse tasks and embodiments.
@@ -211,7 +211,7 @@
   - **Brain analogy (efference copy)**: the motor system sends a copy of each motor command to the sensory system so self-caused sensations are not mistaken for external events (hypothesized reason you cannot tickle yourself). Same move as tagging self-written tokens.
     - > Remark 8. The role played by interventions in our discussion has a parallel in the brain sciences. The central motor system, when issuing a motor signal, generates an efferent copy which is sent to the sensory system. This enables the sensory system to take into account what the intended actions are, so that these are not mistaken for environmental actions. This mechanism is hypothesized to be the reason why one can't tickle oneself [3].
 
-- **Lineage**: predecessor to CIC (2026, below), which turns "actions are interventions" into a practical loss mask; sibling to You Can't Count on Luck (2022, above), the same disease with environment luck rather than the latent task as the confounder. The mixture-over-$\Theta$ framing connects to Bayesian / Solomonoff sequence prediction ([[papers-aixi]]).
+- **Lineage**: predecessor to CIC (2026, below), which turns "actions are interventions" into a practical loss mask; sibling to You Can't Count on Luck (2022, above), the same disease with environment luck rather than the latent task as the confounder. The mixture-over-$\Theta$ framing connects to Bayesian / Solomonoff sequence prediction ([[aixi]]).
 
 ## [2026] [PedroOrtega,Nando] [CIC: Continual, Interactive, Causal Agents](https://love4all.ai/files/continual-interactive-causal-agents.pdf)
 
@@ -299,4 +299,4 @@
 - **Relation to other work**
   - Fixes the same self-delusion the predecessor "Shaking the Foundations" analyzes, but as a token-level training recipe rather than a theoretical account.
   - Contrasts with **Decision Transformer / RvS** (conditioning on outcomes) and **You Can't Count on Luck** (return-conditioning failing under environment stochasticity): those are conditioning methods; CIC takes the interventional route and masks self-actions from the loss. The confounder differs (latent task vs environment luck), but both are instances of conditioning on a quantity you did not cause.
-  - The continual, prequential framing connects to the AIXI / lifelong-compression ideal (see [[papers-aixi]]): self-authored tokens as interventions is the causal form of learning from one's own stream.
+  - The continual, prequential framing connects to the AIXI / lifelong-compression ideal (see [[aixi]]): self-authored tokens as interventions is the causal form of learning from one's own stream.

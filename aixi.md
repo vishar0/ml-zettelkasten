@@ -1,7 +1,7 @@
 # Universal AI (AIXI)
 
 - **Created**: 2026-07-02
-- **Last Updated**: 2026-07-21
+- **Last Updated**: 2026-07-25
 - **Status**: `In Progress`
 - **Description**: AIXI = **Solomonoff induction (prediction) + expectimax (control)**: the formal, incomputable upper bound of machine intelligence (the "universal AI" framework). Intelligence is measured by the **Legg-Hutter score** (expected cumulative reward over all computable environments, weighted by the universal prior), and AIXI is by definition its maximizer. Incomputable, so it can only be **approximated from below**.
 - **Related**:
