@@ -1,13 +1,13 @@
 # ML Hardware
 
 - **Created**: 2025-11-23
-- **Last Updated**: 2025-11-23
+- **Last Updated**: 2026-07-26
 - **Status**: `In Progress`
 
 ---
 
 - [ ] [2019] [Jeff Dean] The Deep Learning Revolution and Its Implications for Computer Architecture and Chip Design - [paper](https://arxiv.org/abs/1911.05289)
-- [ ] [2020] [Sara Hooker] The Hardware Lottery - [paper](https://arxiv.org/abs/2009.06489)
+- [x] [2020] [Sara Hooker] The Hardware Lottery - [paper](https://arxiv.org/abs/2009.06489)
 - [ ] TODO TPU
 - [ ] TODO Ampere arch
 
