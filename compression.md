@@ -1,7 +1,7 @@
 # Compression
 
 - **Created**: 2026-06-07
-- **Last Updated**: 2026-07-25
+- **Last Updated**: 2026-07-26
 - **Status**: `In Progress`
 - **Description**: The information-theoretic view of compression, including the compression–prediction duality, arithmetic coding, minimum description length (MDL), universal coding, and compression as an objective for learning and control.
 - **Related**:
@@ -49,6 +49,19 @@
 
 ---
 
+- [x] **Code**: [google-deepmind/language_modeling_is_compression](https://github.com/google-deepmind/language_modeling_is_compression)
+  - [x] [`arithmetic_coder.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/arithmetic_coder.py) — Finite-precision arithmetic encoder and decoder, including renormalization and termination.
+  - [x] [`compress.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/compress.py) — Evaluation entrypoint: chunked vs unchunked compression, header accounting, and ASCII masking.
+  - [x] `compressors`
+    - [x] [`compressor.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/compressors/compressor.py) — Shared compressor protocol and registry for gzip, LZMA, PNG, FLAC, and the language model.
+    - [x] [`flac.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/compressors/flac.py) — FLAC baseline over byte streams interpreted as mono 8-bit audio.
+    - [x] [`language_model.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/compressors/language_model.py) — Converts Transformer probabilities into a lossless arithmetic code and decodes it autoregressively.
+    - [x] [`png.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/compressors/png.py) — PNG baseline over byte streams reshaped into grayscale images.
+  - [x] [`constants.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/constants.py) — Experimental constants: 488,281 chunks, 2,048 bytes, 32×64 image patches, 256 symbols, and 32-bit arithmetic.
+  - [x] [`data_loaders.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/data_loaders.py) — Converts enwik9, ImageNet, LibriSpeech, and random data into fixed 2,048-byte chunks.
+  - [x] [`train.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/train.py) — Trains the small byte-level Transformer on 2,048-byte enwik8 sequences.
+  - [x] [`transformer.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/transformer.py) — Decoder-only Transformer with causal attention and sinusoidal positional encodings.
+  - [x] [`utils.py`](https://github.com/google-deepmind/language_modeling_is_compression/blob/main/utils.py) — Bit/byte conversion, ASCII-compatible byte transformations, and probability quantization for arithmetic coding.
 - **Abstract**:
   - > **It has long been established that predictive models can be transformed into lossless compressors and vice versa**. Incidentally, in recent years, the machine learning community has focused on training increasingly large and powerful self-supervised (language) models. Since these large language models exhibit impressive predictive capabilities, they are well-positioned to be strong compressors. In this work, we advocate for viewing the prediction problem through the lens of compression and evaluate the compression capabilities of large (foundation) models. We show that **large language models are powerful general-purpose predictors and that the compression viewpoint provides novel insights into scaling laws, tokenization, and in-context learning**. For example, Chinchilla 70B, while trained primarily on text, compresses ImageNet patches to 43.4% and LibriSpeech samples to 16.4% of their raw size, beating domain-specific compressors like PNG (58.5%) or FLAC (30.3%), respectively. Finally, we show that the **prediction-compression equivalence allows us to use any compressor (like gzip) to build a conditional generative model**.
 - **Intro**:
@@ -204,7 +217,7 @@
   - **So what (why §2.3 is here)**: it recasts a *discriminative* task (classification) as *generative modeling + Bayes* — model $P(Y\mid C)$ per class instead of learning $P(C\mid Y)$ directly. CnC is **literally this, run per action $a$, with the "class" = the return $z$**:
 
 | Compression-based classification | CnC (policy evaluation), *per action $a$* |
-|---|---|
+| --- | --- |
 | classify input $Y$ | classify state $s$ |
 | class $C$ | return $z$ |
 | — | action $a$: conditioning context that *selects the classifier* (indexes the $(z,a)$ buckets), not a predicted label — like $D$ in the Bayes formula |
