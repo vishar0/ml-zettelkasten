@@ -1,18 +1,19 @@
 # Open-Ended Learning
 
 - **Created**: 2026-05-05
-- **Last Updated**: 2026-07-21
+- **Last Updated**: 2026-08-06
 - **Status**: `In Progress`
 - **Description**: Agents that learn through open-ended environments, curricula, exploration, environment design, and long-horizon open-world interaction.
 - **Related**:
   - [[papers-rl]] — Open-ended learning extends RL beyond fixed tasks through exploration, automatic curricula, and environment design.
-  - [[papers-world-models]] — Generated worlds can provide the expanding environment distribution that open-ended learning requires.
+  - [[papers-genie]] — Generated worlds can provide the expanding environment distribution that open-ended learning requires.
   - [[papers-generalist-agents]] — Training over an expanding task distribution can produce broad, transferable competence.
 
 ---
 
 ## Core Open-Ended Learning
 
+- [ ] [2022] [rockt] General Intelligence Requires Rethinking Exploration - [paper](https://arxiv.org/abs/2211.07819)
 - [ ] [2021] XLand: Open-Ended Learning Leads to Generally Capable Agents - [paper](https://arxiv.org/abs/2107.12808), [blog](https://deepmind.google/discover/blog/generally-capable-agents-emerge-from-open-ended-play/)
 - [2024] [[papers-rl]] Craftax: A Lightning-Fast Benchmark for Open-Ended Reinforcement Learning - [paper](https://arxiv.org/abs/2402.16801)
 - [2022] [[papers-generalist-agents]] MineDojo: Building Open-Ended Embodied Agents with Internet-Scale Knowledge - [paper](https://arxiv.org/abs/2206.08853), [website](https://minedojo.org/)
@@ -36,9 +37,8 @@
 - [2023] [[papers-generalist-agents]] STEVE-1: A Generative Model for Text-to-Behavior in Minecraft - [paper](https://arxiv.org/abs/2306.00937)
 - [2023] [[papers-generalist-agents]] JARVIS-1: Open-World Multi-task Agents with Memory-Augmented Multimodal Language Models - [paper](https://arxiv.org/abs/2311.05997), [website](https://craftjarvis.org/)
 
-## World Models / Generated Worlds
+## Generated Interactive Worlds
 
-- [2022] [[papers-world-models]] General Intelligence Requires Rethinking Exploration - [paper](https://arxiv.org/abs/2211.07819)
-- [2024] [[papers-world-models]] Genie: Generative Interactive Environments - [paper](https://arxiv.org/abs/2402.15391), [website](https://sites.google.com/view/genie-2024/home)
-- [2024] [[papers-world-models]] Genie 2: A large-scale foundation world model - [blog](https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/)
-- [2025] [[papers-world-models]] Genie 3: A new frontier for world models - [blog](https://deepmind.google/discover/blog/genie-3-a-new-frontier-for-world-models/)
+- [2024] [[papers-genie]] Genie: Generative Interactive Environments - [paper](https://arxiv.org/abs/2402.15391), [website](https://sites.google.com/view/genie-2024/home)
+- [2024] [[papers-genie]] Genie 2: A large-scale foundation world model - [blog](https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/)
+- [2025] [[papers-genie]] Genie 3: A new frontier for world models - [blog](https://deepmind.google/discover/blog/genie-3-a-new-frontier-for-world-models/)

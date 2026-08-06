@@ -1,14 +1,15 @@
 # Generalist Agents
 
 - **Created**: 2026-05-05
-- **Last Updated**: 2026-07-21
+- **Last Updated**: 2026-08-06
 - **Status**: `In Progress`
 - **Description**: Agents that develop broad competence across tasks, environments, modalities, and embodiments.
 - **Related**:
   - [[papers-rl]]
   - [[papers-generative-decision-making]]
   - [[papers-open-ended-learning]]
-  - [[papers-world-models]]
+  - [[papers-dreamer]]
+  - [[papers-genie]]
 
 ---
 

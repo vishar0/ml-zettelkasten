@@ -1,7 +1,7 @@
 # Vision
 
 - **Created**: 2025-07-21
-- **Last Updated**: 2026-02-10
+- **Last Updated**: 2026-08-04
 - **Status**: `In Progress`
 
 ---
@@ -10,6 +10,7 @@
 - [ ] [2022] OpenCLIP: Reproducible scaling laws for contrastive language-image learning — [paper](https://arxiv.org/abs/2212.07143)
   - [ ] OpenCLIP code: <https://github.com/mlfoundations/open_clip>
 - [X] [2023] MetaCLIP: Demystifying CLIP Data — [paper](https://arxiv.org/abs/2309.16671)
+- [x] [2020] ImageGPT: Generative Pretraining from Pixels — [paper](https://cdn.openai.com/papers/Generative_Pretraining_from_Pixels_V2.pdf)
 - [ ] [2020] VQGAN: Taming Transformers for High-Resolution Image Synthesis - [paper](https://arxiv.org/abs/2012.09841)
 - [X] [2022] RQ-VAE & RQ-Transformer: Autoregressive Image Generation using Residual Quantization — [paper](https://arxiv.org/abs/2203.01941)
 - [X] [2022] MaskGIT: Masked Generative Image Transformer — [paper](https://arxiv.org/abs/2202.04200)
@@ -74,6 +75,102 @@
 
 - "We believe that the main ingredient to the success of CLIP is its data and not the model architecture or pre-training objective."
 - MetaCLIP (Metadata-Curated Language-Image Pretraining) aims to reveal CLIP's data curation process.
+
+## [2020] [ImageGPT: Generative Pretraining from Pixels](https://cdn.openai.com/papers/Generative_Pretraining_from_Pixels_V2.pdf)
+
+- **Date**: 2026-08-04
+
+---
+
+- **Question**: Does the GPT recipe transfer from language to vision? More precisely, can a model trained only to predict pixels learn semantic visual representations useful for classification?
+- **Core result**: Yes, at sufficient scale. A decoder-only Transformer trained without labels on low-resolution images learns features that transfer well under linear probing, full fine-tuning, and low-data classification.
+  - This supports the idea that learning a tractable model of $p(x)$ can produce useful features for learning $p(y\mid x)$.
+  - cf. the modality-general compression/prediction argument in [[compression]].
+
+- **Motivation and framing**:
+  - > Unsupervised pre-training played a central role in the resurgence of deep learning. Starting in the mid-2000s, approaches such as the Deep Belief Network (Hinton et al., 2006) and Denoising Autoencoder (Vincent et al., 2008) were commonly used in neural networks for computer vision (Lee et al., 2009) and speech recognition (Mohamed et al., 2009). It was believed that a model which learned the data distribution $P(X)$ would also learn beneficial features for the subsequent supervised modeling of $P(Y\mid X)$ (Lasserre et al., 2006; Erhan et al., 2010). However, advancements such as piecewise linear activation functions (Nair & Hinton, 2010), improved initializations (Glorot & Bengio, 2010), and normalization strategies (Ioffe & Szegedy, 2015; Ba et al., 2016) removed the need for pre-training in order to achieve strong results.
+  - > Other research cast doubt on the benefits of deep unsupervised representations and reported strong results using a single layer of learned features (Coates et al., 2011), or even random features (Huang et al., 2014; May et al., 2017). The approach fell out of favor as the state of the art increasingly relied on directly encoding prior structure into the model and utilizing abundant supervised data to directly learn representations (Krizhevsky et al., 2012; Graves & Jaitly, 2014). Retrospective study of unsupervised pre-training demonstrated that it could even hurt performance in modern settings (Paine et al., 2014).
+  - > Instead, unsupervised pre-training flourished in a different domain. After initial strong results for word vectors (Mikolov et al., 2013), it pushed the state of the art forward in Natural Language Processing on most tasks (Dai & Le, 2015; Peters et al., 2018; Howard & Ruder, 2018; Radford et al., 2018; Devlin et al., 2018). Interestingly, the training objective of a dominant approach like BERT, the prediction of corrupted inputs, closely resembles that of the Denoising Autoencoder, which was originally developed for images.
+  - > As a higher-dimensional, noisier, and more redundant modality than text, images are believed to be difficult for generative modeling. Here, self-supervised approaches designed to encourage the modeling of more global structure (Doersch et al., 2015) have shown significant promise. A combination of new training objectives (Oord et al., 2018), more recent architectures (Gomez et al., 2017), and increased model capacity (Kolesnikov et al., 2019) has allowed these methods to achieve state-of-the-art performance in low-data settings and sometimes even outperform supervised representations in transfer-learning settings.
+  - > Given that it had been a decade since the original wave of generative pre-training methods for images, and considering their substantial impact in NLP, this class of methods was due for a modern re-examination and comparison with recent progress in self-supervised methods. We re-evaluate generative pre-training on images and demonstrate that, when using a flexible architecture (Vaswani et al., 2017), a tractable and efficient likelihood-based training objective (Larochelle & Murray, 2011; Oord et al., 2016), and significant compute resources (2,048 TPU cores), generative pre-training is competitive with other self-supervised approaches and learns representations that significantly improve the state of the art in low-resolution unsupervised representation-learning settings.
+  - > This is especially promising, as our architecture uses a dense connectivity pattern which does not encode the 2D spatial structure of images, yet is able to match and even outperform approaches which do.
+- **Approach**:
+  - Resize each image to a low spatial resolution, flatten it in raster order, and treat it as a one-dimensional token sequence.
+  - The architecture is essentially GPT-2: a decoder-only Transformer with learned positional embeddings and dense self-attention.
+    - It receives no explicit knowledge of the image's two-dimensional structure.
+    - The autoregressive ordering does introduce one weak spatial bias: pixels are encountered in raster order.
+  - In the paper's notation, each pre-norm Transformer block is
+    $$
+    n^\ell=\operatorname{LayerNorm}(h^\ell),
+    \qquad
+    a^\ell=h^\ell+\operatorname{MultiHeadAttention}(n^\ell),
+    \qquad
+    h^{\ell+1}=a^\ell+\operatorname{MLP}\!\left(\operatorname{LayerNorm}(a^\ell)\right).
+    $$
+    - > Layer norms precede both the attention and MLP operations, and all operations lie strictly on residual paths. We find that such a formulation allows us to scale the Transformer with ease.
+  - Two unsupervised objectives are compared:
+    - **Autoregressive pixel prediction**:
+      $$
+      p(x)=\prod_{i=1}^{n}p(x_i\mid x_{<i};\theta),
+      \qquad
+      \mathcal{L}_{\mathrm{AR}}
+      =\mathbb{E}_{x\sim\mathcal{X}}[-\log p(x)].
+      $$
+    - **BERT-style masked-pixel prediction**: independently mask $15\%$ of positions, then predict each masked pixel from the unmasked pixels:
+      $$
+      \mathcal{L}_{\mathrm{BERT}}
+      =
+      \mathbb{E}_{x\sim\mathcal{X}}
+      \mathbb{E}_{M}
+      \left[
+        \sum_{i\in M}-\log p(x_i\mid x_{[1,n]\setminus M})
+      \right].
+      $$
+
+- **Making pixel sequences tractable**:
+  - Dense attention is quadratic in sequence length, so directly modeling a $224\times224$ RGB image is infeasible.
+  - Images are resized to $32^2$, $48^2$, or $64^2$ pixels.
+  - Rather than model the three RGB channel values as three tokens per pixel, the authors cluster RGB values into a learned 512-color palette. Each pixel then becomes one of 512 discrete tokens, shortening the sequence by $3\times$.
+    - **Input resolution (IR)** describes the original RGB representation, such as $32^2\times3$.
+    - **Model resolution (MR)** is the actual Transformer context length after palette quantization, such as $32^2$.
+  - Models range from iGPT-S at 76M parameters to iGPT-XL at 6.8B parameters. The scale is central to the result rather than incidental.
+- **Using the learned representation**:
+  - > One way to measure representation quality is to fine-tune for image classification. Fine-tuning adds a small classification head to the model, which is used to optimize a classification objective, and adapts all weights. Pre-training can be viewed as a favorable initialization or as a regularizer when used in combination with early stopping (Erhan et al., 2010).
+  - > Another approach for measuring representation quality uses the pre-trained model as a feature extractor. In particular, given labeled examples $(X,Y)$, the model is applied to $X$ to produce features $f_X$. A linear classifier is then trained on $(f_X,Y)$. Linear probing captures the intuition that good features should linearly separate the classes of transfer tasks. Furthermore, linear probes help disentangle feature quality from model architecture: in fine-tuning, one model may outperform another because its architecture is more suited for the downstream task rather than because of better pre-training.
+  - In iGPT's implementation, **linear probing** freezes the model, average-pools sequence representations from a chosen Transformer layer, and trains only the linear classifier.
+  - > In supervised pre-training, representation quality tends to increase monotonically with depth, such that the best representations lie at the penultimate layer (Zeiler & Fergus, 2014). Indeed, since a linear layer produces class logits from pre-logits, a good classifier necessarily achieves high accuracy on a linear probe of its pre-logits. If a downstream task also involves classification, it is empirically validated that penultimate features perform well. With generative pre-training, it is not obvious whether a task like pixel prediction is relevant to image classification. This suggests that the penultimate layer of a model trained for pixel prediction might not produce the most useful representations for classification. Latent-variable models such as VAEs can avoid this issue by explicitly learning a representation of the input data, but deep autoregressive generative models have the same width and connectivity pattern at every layer. Our first experiment studies how representation quality varies over one set of candidate representations: different layers of a generative model. We observe a very different behavior from supervised learning: representations first improve as a function of depth and then, starting around the middle layer, begin to deteriorate until the penultimate layer (Figure 2).
+  - > This behavior potentially suggests that these generative models operate in two phases. In the first phase, each position gathers information from its surrounding context in order to build a more global image representation. In the second phase, this contextualized input is used to solve the conditional next-pixel prediction task. This could resemble the behavior of encoder-decoder architectures common across deep learning, but learned within a monolithic architecture via a pre-training objective.
+    - Therefore, evaluating only the final layer understates representation quality; on CIFAR-10 it costs 2.4 percentage points.
+  - **Fine-tuning** averages the final-layer sequence features and trains the entire model with a classification head.
+    - Jointly retaining the generative loss, $\mathcal{L}_{\mathrm{GEN}}+\mathcal{L}_{\mathrm{CLF}}$, works better than classification loss alone.
+- **Evaluation setup**:
+  - > Although supervised pre-training is the dominant paradigm for image classification, curating large labeled image datasets is both expensive and time-consuming. Instead of further scaling up labeling efforts, we can aspire to learn general-purpose representations from the much larger set of available unlabeled images and fine-tune them for classification. We investigate this setting using ImageNet as a proxy for a large unlabeled corpus, and small classic labeled datasets (CIFAR-10, CIFAR-100, STL-10) as proxies for downstream tasks. For our largest model, we use an additional 100 million unlabeled web images, filtered to be similar to ImageNet. Even in cases where labels are available, unsupervised or self-supervised pre-training can still provide benefits in data efficiency or fine-tuning speed. We investigate this setting by pre-training without labels and then fine-tuning or linear probing with labels.
+
+- **Results**:
+  - **Linear probes with iGPT-L**:
+    - CIFAR-10: **96.3%**.
+    - CIFAR-100: **82.8%**.
+    - STL-10: **95.5%**.
+    - These results beat the paper's supervised-transfer and unsupervised-transfer baselines on the three low-resolution datasets, although iGPT is pretrained at a resolution closely matched to CIFAR.
+  - **ImageNet linear probe**:
+    - iGPT-XL reaches **68.7%** using the best single layer.
+    - Concatenating five nearby layers gives **72.0%**, but uses a 15,360-dimensional feature vector.
+    - This is competitive with contemporary self-supervised methods, not best-in-class: the paper reports SimCLR at 76.5% while using standard ImageNet resolution and far fewer parameters.
+  - **Full fine-tuning with iGPT-L** reaches **99.0%** on CIFAR-10 and **88.5%** on CIFAR-100. On ImageNet, the $48^2$ model reaches **72.6%**, versus 53.2% when the same architecture is trained from scratch in the reported baseline.
+  - Better autoregressive validation likelihood correlates with better linear-probe accuracy throughout training. Larger models also learn better representations, including when compared at the same generative loss.
+  - In the low-data CIFAR-10 setting, fixed iGPT features plus logistic regression reach 73.2% with four labels per class and 87.6% with 25 labels per class, though specialized semi-supervised methods remain stronger.
+- **Autoregressive vs. masked prediction**:
+  - Autoregressive pretraining produces substantially better frozen features: the best BERT-style probe is more than one point worse on CIFAR-10 and about six points worse on ImageNet.
+  - Full fine-tuning closes most or all of that gap. This distinguishes **representation quality accessible to a linear probe** from **usefulness as an initialization that can be adapted end to end**.
+  - The masked model also has a train/test mismatch: because it sees corrupted inputs during pretraining, evaluation works better when predictions are ensembled over several random masks.
+- **Takeaways and limitations**:
+  - > Many self-supervised approaches focus on designing auxiliary objectives which support the learning of useful representations without attempting to directly model the input data. Examples include surrogate classification (Dosovitskiy et al., 2015), jigsaw-puzzle solving (Noroozi & Favaro, 2016), and rotation prediction (Gidaris et al., 2018). A cluster of similar approaches based on contrastive losses comparing various views and transformations of input images have recently driven significant progress in self-supervised learning (Hjelm et al., 2018; Bachman et al., 2019; Tian et al., 2019). Among contrastive approaches, our work is most similar to Contrastive Predictive Coding (Oord et al., 2018), which also utilizes an autoregressive prediction objective, but in a learned latent space, and to Selfie (Trinh et al., 2019), which trains a bidirectional self-attention architecture on top of a standard convolutional network to differentiate correct from incorrect patches.
+  - **Main conceptual contribution**: next-token prediction is not inherently linguistic. Even raw pixel prediction can force a sufficiently large sequence model to learn semantic features.
+  - **Generative quality and representation quality align empirically** in this setup: improved likelihood tracks improved classification features.
+  - **Weak inductive bias can be overcome by scale**, but not efficiently. iGPT-L uses roughly 2-3 times as many parameters as similarly performing ImageNet models, and training the largest model required enormous compute.
+  - Low input resolution and dense attention are fundamental constraints. Later image generators address this by modeling compressed latent or discrete visual tokens instead of every raw pixel; see VQGAN, RQ-Transformer, and MaskGIT below.
+  - Relation to ViT: both apply Transformers to images, but iGPT is a decoder-only generative model over rasterized pixels, whereas ViT is an encoder over image patches trained for recognition.
+  - > Finally, our results, considered together with Donahue & Simonyan (2019), suggest revisiting the representation-learning capabilities of other families of generative models, such as flows (Dinh et al., 2014; Kingma & Dhariwal, 2018) and VAEs, in order to study whether they show similarly competitive representation-learning capabilities.
 
 ## [2022] RQ-VAE & RQ-Transformer: Autoregressive Image Generation using Residual Quantization
 
