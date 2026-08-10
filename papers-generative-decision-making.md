@@ -1,7 +1,7 @@
 # Generative Decision-Making
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-07-25
+- **Last Updated**: 2026-08-10
 - **Status**: `In Progress`
 - **Description**: Decision-making through conditional generation of actions and trajectories, including goal-, reward-, and return-conditioned models.
 - **Related**:
@@ -18,6 +18,7 @@
 - [ ] [2019] [SergeyLevine] GCSL: Learning to Reach Goals via Iterated Supervised Learning - [paper](https://arxiv.org/abs/1912.06088)
 - [ ] [2021] [SergeyLevine] Trajectory Transformer: Offline RL as One Big Sequence Modeling Problem - [paper](https://arxiv.org/abs/2106.02039)
 - [x] [2021] [PieterAbbeel] Decision Transformer: Reinforcement Learning via Sequence Modeling - [paper](https://arxiv.org/abs/2106.01345), [code](https://github.com/kzl/decision-transformer)
+- [ ] [2022] [Greg-rec] Q-learning Decision Transformer: Leveraging Dynamic Programming for Conditional Sequence Modelling in Offline RL - [paper](https://arxiv.org/abs/2209.03993)
 - [ ] [2022] [FAIR,AmyZhang,AdityaGrover] Online Decision Transformer - [paper](https://arxiv.org/abs/2202.05607)
 - [ ] [2022] [JoshTenenbaum,PulkitAgarwal] Decision Diffuser: Is Conditional Generative Modeling all you need for Decision-Making? - [paper](https://arxiv.org/abs/2211.15657)
 - [x] [2021] [SergeyLevine] RvS: What is Essential for Offline RL via Supervised Learning? - [paper](https://arxiv.org/abs/2112.10751)

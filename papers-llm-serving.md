@@ -8,7 +8,7 @@
   - [[papers-ml-fundamentals]] — Core architectures, training methods, and language-model concepts.
   - [[papers-foundation-models]] — Foundation-model families and their technical reports.
   - [[book-huggingface-ultrascale-llm-training]] — Large-scale training systems with techniques that also inform inference infrastructure.
-  - [[papers-ml-hardware]] — Hardware constraints and hardware-software co-design.
+  - [[ml-hardware]] — Hardware constraints and hardware-software co-design.
 
 ---
 

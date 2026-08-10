@@ -1,11 +1,15 @@
 # ML Hardware
 
 - **Created**: 2025-11-23
-- **Last Updated**: 2026-07-26
+- **Last Updated**: 2026-08-10
 - **Status**: `In Progress`
 
 ---
 
+- [ ] [UnconventionalAI] Unconventional AI research posts - [blog](https://unconv.ai/)
+  - Hardware-software-algorithm co-design beyond conventional digital accelerators, including physical dynamical systems, analog and mixed-signal computing, memory and data-movement constraints, and biology-scale energy efficiency.
+- [ ] I want a good parallel computer - [2024 talk](https://www.youtube.com/watch?v=c52ziyKOArc), [2025 companion post](https://raphlinus.github.io/gpu/2025/03/21/good-parallel-computer.html)
+  - A graphics-driven exploration of parallel architectures beyond conventional multicore CPUs and GPU dispatch: the hardware design, execution and programming model, memory organization, and algorithms have to evolve together. Watch the talk first; the post is difficult to follow on its own.
 - [ ] [2019] [Jeff Dean] The Deep Learning Revolution and Its Implications for Computer Architecture and Chip Design - [paper](https://arxiv.org/abs/1911.05289)
 - [x] [2020] [Sara Hooker] The Hardware Lottery - [paper](https://arxiv.org/abs/2009.06489)
 - [ ] TODO TPU

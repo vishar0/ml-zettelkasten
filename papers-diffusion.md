@@ -1,7 +1,7 @@
 # Diffusion
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-08-04
+- **Last Updated**: 2026-08-10
 - **Status**: `In Progress`
 - **Related**:
   - [[course-mit-diffusion]] — Structured MIT course with lecture notes, slides, recordings, and labs on flow matching and diffusion models.
@@ -31,7 +31,7 @@
   - Practical sequel to DDPM: cosine noise schedule, learned reverse variances, hybrid loss, improved likelihood, and substantially fewer sampling steps through timestep respacing.
 - [ ] [2015] [JaschaSohlDickstein] Deep Unsupervised Learning using Nonequilibrium Thermodynamics - [paper](https://arxiv.org/abs/1503.03585)
   - Read after DDPM rather than before it. Focus on the fixed forward process and learned reversal; skim older implementation details.
-- [ ] [2021] [Kingma] Variational Diffusion Models - [paper](https://arxiv.org/abs/2107.00630), [code](https://github.com/google-research/vdm)
+- [ ] [2021] [Greg-rec] [Kingma] Variational Diffusion Models - [paper](https://arxiv.org/abs/2107.00630), [code](https://github.com/google-research/vdm)
   - Essential bridge among SNR, the variational bound, estimator variance, likelihood, and bits-back compression.
 
 ## 2. Score, SDE, ODE, and Flow Views
@@ -55,7 +55,7 @@
   - Study the pixel-space fidelity versus learned-latent efficiency tradeoff and the reconstruction bottleneck.
 - [ ] [2023] [EmielHoogeboom,JonathanHeek,TimSalimans] Simple Diffusion: End-to-End Diffusion for High Resolution Images - [paper](https://arxiv.org/abs/2301.11093), [proceedings](https://proceedings.mlr.press/v202/hoogeboom23a.html)
   - Pixel-space alternative to latent diffusion and cascades. Focus on the resolution-dependent log-SNR shift, selective low-resolution scaling and dropout, early downsampling, and the multiscale loss; the shifted cosine schedule is the part used in Nando §2.3.
-- [ ] [2025] [KaimingHe] Back to Basics: Let Denoising Generative Models Denoise - [paper](https://arxiv.org/abs/2511.13720)
+- [ ] [2025] [Greg-rec] [KaimingHe] Back to Basics: Let Denoising Generative Models Denoise - [paper](https://arxiv.org/abs/2511.13720)
   - "Just Image Transformers": clean-data $x$-prediction with simple large-patch transformers directly on pixels. Treat as a promising design lead, not settled doctrine.
 - [ ] [2024] [DanijarHafner,SergeyLevine,PieterAbbeel] One-Step Diffusion via Shortcut Models - [paper](https://arxiv.org/abs/2410.12557)
 - [ ] [2025] [KaimingHe] Mean Flows for One-Step Generative Modeling - [paper](https://arxiv.org/abs/2505.13447)
@@ -82,6 +82,8 @@
   - Concrete single-transformer treatment of mixed discrete text and continuous images using modality-specific losses.
 - [ ] [2024] Diffusion Forcing: Next-Token Prediction Meets Full-Sequence Diffusion - [paper](https://arxiv.org/abs/2407.01392), [project](https://boyuan.space/diffusion-forcing)
   - Independent noise levels per token unify causal next-step prediction, full-sequence diffusion, variable-horizon rollouts, planning, and guidance.
+- [ ] [2024] Rolling Diffusion Models - [paper](https://arxiv.org/abs/2402.09470)
+  - Sliding-window denoising assigns progressively more noise to later frames, committing to the near-term future while preserving greater uncertainty farther ahead. Focus on Figure 2's rolling noise schedule and how it differs from applying one shared noise level to an entire temporal sequence.
 
 **Checkpoint:** design a corruption process for $(o_t,a_t,r_t)$ in which pixels use continuous noise, actions and rewards use a CTMC or mask process, and different frames may have different noise levels. Justify both its loss and sampling semantics.
 
@@ -100,9 +102,13 @@ Start this section only after the core generative-modeling path.
 
 - [ ] [2022] Decision Diffuser: Is Conditional Generative Modeling All You Need for Decision-Making? - [paper](https://arxiv.org/abs/2211.15657)
   - Conditional trajectory generation and guidance.
+- [ ] [2025] [Bengio] Monte Carlo Tree Diffusion for System 2 Planning - [paper](https://arxiv.org/abs/2502.07202)
+  - Recast denoising as tree search over partially denoised plans: evaluate, branch, prune, and revisit candidates so planning quality can improve with inference-time compute. Read as an MCTS-style search extension to diffusion planning, not as a core diffusion prerequisite.
 - [ ] [2023] Diffusion Policy: Visuomotor Policy Learning via Action Diffusion - [paper](https://arxiv.org/abs/2303.04137), [project](https://diffusion-policy.cs.columbia.edu/)
   - Action-sequence diffusion for visuomotor control.
-- [ ] [2025] Efficient Online Reinforcement Learning for Diffusion Policy - [paper](https://openreview.net/forum?id=6Anv3KB9lz)
+- [ ] [2023] [Greg-rec] [SergeyLevine] IDQL: Implicit Q-Learning as an Actor-Critic Method with Diffusion Policies - [paper](https://arxiv.org/abs/2304.10573)
+  - Interpret IQL as an actor-critic method, represent its potentially multimodal implicit actor with a diffusion behavior policy, and use critic-derived weights to extract the intended policy.
+- [ ] [2025] [Greg-rec] Efficient Online Reinforcement Learning for Diffusion Policy - [paper](https://arxiv.org/abs/2502.00361)
   - Reweighted score matching for policy improvement without differentiating through the sampling chain.
 - [ ] [2024] Diffusion-Based Reinforcement Learning via Q-Weighted Variational Policy Optimization - [paper](https://arxiv.org/abs/2405.16173)
   - Explicit $Q$-weighted variational objective discussed in the Universal Learner work.
