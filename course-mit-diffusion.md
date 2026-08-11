@@ -1,7 +1,7 @@
 # [Introduction to Flow Matching and Diffusion Models, MIT](https://diffusion.csail.mit.edu/2026/index.html)
 
 - **Created**: 2026-08-04
-- **Last Updated**: 2026-08-10
+- **Last Updated**: 2026-08-11
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-diffusion]] — Broader reading list covering the foundations, objectives, architectures, and applications of diffusion models.
@@ -959,3 +959,460 @@ $$
 and generate by integrating from $t=1$ back to $t=0$. The substance is the same after reversing or relabeling time; the symbols $x_0$ and $x_1$ do not intrinsically mean “noise” and “data.” In particular, `ConditionalOTFlow` in `offline_atari` is a flow model in the lecture's terminology: its sampling dynamics contain no Brownian term, even though it lives inside the broader diffusion interface.
 
 Lecture 1 has now specified what flow and diffusion generative models **are** and how to simulate them. It has not yet explained how to learn a drift that reaches $p_{\mathrm{data}}$: §3 introduces flow matching for deterministic flows, while §4 introduces score matching and reverse-SDE sampling for diffusion models.
+
+## [Lecture2] Flow Matching
+
+### From a Flow Model to a Training Problem
+
+_**TL;DR:** A flow model can already turn an initial sample into an endpoint; flow matching supplies a tractable target vector field whose endpoint distribution is the data distribution._
+
+Lecture 1 defined a flow model but did not say how to choose its neural vector field. The model is
+
+$$
+X_0\sim p_{\mathrm{init}},
+\qquad
+dX_t=u_t^\theta(X_t)\,dt,
+$$
+
+or equivalently
+
+$$
+\frac{dX_t}{dt}=u_t^\theta(X_t).
+\tag{10}
+$$
+
+Generation means numerically simulating this ODE from $t=0$ to $t=1$ and returning $X_1$. Training must therefore choose $\theta$ so that
+
+$$
+X_0\sim p_{\mathrm{init}}
+\quad\Longrightarrow\quad
+X_1\sim p_{\mathrm{data}}.
+$$
+
+This is a distribution-level requirement: there is no distinguished correct endpoint for any particular initial noise sample. Many different flows can carry the same initial distribution to the same data distribution. Flow matching resolves this freedom by first choosing a convenient path of intermediate distributions and then constructing a vector field that realizes it.
+
+Although this section trains a deterministic ODE, its Gaussian corruption paths will look almost identical to the noising formulas used in diffusion models. The later distinction is in the dynamics used for generation: flow matching here learns an ODE, whereas score-based diffusion constructs a reverse SDE or its associated probability-flow ODE.
+
+### Conditional and Marginal Probability Paths
+
+_**TL;DR:** A conditional path ends at one chosen datum $z$; mixing those paths over $z\sim p_{\mathrm{data}}$ gives the marginal path from noise to the full data distribution._
+
+A **probability path** $(p_t)_{0\leq t\leq1}$ specifies the desired distribution of $X_t$ at every time. It describes a sequence of population snapshots, not how any particular particle moves between snapshots. A vector field, introduced below, supplies those dynamics.
+
+For a fixed data point $z\in\mathbb R^d$, a conditional probability path $p_t(\cdot\mid z)$ satisfies
+
+$$
+p_0(\cdot\mid z)=p_{\mathrm{init}},
+\qquad
+p_1(\cdot\mid z)=\delta_z.
+\tag{11}
+$$
+
+Here $\delta_z$ is the Dirac point mass: a sample from $\delta_z$ equals $z$ with probability one. Thus the conditional path starts with the same noise distribution for every $z$ and gradually collapses onto that one selected data point.
+
+The word **conditional** means "for one fixed endpoint $z$." To recover the whole dataset distribution, first draw the endpoint and then draw a noisy point conditional on it:
+
+$$
+Z\sim p_{\mathrm{data}},
+\qquad
+X_t\sim p_t(\cdot\mid Z).
+\tag{12}
+$$
+
+The resulting marginal density is
+
+$$
+p_t(x)
+=
+\int p_t(x\mid z)p_{\mathrm{data}}(z)\,dz.
+\tag{13}
+$$
+
+"Marginal" means that the latent choice of $z$ has been averaged out. Equation (12) is tractable with a dataset: sample a training example and corrupt it. Equation (13) is generally intractable because evaluating $p_t(x)$ requires integrating over all possible clean data points.
+
+The endpoints follow directly from the conditional endpoints. At $t=0$,
+
+$$
+\begin{aligned}
+p_0(x)
+&=\int p_0(x\mid z)p_{\mathrm{data}}(z)\,dz\\
+&=\int p_{\mathrm{init}}(x)p_{\mathrm{data}}(z)\,dz\\
+&=p_{\mathrm{init}}(x),
+\end{aligned}
+$$
+
+because $p_{\mathrm{data}}$ integrates to one. At $t=1$,
+
+$$
+\begin{aligned}
+p_1(x)
+&=\int \delta_z(x)p_{\mathrm{data}}(z)\,dz\\
+&=p_{\mathrm{data}}(x).
+\end{aligned}
+$$
+
+Therefore
+
+$$
+p_0=p_{\mathrm{init}},
+\qquad
+p_1=p_{\mathrm{data}}.
+\tag{14}
+$$
+
+The conditional and marginal views are two levels of the same construction:
+
+- $p_t(\cdot\mid z)$: what noisy versions of one particular $z$ look like at time $t$;
+- $p_t$: what noisy versions of the entire data distribution look like at time $t$.
+
+### The Gaussian Conditional Probability Path
+
+_**TL;DR:** Form an intermediate sample by scaling a clean datum and a Gaussian-noise sample; changing their coefficients moves the distribution continuously from noise to data._
+
+Let $\alpha_t$ and $\beta_t$ be differentiable schedules satisfying
+
+$$
+\alpha_0=0,
+\quad
+\alpha_1=1,
+\qquad
+\beta_0=1,
+\quad
+\beta_1=0.
+$$
+
+The Gaussian conditional path is
+
+$$
+p_t(\cdot\mid z)
+=
+\mathcal N(\alpha_tz,\beta_t^2I_d).
+\tag{15}
+$$
+
+It can be sampled by
+
+$$
+Z\sim p_{\mathrm{data}},
+\qquad
+\epsilon\sim\mathcal N(0,I_d),
+\qquad
+X_t=\alpha_tZ+\beta_t\epsilon.
+\tag{16}
+$$
+
+Conditioned on $Z=z$,
+
+$$
+\alpha_tz+\beta_t\epsilon
+\sim
+\mathcal N(\alpha_tz,\beta_t^2I_d),
+$$
+
+because scaling a standard Gaussian by $\beta_t$ gives covariance $\beta_t^2I_d$ and adding $\alpha_tz$ shifts its mean.
+
+At the endpoints,
+
+$$
+X_0=\epsilon\sim\mathcal N(0,I_d),
+\qquad
+X_1=Z\sim p_{\mathrm{data}}.
+$$
+
+A particularly simple choice is the conditional optimal-transport, or CondOT, schedule
+
+$$
+\alpha_t=t,
+\qquad
+\beta_t=1-t,
+$$
+
+which gives the straight interpolation
+
+$$
+X_t=tZ+(1-t)\epsilon.
+$$
+
+The schedules need not satisfy $\alpha_t^2+\beta_t^2=1$ for general flow matching. Variance-preserving diffusion schedules often impose such a relation, but CondOT instead prioritizes straight conditional trajectories.
+
+**Time convention.** In these notes, $t=0$ is noise and $t=1$ is data. Many DDPM presentations call clean data $x_0$ and increase noise with $t$. The formulas can be translated by reversing or relabeling time; always check which endpoint is noise.
+
+**A path is not yet a dynamics.** Equation (16) can be used in two ways:
+
+- Drawing a fresh independent $\epsilon$ for every $t$ produces correct snapshots from $p_t(\cdot\mid z)$ but does not connect them into a trajectory.
+- Holding the same $\epsilon$ fixed while varying $t$ couples the snapshots into the path $X_t=\alpha_tz+\beta_t\epsilon$. This coupling will produce the convenient conditional vector field below.
+
+The fixed $\epsilon$ here is an initial latent variable, not a stream of Brownian increments. An SDE simulation instead adds fresh noise throughout time.
+
+### Conditional Vector Fields
+
+_**TL;DR:** A conditional vector field supplies dynamics whose population of trajectories has the prescribed conditional distribution at every time._
+
+For each fixed $z$, a conditional vector field $u_t^{\mathrm{target}}(x\mid z)$ must satisfy
+
+$$
+X_0\sim p_{\mathrm{init}},
+\qquad
+\frac{dX_t}{dt}
+=u_t^{\mathrm{target}}(X_t\mid z)
+\quad\Longrightarrow\quad
+X_t\sim p_t(\cdot\mid z)
+\quad(0\leq t\leq1).
+\tag{17}
+$$
+
+The distinction between a path and a vector field is essential:
+
+- $p_t(x\mid z)$ is a scalar density describing where probability mass is found at time $t$;
+- $u_t(x\mid z)\in\mathbb R^d$ is a velocity describing the direction and speed of motion at $(x,t)$.
+
+Consequently,
+
+$$
+\frac{p_t(x\mid z)-p_{t-\Delta t}(x\mid z)}{\Delta t}
+$$
+
+approximates the scalar density derivative $\partial_tp_t(x\mid z)$, not the vector velocity. The density derivative constrains a vector field through the continuity equation
+
+$$
+\partial_tp_t(x\mid z)
+=
+-\nabla\cdot\bigl(p_t(x\mid z)u_t(x\mid z)\bigr),
+$$
+
+but it does not uniquely determine $u_t$. For example, a rotational field can move particles around inside an isotropic Gaussian without changing the Gaussian density at all. The same probability snapshots can therefore admit different particle trajectories.
+
+By contrast, if $X_t$ and $X_{t-\Delta t}$ are coupled points on the same trajectory, then
+
+$$
+\frac{X_t-X_{t-\Delta t}}{\Delta t}
+\longrightarrow
+\frac{dX_t}{dt}
+$$
+
+does give the trajectory's velocity. The Gaussian construction obtains its vector field from exactly such a shared-$\epsilon$ coupling.
+
+The conditional field is analytically convenient but not itself a useful unconditional generator: it requires knowing $z$, and every trajectory ends at that already-known $z$. Its role is to provide tractable building blocks and, later, tractable regression targets.
+
+### The Marginalization Trick
+
+_**TL;DR:** At a noisy location $x$, average the conditional velocities using the posterior probability that each clean datum $z$ generated that $x$._
+
+Theorem 9 defines the marginal vector field
+
+$$
+u_t^{\mathrm{target}}(x)
+=
+\int
+u_t^{\mathrm{target}}(x\mid z)
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}
+\,dz.
+\tag{18}
+$$
+
+By Bayes' rule,
+
+$$
+p_t(z\mid x)
+=
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)},
+$$
+
+so Equation (18) is the conditional expectation
+
+$$
+\boxed{
+u_t^{\mathrm{target}}(x)
+=
+\mathbb E\!\left[
+u_t^{\mathrm{target}}(x\mid Z)
+\mid X_t=x
+\right].
+}
+$$
+
+The weighting must use the posterior $p_t(z\mid x)$, not just the prior $p_{\mathrm{data}}(z)$. The prior says how common $z$ is globally; the posterior says how much of the probability mass currently located at this particular $x$ came from the component indexed by $z$.
+
+A probability-current view makes both the likelihood factor and the denominator unavoidable. The component associated with $z$ contributes local density
+
+$$
+\rho_z(x)=p_t(x\mid z)p_{\mathrm{data}}(z)
+$$
+
+and local probability current
+
+$$
+J_z(x)=\rho_z(x)u_t(x\mid z).
+$$
+
+After forgetting the component label $z$, currents and densities add:
+
+$$
+J(x)=\int J_z(x)\,dz,
+\qquad
+p_t(x)=\int\rho_z(x)\,dz.
+$$
+
+The effective velocity is current divided by density,
+
+$$
+u_t(x)
+=
+\frac{J(x)}{p_t(x)}
+=
+\frac{\int p_t(x\mid z)p_{\mathrm{data}}(z)u_t(x\mid z)\,dz}{p_t(x)},
+$$
+
+which is Equation (18). Matching the total current makes the marginal density obey the same continuity equation as the mixture of conditional paths. Therefore
+
+$$
+X_0\sim p_{\mathrm{init}},
+\qquad
+\frac{dX_t}{dt}=u_t^{\mathrm{target}}(X_t)
+\quad\Longrightarrow\quad
+X_t\sim p_t,
+\tag{19}
+$$
+
+and in particular $X_1\sim p_{\mathrm{data}}$.
+
+For a concrete two-mode CondOT example, suppose $Z\in\{-a,+a\}$ with equal prior probability. The conditional velocities derived below are
+
+$$
+u_t(x\mid z)=\frac{z-x}{1-t}.
+$$
+
+Using only the prior would give
+
+$$
+\frac12u_t(x\mid+a)+\frac12u_t(x\mid-a)
+=
+-\frac{x}{1-t},
+$$
+
+which pushes everything toward the mean zero. The correct marginal field is instead
+
+$$
+u_t(x)
+=
+\frac{\mathbb E[Z\mid X_t=x]-x}{1-t}.
+$$
+
+Positive $x$ values that are more plausibly noisy versions of $+a$ receive more of the $+a$ velocity; negative values receive more of the $-a$ velocity. The averaging is local and $x$-dependent, so the marginal flow can produce multiple modes rather than collapse to the global mean.
+
+The theorem guarantees the correct distribution at every time. It does not say that a trajectory of the marginal ODE secretly chooses one fixed $z$ and follows that conditional trajectory. Once $z$ is marginalized out, the deterministic ODE uses only the posterior-averaged velocity at its current location.
+
+### Gaussian Conditional Vector Field and Its Derivation (Example 10)
+
+_**TL;DR:** Couple all times with the same initial noise, differentiate that explicit flow, and rewrite the velocity in terms of the current state._
+
+For the Gaussian path
+
+$$
+p_t(\cdot\mid z)=\mathcal N(\alpha_tz,\beta_t^2I_d),
+$$
+
+the target conditional vector field is
+
+$$
+\boxed{
+u_t^{\mathrm{target}}(x\mid z)
+=
+\left(
+\dot\alpha_t
+-\frac{\dot\beta_t}{\beta_t}\alpha_t
+\right)z
++
+\frac{\dot\beta_t}{\beta_t}x.
+}
+\tag{20}
+$$
+
+To derive it without guessing, first define an explicit conditional flow map using an initial point $x_0$:
+
+$$
+\psi_t^{\mathrm{target}}(x_0\mid z)
+=
+\alpha_tz+\beta_tx_0.
+\tag{21}
+$$
+
+If $X_0\sim\mathcal N(0,I_d)$, then
+
+$$
+X_t
+=
+\psi_t^{\mathrm{target}}(X_0\mid z)
+=
+\alpha_tz+\beta_tX_0
+\sim
+\mathcal N(\alpha_tz,\beta_t^2I_d)
+=
+p_t(\cdot\mid z).
+$$
+
+Thus this flow has the desired conditional snapshots. Differentiate it while holding $x_0$ and $z$ fixed:
+
+$$
+\frac{d}{dt}\psi_t^{\mathrm{target}}(x_0\mid z)
+=
+\dot\alpha_tz+\dot\beta_tx_0.
+$$
+
+This is a trajectory velocity expressed using its starting point $x_0$. A vector field must instead be a function of the current state
+
+$$
+x=\psi_t^{\mathrm{target}}(x_0\mid z)
+=
+\alpha_tz+\beta_tx_0.
+$$
+
+For $0\leq t<1$ with $\beta_t>0$, solve for the initial point:
+
+$$
+x_0
+=
+\frac{x-\alpha_tz}{\beta_t}.
+$$
+
+Substitution gives
+
+$$
+\begin{aligned}
+u_t^{\mathrm{target}}(x\mid z)
+&=\dot\alpha_tz
++\dot\beta_t\frac{x-\alpha_tz}{\beta_t}\\
+&=\left(
+\dot\alpha_t
+-\frac{\dot\beta_t}{\beta_t}\alpha_t
+\right)z
++\frac{\dot\beta_t}{\beta_t}x,
+\end{aligned}
+$$
+
+which is Equation (20).
+
+Equivalently, along the shared-noise coupling $X_t=\alpha_tz+\beta_t\epsilon$,
+
+$$
+\frac{X_t-X_{t-\Delta t}}{\Delta t}
+\longrightarrow
+\dot\alpha_tz+\dot\beta_t\epsilon.
+$$
+
+Replacing $\epsilon=(x-\alpha_tz)/\beta_t$ yields the same vector field. This is why differencing **coupled sample locations** can recover velocity whereas differencing density values cannot.
+
+For CondOT, $\alpha_t=t$ and $\beta_t=1-t$, so $\dot\alpha_t=1$ and $\dot\beta_t=-1$. Equation (20) simplifies to
+
+$$
+\begin{aligned}
+u_t^{\mathrm{target}}(x\mid z)
+&=\frac{z-x}{1-t}\\
+&=z-\epsilon
+\qquad\text{when }x=tz+(1-t)\epsilon.
+\end{aligned}
+$$
+
+The second form is especially intuitive: the conditional trajectory is a straight line from initial noise $\epsilon$ to data $z$, so its constant velocity is simply endpoint minus starting point. The expression $(z-x)/(1-t)$ appears singular at $t=1$ only because it infers that constant velocity from a vanishing remaining displacement and time. Along a valid trajectory the ratio has the finite limit $z-\epsilon$.
+
+Up to this point, the analytically known objects are conditional on $z$, while the useful generative field $u_t^{\mathrm{target}}(x)$ involves an intractable integral over all $z$. The next part of Lecture 2 explains how conditional flow matching trains a neural network on tractable conditional targets while implicitly learning this marginal field.
