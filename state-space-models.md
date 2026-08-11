@@ -1,8 +1,10 @@
 # State Space Models (SSM)
 
 - **Created**: 2025-02-28
-- **Last Updated**: 2025-02-28
+- **Last Updated**: 2026-08-11
 - **Status**: `Not Started`
+- **Related**:
+  - [[linear-attention]] — Closely related recurrent sequence models; both compress the past into a fixed-size state, but derive their updates from different starting points.
 
 ---
 

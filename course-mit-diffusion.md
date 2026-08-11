@@ -1,7 +1,7 @@
 # [Introduction to Flow Matching and Diffusion Models, MIT](https://diffusion.csail.mit.edu/2026/index.html)
 
 - **Created**: 2026-08-04
-- **Last Updated**: 2026-08-08
+- **Last Updated**: 2026-08-10
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-diffusion]] — Broader reading list covering the foundations, objectives, architectures, and applications of diffusion models.
@@ -548,3 +548,414 @@ This is the same general pattern as a latent-variable generator $z\mapsto G_\the
 With Euler, sampling takes $n$ neural-network evaluations. The returned $X_1$ approximates $\psi_1^\theta(X_0)$; changing the numerical solver or step size changes the simulation error without changing the underlying learned continuous-time model.
 
 At this point the remaining question is how to choose $\theta$ so that $p_1^\theta\approx p_{\mathrm{data}}$. Section 3 will answer that with flow matching. Section 2.2 first introduces the stochastic counterpart: diffusion models built from SDEs.
+
+### Stochastic Processes and Random Trajectories
+
+_**TL;DR:** An ODE assigns one trajectory to an initial point; an SDE assigns a distribution over trajectories because fresh randomness enters throughout the evolution._
+
+For an ODE, fixing the initial condition $X_0=x_0$ fixes the complete trajectory. An SDE instead produces a **stochastic process**
+
+$$
+(X_t)_{0\leq t\leq 1}.
+$$
+
+There are two complementary ways to look at this object:
+
+- For a fixed time $t$, $X_t$ is a random variable in $\mathbb{R}^d$ with some marginal distribution $p_t$.
+- For one fixed outcome of all the randomness, $t\mapsto X_t$ is one random trajectory, or **sample path**.
+
+More formally, a stochastic process is a function
+
+$$
+X:\Omega\times[0,1]\to\mathbb{R}^d,
+\qquad
+(\omega,t)\mapsto X_t(\omega),
+$$
+
+where $\omega\in\Omega$ represents one outcome of the random experiment. Holding $t$ fixed and varying $\omega$ gives the random variable $X_t$; holding $\omega$ fixed and varying $t$ gives one trajectory.
+
+This distinction prevents a common confusion: the process is not one randomly chosen curve. It is the entire probabilistic rule that can produce many curves. Running the same SDE twice from the same $x_0$ can therefore produce different endpoints.
+
+### Brownian Motion
+
+_**TL;DR:** Brownian motion is continuous-time Gaussian noise: an interval of length $h$ contributes an independent Gaussian displacement with variance $h$ and therefore typical size $\sqrt{h}$._
+
+A $d$-dimensional **Brownian motion**, or **Wiener process**, is a stochastic process $(W_t)_{t\geq0}$ satisfying:
+
+1. It starts at the origin:
+
+   $$
+   W_0=0.
+   $$
+
+2. Its paths $t\mapsto W_t$ are continuous.
+
+3. Its increments are Gaussian. For $0\leq s<t$,
+
+   $$
+   W_t-W_s\sim\mathcal{N}\!\left(0,(t-s)I_d\right).
+   $$
+
+4. Increments over disjoint time intervals are independent.
+
+Taking $s=t$ and advancing by a small step $h$ gives
+
+$$
+W_{t+h}-W_t\sim\mathcal{N}(0,hI_d).
+$$
+
+Consequently, we can simulate its values on a time grid using
+
+$$
+\boxed{
+W_{t+h}=W_t+\sqrt{h}\,\epsilon_t,
+\qquad
+\epsilon_t\sim\mathcal{N}(0,I_d)
+}
+$$
+
+with a fresh independent $\epsilon_t$ at every step.
+
+**Why $\sqrt{h}$ rather than $h$?** If $\epsilon_t\sim\mathcal{N}(0,I_d)$, then
+
+$$
+\operatorname{Var}(\sqrt{h}\,\epsilon_t)=hI_d.
+$$
+
+Over $n=1/h$ independent steps spanning one unit of time, the variances add:
+
+$$
+n h I_d=I_d.
+$$
+
+Scaling the random increment by $h$ would instead produce total variance $nh^2=h\to0$, causing the randomness to disappear as the grid is refined. Using unscaled noise would make the total variance diverge.
+
+The $\sqrt{h}$ scaling has an important consequence. Over a short interval,
+
+$$
+\text{deterministic displacement}=O(h),
+\qquad
+\text{Brownian displacement}=O(\sqrt{h}).
+$$
+
+Brownian paths are continuous but, with probability one, nowhere differentiable. This is why an SDE cannot be interpreted as an ordinary differential equation driven by a conventional derivative $dW_t/dt$.
+
+### From ODEs to SDEs
+
+_**TL;DR:** An SDE combines a directed drift with Brownian spreading: locally it moves by $h$ times the drift plus $\sqrt h$ times fresh Gaussian noise._
+
+For an ODE, a small-time update is
+
+$$
+X_{t+h}
+=
+X_t+h\,u_t(X_t)+hR_t(h),
+$$
+
+where $R_t(h)\to0$ as $h\to0$. Adding a Brownian increment gives
+
+$$
+X_{t+h}
+=
+X_t
++h\,u_t(X_t)
++\sigma_t(W_{t+h}-W_t)
++hR_t(h).
+$$
+
+This motivates the symbolic SDE notation
+
+$$
+\boxed{
+dX_t=u_t(X_t)\,dt+\sigma_t\,dW_t,
+\qquad
+X_0=x_0.
+}
+$$
+
+The two terms have distinct roles:
+
+- $u_t(X_t)\,dt$ is the **drift**. It gives the systematic local direction of travel.
+- $\sigma_t\,dW_t$ is the **diffusion** term. The nonnegative coefficient $\sigma_t$ controls how strongly trajectories spread at time $t$.
+
+A useful local interpretation is
+
+$$
+\mathbb{E}[X_{t+h}-X_t\mid X_t=x]
+\approx
+h\,u_t(x),
+$$
+
+and, for the scalar diffusion coefficient used in the notes,
+
+$$
+\operatorname{Cov}(X_{t+h}-X_t\mid X_t=x)
+\approx
+h\sigma_t^2I_d.
+$$
+
+Thus the drift describes the conditional mean displacement, while the diffusion coefficient describes the conditional covariance of the random displacement.
+
+The notation $dW_t$ is symbolic. The corresponding integral equation is
+
+$$
+X_t
+=
+X_0
++\int_0^t u_s(X_s)\,ds
++\int_0^t\sigma_s\,dW_s.
+$$
+
+The last term is an Itô stochastic integral rather than an ordinary Riemann integral. The course avoids developing the full stochastic-calculus machinery and works through the simulation rule instead.
+
+**What happened to the flow map?** An ODE has a deterministic map $x_0\mapsto\psi_t(x_0)$. For an SDE, $X_t$ is not determined by $x_0$ alone; it also depends on the Brownian path. One can define a random flow after fixing that Brownian path, but there is no single deterministic map of $x_0$ that gives every outcome.
+
+The marginal distribution $p_t$ is nevertheless well-defined and evolves deterministically. For state-independent scalar $\sigma_t$, its evolution is described by the Fokker-Planck equation
+
+$$
+\frac{\partial p_t(x)}{\partial t}
+=
+-\nabla\cdot\left(p_t(x)u_t(x)\right)
++\frac{\sigma_t^2}{2}\Delta p_t(x).
+$$
+
+The first term transports probability according to the drift, just as in the ODE continuity equation. The second term spreads probability through diffusion. Setting $\sigma_t=0$ recovers the ODE case.
+
+### Existence and Uniqueness for SDEs
+
+As in the ODE case, regularity assumptions prevent ambiguous dynamics. The notes use the sufficient conditions that $u$ is continuously differentiable with bounded derivative and $\sigma_t$ is continuous. Under these assumptions, the SDE has a unique solution.
+
+Operationally, uniqueness means that if we fix both
+
+$$
+X_0=x_0
+\quad\text{and}\quad
+(W_t)_{0\leq t\leq1},
+$$
+
+the SDE determines one path $X_t$. Changing the Brownian realization changes the path; ambiguity in the differential equation does not.
+
+Every ODE is the special case
+
+$$
+\sigma_t=0.
+$$
+
+The hierarchy is therefore
+
+$$
+\text{flow model}
+\subset
+\text{SDE model},
+$$
+
+with the flow model obtained by turning off stochasticity in the dynamics.
+
+### Ornstein-Uhlenbeck Process
+
+_**TL;DR:** The Ornstein-Uhlenbeck process balances an inward linear drift against continual Gaussian noise, producing a stationary Gaussian rather than collapsing to zero._
+
+The lecture's main SDE example is
+
+$$
+\boxed{
+dX_t=-\theta X_t\,dt+\sigma\,dW_t,
+\qquad \theta>0.
+}
+$$
+
+This is the **Ornstein-Uhlenbeck (OU) process**. Its two forces compete:
+
+- The drift $-\theta X_t$ pulls the state toward zero. Farther points receive a stronger restoring force.
+- The diffusion term $\sigma dW_t$ continually injects noise and spreads trajectories apart.
+
+Using the integrating factor $e^{\theta t}$ gives the exact solution
+
+$$
+X_t
+=
+e^{-\theta t}X_0
++\sigma\int_0^t e^{-\theta(t-s)}\,dW_s.
+$$
+
+For fixed $X_0=x_0$, the stochastic integral is Gaussian, so
+
+$$
+X_t\mid X_0=x_0
+\sim
+\mathcal{N}\!\left(
+e^{-\theta t}x_0,
+\frac{\sigma^2}{2\theta}
+\left(1-e^{-2\theta t}\right)I_d
+\right).
+$$
+
+The mean decays toward zero:
+
+$$
+\mathbb{E}[X_t\mid X_0=x_0]=e^{-\theta t}x_0,
+$$
+
+while the variance grows from zero toward a finite limit:
+
+$$
+\operatorname{Var}(X_t\mid X_0=x_0)
+=
+\frac{\sigma^2}{2\theta}
+\left(1-e^{-2\theta t}\right)I_d.
+$$
+
+Hence, as $t\to\infty$,
+
+$$
+X_t
+\xrightarrow{d}
+\mathcal{N}\!\left(0,\frac{\sigma^2}{2\theta}I_d\right).
+$$
+
+This explains the trajectories in Figure 3 of the lecture notes:
+
+- With $\sigma=0$, all paths smoothly contract to zero, exactly as in the earlier linear ODE.
+- With $\sigma>0$, trajectories keep fluctuating, but mean reversion prevents them from wandering arbitrarily far.
+- Increasing $\sigma$ increases the equilibrium variance; increasing $\theta$ strengthens mean reversion and decreases it.
+
+The OU process is a useful prototype for diffusion-model noising processes: the signal from the initial condition decays while Gaussian uncertainty accumulates.
+
+### Simulating an SDE with Euler-Maruyama
+
+_**TL;DR:** Euler-Maruyama is Euler's method plus a correctly scaled, independent Gaussian increment at every step._
+
+Choose $n$ steps and set
+
+$$
+h=\frac1n.
+$$
+
+Replacing the Brownian increment by its exact grid distribution,
+
+$$
+W_{t+h}-W_t=\sqrt h\,\epsilon_t,
+\qquad
+\epsilon_t\sim\mathcal{N}(0,I_d),
+$$
+
+gives the **Euler-Maruyama** update
+
+$$
+\boxed{
+X_{t+h}
+=
+X_t
++h\,u_t(X_t)
++\sigma_t\sqrt h\,\epsilon_t,
+\qquad
+\epsilon_t\sim\mathcal{N}(0,I_d).
+}
+$$
+
+Compare the two numerical methods directly:
+
+$$
+\begin{aligned}
+\text{Euler:}\qquad
+X_{t+h}
+&=X_t+h\,u_t(X_t),\\
+\text{Euler-Maruyama:}\qquad
+X_{t+h}
+&=X_t+h\,u_t(X_t)+\sigma_t\sqrt h\,\epsilon_t.
+\end{aligned}
+$$
+
+At each step:
+
+1. Evaluate the drift at the current state.
+2. Move a distance $h\,u_t(X_t)$ in that direction.
+3. Draw a fresh independent $\epsilon_t$.
+4. Add the random displacement $\sigma_t\sqrt h\,\epsilon_t$.
+
+The independent Gaussian draw is part of simulating the modeled dynamics, not merely numerical error. Reusing the same $\epsilon$ at every step would create strongly correlated increments and would not simulate Brownian motion.
+
+As with Euler's method, a smaller $h$ produces a more faithful approximation but requires more evaluations of the neural drift. Because Brownian paths are rough, the general strong convergence rate of Euler-Maruyama is lower than Euler's rate for smooth ODEs; the simulation still converges even though individual paths never become differentiable.
+
+### Diffusion Models as SDE Generators
+
+_**TL;DR:** A diffusion model learns the drift of an SDE whose endpoint distribution should match the data; sampling numerically evolves Gaussian noise while injecting fresh noise along the path._
+
+The lecture now parameterizes the drift with a neural network
+
+$$
+u^\theta:
+\mathbb{R}^d\times[0,1]
+\to
+\mathbb{R}^d,
+\qquad
+(x,t)\mapsto u_t^\theta(x),
+$$
+
+and treats the diffusion coefficient $\sigma_t$ as fixed. Its abstract diffusion model is
+
+$$
+\boxed{
+\begin{aligned}
+X_0&\sim p_{\mathrm{init}},\\
+dX_t&=u_t^\theta(X_t)\,dt+\sigma_t\,dW_t.
+\end{aligned}
+}
+$$
+
+The objective is to choose $\theta$ so that
+
+$$
+X_1\sim p_{\mathrm{data}}.
+$$
+
+Euler-Maruyama sampling is:
+
+1. Set $h=1/n$ and draw $X_0\sim p_{\mathrm{init}}$.
+2. For $t=0,h,\ldots,1-h$:
+
+   $$
+   \epsilon_t\sim\mathcal{N}(0,I_d),
+   $$
+
+   $$
+   X_{t+h}
+   =
+   X_t
+   +h\,u_t^\theta(X_t)
+   +\sigma_t\sqrt h\,\epsilon_t.
+   $$
+
+3. Return $X_1$.
+
+Unlike a flow model, randomness now enters in two places:
+
+$$
+\underbrace{X_0\sim p_{\mathrm{init}}}_{\text{random initial state}}
+\quad\text{and}\quad
+\underbrace{dW_t}_{\text{fresh randomness during evolution}}.
+$$
+
+Setting $\sigma_t=0$ removes the second source and recovers the flow model exactly.
+
+**What does the neural network predict?** In this abstract presentation, it directly parameterizes the SDE drift $u_t^\theta(x)$. Practical diffusion models are often trained to predict a score, noise $\epsilon$, velocity $v$, or clean data $x_0$ instead. Those quantities can be converted algebraically into the drift required by the sampler; §4 develops the score-based construction.
+
+**Time-direction convention.** This lecture labels the generative direction as
+
+$$
+X_0\sim p_{\mathrm{init}}
+\longrightarrow
+X_1\sim p_{\mathrm{data}}.
+$$
+
+DDPM papers and the `offline_atari` implementation usually label the easy corruption direction oppositely:
+
+$$
+x_0\sim p_{\mathrm{data}}
+\longrightarrow
+x_1\approx\mathcal{N}(0,I),
+$$
+
+and generate by integrating from $t=1$ back to $t=0$. The substance is the same after reversing or relabeling time; the symbols $x_0$ and $x_1$ do not intrinsically mean “noise” and “data.” In particular, `ConditionalOTFlow` in `offline_atari` is a flow model in the lecture's terminology: its sampling dynamics contain no Brownian term, even though it lives inside the broader diffusion interface.
+
+Lecture 1 has now specified what flow and diffusion generative models **are** and how to simulate them. It has not yet explained how to learn a drift that reaches $p_{\mathrm{data}}$: §3 introduces flow matching for deterministic flows, while §4 introduces score matching and reverse-SDE sampling for diffusion models.

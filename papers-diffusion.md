@@ -110,7 +110,7 @@ Start this section only after the core generative-modeling path.
   - Interpret IQL as an actor-critic method, represent its potentially multimodal implicit actor with a diffusion behavior policy, and use critic-derived weights to extract the intended policy.
 - [ ] [2025] [Greg-rec] Efficient Online Reinforcement Learning for Diffusion Policy - [paper](https://arxiv.org/abs/2502.00361)
   - Reweighted score matching for policy improvement without differentiating through the sampling chain.
-- [ ] [2024] Diffusion-Based Reinforcement Learning via Q-Weighted Variational Policy Optimization - [paper](https://arxiv.org/abs/2405.16173)
+- [ ] [2024] [Greg-rec] Diffusion-Based Reinforcement Learning via Q-Weighted Variational Policy Optimization - [paper](https://arxiv.org/abs/2405.16173)
   - Explicit $Q$-weighted variational objective discussed in the Universal Learner work.
 - [ ] Revisit [[papers-generative-decision-making]] and [Compress and Control](https://arxiv.org/abs/1411.5326)
   - Conditional generation is not automatically causal control. Self-generated actions must be treated as interventions rather than evidence.

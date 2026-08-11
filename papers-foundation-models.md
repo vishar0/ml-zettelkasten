@@ -17,6 +17,7 @@
 - [ ] llama3
 - [ ] llama4
 - [ ] GPT4
+- [ ] [2026] Kimi K3: Open Frontier Intelligence — [paper](https://arxiv.org/abs/2607.24653)
 
 ## [2022] OPT: Open Pre-trained Transformer Language Models
 
