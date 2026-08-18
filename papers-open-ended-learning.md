@@ -1,7 +1,7 @@
 # Open-Ended Learning
 
 - **Created**: 2026-05-05
-- **Last Updated**: 2026-08-06
+- **Last Updated**: 2026-08-14
 - **Status**: `In Progress`
 - **Description**: Agents that learn through open-ended environments, curricula, exploration, environment design, and long-horizon open-world interaction.
 - **Related**:
@@ -29,6 +29,8 @@
 - [2021] [[papers-rl]] Replay-Guided Adversarial Environment Design - [paper](https://arxiv.org/abs/2110.02439)
 - [2022] [[papers-rl]] Evolving Curricula with Regret-Based Environment Design - [paper](https://arxiv.org/abs/2203.01302)
 - [2022] [[papers-rl]] E3B: Exploration via elliptical episodic bonuses - [paper](https://arxiv.org/abs/2210.05805)
+- [2026] [Greg-rec] [MichaelLevin] Intelligence from Learnable Novelty - [paper](https://arxiv.org/abs/2607.18433)
+  - Seek surprise that can be converted into learned structure, avoiding both novelty search's noisy-TV failure and surprise minimization's dark-room failure. Connects intrinsic motivation, compression progress, and emergent computation; cf. [[compression]], [[papers-neural-cellular-automata]], and [[papers-rl]].
 
 ## Open-World / Minecraft Agents
 

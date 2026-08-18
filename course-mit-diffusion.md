@@ -1,7 +1,7 @@
 # [Introduction to Flow Matching and Diffusion Models, MIT](https://diffusion.csail.mit.edu/2026/index.html)
 
 - **Created**: 2026-08-04
-- **Last Updated**: 2026-08-11
+- **Last Updated**: 2026-08-18
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-diffusion]] — Broader reading list covering the foundations, objectives, architectures, and applications of diffusion models.
@@ -15,7 +15,7 @@
 
 | Done | Lecture | Topic | Slides | Recording | Lecture Notes | Lab | Additional Material |
 | :--: | :--: | --- | :--: | :--: | --- | --- | --- |
-| ☐ | 1 | **Flow and Diffusion Models**<br>• Introduction to generative models<br>• Ordinary and stochastic differential equations<br>• Sampling from flow and diffusion models | [slides](assets/course-mit-diffusion-2026/lecture-01-flow-and-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=9eJQQVrUUoI) | [§§1-2](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 1: ODEs and SDEs](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_one.ipynb) | [3blue1brown: ODEs](https://www.3blue1brown.com/lessons/differential-equations/)<br>[3blue1brown: PDEs](https://www.3blue1brown.com/lessons/pdes/)<br>[Khan: ODE basics](https://www.khanacademy.org/math/differential-equations/first-order-differential-equations) |
+| ☐ | 1 | **Flow and Diffusion Models**<br>• Introduction to generative models<br>• Ordinary and stochastic differential equations<br>• Sampling from flow and diffusion models | [slides](assets/course-mit-diffusion-2026/lecture-01-flow-and-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=9eJQQVrUUoI) | [§§1-2](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 1: ODEs and SDEs](https://colab.research.google.com/drive/18W-IB1QwdK7zuKlWrx5uB76FM-9Ak3eW?usp=sharing) | [3blue1brown: ODEs](https://www.3blue1brown.com/lessons/differential-equations/)<br>[3blue1brown: PDEs](https://www.3blue1brown.com/lessons/pdes/) |
 | ☐ | 2 | **Flow Matching**<br>• Conditional and marginal probability path<br>• Conditional and marginal vector field<br>• Flow matching training objective | [slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf) | [recording](https://www.youtube.com/watch?v=PNkMKWW8Khw) | [§3](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_two.ipynb) | — |
 | ☐ | 3-A | **Score Functions and Score Matching**<br>• Score functions<br>• Denoising score matching<br>• SDE sampling | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=ngC3QnYSVNM) | [§4](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_two.ipynb) | — |
 | ☐ | 3-B | **Classifier-free Guidance**<br>• Guided generation<br>• Classifier guidance<br>• Classifier-free guidance | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=8oWZ1bHwyRI) | [§5](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
@@ -113,12 +113,12 @@ The common idea is iterative generation: many simple local changes compose into 
 
 _**TL;DR:** A vector field gives the instantaneous velocity at every state and time; solving its ODE produces trajectories, and the flow collects the trajectories for every possible starting state._
 
-A **trajectory** is a time-indexed position. To make its dependence on the starting point explicit, write
+A **trajectory** is a time-indexed position:
 
 $$
-X^{x_0} : [0,1] \to \mathbb{R}^d,
+X : [0,1] \to \mathbb{R}^d,
 \qquad
-t \mapsto X_t^{x_0}.
+t \mapsto X_t.
 $$
 
 A **time-dependent vector field** assigns a velocity to every possible position and time:
@@ -131,22 +131,22 @@ $$
 
 The vector $u_t(x)$ answers a local question: _if the state were at $x$ at time $t$, in which direction and how quickly should it move?_ It does not directly tell us the final destination.
 
-Given a fixed initial state $x_0$, the solution of the initial-value problem is one trajectory $X^{x_0}$. The ODE requires this trajectory's instantaneous velocity to equal the vector field evaluated at its current location:
+Given a fixed initial state $x_0$, the solution of the initial-value problem is one trajectory $X$. The ODE requires this trajectory's instantaneous velocity to equal the vector field evaluated at its current location:
 
 $$
-\frac{dX_t^{x_0}}{dt} = u_t\!\left(X_t^{x_0}\right),
+\frac{dX_t}{dt} = u_t(X_t),
 \qquad
-X_0^{x_0}=x_0.
+X_0=x_0.
 $$
 
-The dependence $u_t(X_t^{x_0})$ is important. As $X_t^{x_0}$ moves, it enters a new part of the field, receives a new velocity, and bends accordingly. This is the higher-dimensional version of a slope field: arrows describe local derivatives, while a solution curve follows those arrows.
+The dependence $u_t(X_t)$ is important. As $X_t$ moves, it enters a new part of the field, receives a new velocity, and bends accordingly. This is the higher-dimensional version of a slope field: arrows describe local derivatives, while a solution curve follows those arrows.
 
 The same equation can be written in integral form:
 
 $$
-X_t^{x_0}
+X_t
 =
-x_0 + \int_0^t u_s\!\left(X_s^{x_0}\right)\,ds.
+x_0 + \int_0^t u_s(X_s)\,ds.
 $$
 
 This says that the current position equals the starting position plus all the infinitesimal displacements accumulated so far. It is also the form from which numerical solvers such as Euler's method follow naturally.
@@ -162,7 +162,7 @@ $$
 where
 
 $$
-\boxed{\psi_t(x_0)=X_t^{x_0}}.
+\boxed{X_t=\psi_t(X_0)=\psi_t(x_0)}.
 $$
 
 Thus, after fixing $x_0$, the function $t\mapsto\psi_t(x_0)$ is exactly that initial point's solution trajectory. Because this must hold for every $x_0$, the flow satisfies
@@ -188,10 +188,10 @@ $$
 The three concepts differ mainly in viewpoint:
 
 - $u_t(x)$ is the full field of local instructions.
-- $X_t^{x_0}$ is one solution path obtained from one fixed initial condition $x_0$.
+- $X_t$ is one solution path obtained from one fixed initial condition $X_0=x_0$.
 - $\psi_t$ maps every possible $x_0$ to its position at time $t$, so it collects all the solution paths.
 
-In the wind analogy, $u_t(x)$ is the wind velocity everywhere, $X_t^{x_0}$ is the path of one balloon released at $x_0$, and $\psi_t$ is the map saying where a balloon released from every possible starting point would be at time $t$.
+In the wind analogy, $u_t(x)$ is the wind velocity everywhere, $X_t$ is the path of one balloon released at $x_0$, and $\psi_t$ is the map saying where a balloon released from every possible starting point would be at time $t$.
 
 So the causal chain is
 
@@ -204,22 +204,6 @@ $$
 $$
 
 The model will eventually learn or parameterize the **vector field**, while an ODE solver computes the resulting trajectory/flow. The neural network is not usually asked to output $X_1$ in a single jump.
-
-**Sample path versus distribution.** The ODE moves each individual sample. If $X_0 \sim p_0$, applying the flow to all possible initial samples induces a time-dependent distribution
-
-$$
-p_t = (\psi_t)_{\#}p_0,
-$$
-
-read as “$p_t$ is the pushforward of $p_0$ through $\psi_t$.” At the population level this density obeys the continuity equation
-
-$$
-\partial_t p_t(x)
-=
--\nabla \cdot \bigl(p_t(x)u_t(x)\bigr).
-$$
-
-Thus an ODE describes the motion of a sample, whereas a PDE describes how the entire probability density changes. This is the bridge between the first two 3Blue1Brown videos linked in the table.
 
 ### Existence, Uniqueness, and Invertibility
 
@@ -709,17 +693,6 @@ $$
 The last term is an Itô stochastic integral rather than an ordinary Riemann integral. The course avoids developing the full stochastic-calculus machinery and works through the simulation rule instead.
 
 **What happened to the flow map?** An ODE has a deterministic map $x_0\mapsto\psi_t(x_0)$. For an SDE, $X_t$ is not determined by $x_0$ alone; it also depends on the Brownian path. One can define a random flow after fixing that Brownian path, but there is no single deterministic map of $x_0$ that gives every outcome.
-
-The marginal distribution $p_t$ is nevertheless well-defined and evolves deterministically. For state-independent scalar $\sigma_t$, its evolution is described by the Fokker-Planck equation
-
-$$
-\frac{\partial p_t(x)}{\partial t}
-=
--\nabla\cdot\left(p_t(x)u_t(x)\right)
-+\frac{\sigma_t^2}{2}\Delta p_t(x).
-$$
-
-The first term transports probability according to the drift, just as in the ODE continuity equation. The second term spreads probability through diffusion. Setting $\sigma_t=0$ recovers the ODE case.
 
 ### Existence and Uniqueness for SDEs
 
