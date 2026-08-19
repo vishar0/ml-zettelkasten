@@ -1,7 +1,7 @@
 # [Introduction to Flow Matching and Diffusion Models, MIT](https://diffusion.csail.mit.edu/2026/index.html)
 
 - **Created**: 2026-08-04
-- **Last Updated**: 2026-08-18
+- **Last Updated**: 2026-08-19
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-diffusion]] — Broader reading list covering the foundations, objectives, architectures, and applications of diffusion models.
@@ -15,14 +15,13 @@
 
 | Done | Lecture | Topic | Slides | Recording | Lecture Notes | Lab | Additional Material |
 | :--: | :--: | --- | :--: | :--: | --- | --- | --- |
-| ☐ | 1 | **Flow and Diffusion Models**<br>• Introduction to generative models<br>• Ordinary and stochastic differential equations<br>• Sampling from flow and diffusion models | [slides](assets/course-mit-diffusion-2026/lecture-01-flow-and-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=9eJQQVrUUoI) | [§§1-2](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 1: ODEs and SDEs](https://colab.research.google.com/drive/18W-IB1QwdK7zuKlWrx5uB76FM-9Ak3eW?usp=sharing) | [3blue1brown: ODEs](https://www.3blue1brown.com/lessons/differential-equations/)<br>[3blue1brown: PDEs](https://www.3blue1brown.com/lessons/pdes/) |
-| ☐ | 2 | **Flow Matching**<br>• Conditional and marginal probability path<br>• Conditional and marginal vector field<br>• Flow matching training objective | [slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf) | [recording](https://www.youtube.com/watch?v=PNkMKWW8Khw) | [§3](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_two.ipynb) | — |
-| ☐ | 3-A | **Score Functions and Score Matching**<br>• Score functions<br>• Denoising score matching<br>• SDE sampling | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=ngC3QnYSVNM) | [§4](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_two.ipynb) | — |
+| ☑ | 1 | **Flow and Diffusion Models**<br>• Introduction to generative models<br>• Ordinary and stochastic differential equations<br>• Sampling from flow and diffusion models | [slides](assets/course-mit-diffusion-2026/lecture-01-flow-and-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=9eJQQVrUUoI) | [§§1-2](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix A: A Reminder on Probability Theory](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=70) | [Lab 1: ODEs and SDEs](https://colab.research.google.com/drive/18W-IB1QwdK7zuKlWrx5uB76FM-9Ak3eW?usp=sharing) | [3blue1brown: ODEs](https://www.3blue1brown.com/lessons/differential-equations/)<br>[3blue1brown: PDEs](https://www.3blue1brown.com/lessons/pdes/) |
+| ☑ | 2 | **Flow Matching**<br>• Conditional and marginal probability path<br>• Conditional and marginal vector field<br>• Flow matching training objective | [slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf) | [recording](https://www.youtube.com/watch?v=PNkMKWW8Khw) | [§3](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix B: A Proof of the Fokker-Planck Equation](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=72) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | [Mario Gemoll: Flow Matching](https://mariogemoll.com/flow-matching)<br>[Khan Academy: Divergence](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/divergence)<br>[Khan Academy: Intuition for the Divergence Formula](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/intuition-for-divergence-formula)<br>[Greg Wayne: Flow Matching Notes](../flourish/assets/2026-greg-wayne-sessions/Notes_Flow_Matching.pdf) |
+| ☐ | 3-A | **Score Functions and Score Matching**<br>• Score functions<br>• Denoising score matching<br>• SDE sampling | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=ngC3QnYSVNM) | [§4](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | [Mario Gemoll: Diffusion](https://mariogemoll.com/diffusion) |
 | ☐ | 3-B | **Classifier-free Guidance**<br>• Guided generation<br>• Classifier guidance<br>• Classifier-free guidance | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=8oWZ1bHwyRI) | [§5](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
-| ☐ | 4 | **Latent Spaces and Neural Network Architectures**<br>• Variational autoencoders and latent spaces<br>• Diffusion Transformer and U-Nets<br>• Case studies: Large-scale models | [slides](assets/course-mit-diffusion-2026/lecture-04-latent-spaces-and-neural-network-architectures.pdf) | [recording](https://www.youtube.com/watch?v=g0MB1CCBmsI) | [§6](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 3: Diffusion Transformer and VAEs](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_three.ipynb) | — |
-| ☐ | 5 | **Discrete Diffusion Models**<br>• Continuous-time Markov chains (CTMCs)<br>• Sampling from CTMC models<br>• Training CTMC models | [slides](assets/course-mit-diffusion-2026/lecture-05-discrete-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=d0kmyEJN2hI) | [§7](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
-| ☐ | — | Supplementary mathematical background | — | — | [Appendices A-C](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
-| ☐ | — | Additional VAE perspectives and diffusion literature guide | — | — | [Appendices D-E](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
+| ☐ | 4 | **Latent Spaces and Neural Network Architectures**<br>• Variational autoencoders and latent spaces<br>• Diffusion Transformer and U-Nets<br>• Case studies: Large-scale models | [slides](assets/course-mit-diffusion-2026/lecture-04-latent-spaces-and-neural-network-architectures.pdf) | [recording](https://www.youtube.com/watch?v=g0MB1CCBmsI) | [§6](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix D: Additional Perspectives on VAEs](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=77) | [Lab 3: Diffusion Transformer and VAEs](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_three.ipynb) | — |
+| ☐ | 5 | **Discrete Diffusion Models**<br>• Continuous-time Markov chains (CTMCs)<br>• Sampling from CTMC models<br>• Training CTMC models | [slides](assets/course-mit-diffusion-2026/lecture-05-discrete-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=d0kmyEJN2hI) | [§7](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix C: Existence and Uniqueness of Continuous-time Markov Chains](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=74) | — | — |
+| ☐ | — | **A Guide to the Diffusion Model Literature** | — | — | [Appendix E](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=81) | — | — |
 
 ---
 
@@ -141,6 +140,10 @@ $$
 
 The dependence $u_t(X_t)$ is important. As $X_t$ moves, it enters a new part of the field, receives a new velocity, and bends accordingly. This is the higher-dimensional version of a slope field: arrows describe local derivatives, while a solution curve follows those arrows.
 
+![A trajectory following the arrows of a time-dependent vector field](assets/course-mit-diffusion-2026/media/lecture-01/ode-trajectory.png)
+
+_A trajectory follows the local arrows as it moves through the field. Source: [Mario Gemoll's interactive visualization](https://mariogemoll.com/flow-matching), via the [MIT Lecture 1 slides](https://diffusion.csail.mit.edu/2026/docs/20260120_Lecture_01.pdf)._
+
 The same equation can be written in integral form:
 
 $$
@@ -178,6 +181,10 @@ u_t\!\left(\psi_t(x_0)\right),
 $$
 
 This resolves the apparently competing terminology in the lecture notes: the **trajectory is the individual solution for one initial condition**, while the **flow is the family, or solution operator, containing the solutions for all initial conditions**. It is common to call the flow a solution of the ODE as shorthand because $t\mapsto\psi_t(x_0)$ obeys the ODE for each fixed $x_0$.
+
+![A vector field progressively warping a grid through its flow](assets/course-mit-diffusion-2026/media/lecture-01/flow-warp.png)
+
+_The blue arrows specify local velocities; integrating them progressively warps the entire red grid. Source: [Lipman et al., Flow Matching Guide and Code](https://arxiv.org/abs/2412.06264), reproduced as Figure 1 in the MIT lecture notes._
 
 For a random initial condition $X_0$, we select one of these trajectories at random:
 
@@ -266,45 +273,17 @@ $$
 
 For every finite $t$, multiplication by $e^{-\theta t}>0$ remains invertible. Points approach the origin exponentially but reach it only in the limit $t\to\infty$, so finite-time invertibility is not contradicted.
 
-This is also a simple **gradient flow**. For
-
-$$
-V(x)=\frac{\theta}{2}\lVert x\rVert^2,
-$$
-
-we have $u(x)=-\nabla V(x)$. The system moves downhill in the quadratic potential toward its minimum. Gradient descent will reappear below as a discrete update with the same shape as Euler's method.
-
 ### Simulating an ODE with Euler's Method
 
 _**TL;DR:** Euler's method repeatedly freezes the current velocity for a short time and takes a straight step in that direction._
 
-For a neural vector field, there is generally no closed-form expression for $\psi_t$. We approximate the trajectory on a grid
+In general, we cannot compute the flow $\psi_t$ directly. Euler's method approximates it by dividing $[0,1]$ into $n$ short steps of size
 
 $$
-t_k=kh,
-\qquad
 h=\frac{1}{n},
-\qquad
-k=0,\ldots,n.
 $$
 
-Starting from the exact integral over one step,
-
-$$
-X_{t+h}
-=
-X_t+\int_t^{t+h}u_s(X_s)\,ds,
-$$
-
-Euler's method approximates the changing velocity throughout the interval by its value at the left endpoint:
-
-$$
-u_s(X_s)\approx u_t(X_t)
-\qquad
-(s\in[t,t+h]).
-$$
-
-Therefore,
+and repeatedly applying
 
 $$
 \boxed{
@@ -314,74 +293,24 @@ X_{t+h}=X_t+h\,u_t(X_t)
 t=0,h,2h,\ldots,1-h.
 $$
 
-Equivalently, this is the first-order Taylor approximation
+Here $u_t(X_t)$ is the current velocity, so $h\,u_t(X_t)$ is the displacement obtained by following that velocity for time $h$. Each step therefore:
 
-$$
-\begin{aligned}
-X_{t+h}
-&=X_t+h\frac{dX_t}{dt}+O(h^2) \\
-&=X_t+h\,u_t(X_t)+O(h^2).
-\end{aligned}
-$$
+1. reads the arrow at the current position;
+2. moves a short distance in that direction;
+3. advances time by $h$;
+4. repeats until $t=1$.
 
-The geometric interpretation is:
+Smaller steps usually follow a curved trajectory more accurately, but they require more vector-field evaluations. In a flow model, each evaluation is a neural-network forward pass, so accuracy is traded against sampling cost.
 
-1. evaluate the arrow $u_t(X_t)$ at the current location;
-2. multiply it by the time interval $h$ to turn velocity into displacement;
-3. move by that displacement;
-4. evaluate the field again at the new state.
+![Euler trajectories with a large and small step size](assets/course-mit-diffusion-2026/media/lecture-01/euler-step-size.png)
 
-With a smooth vector field, one Euler step has local truncation error $O(h^2)$, while the accumulated error over the fixed interval $[0,1]$ is $O(h)$. More, smaller steps usually improve the trajectory but require more vector-field evaluations. In a generative model, each evaluation is normally a neural-network forward pass, so solver accuracy is traded against sampling cost.
-
-For the linear example $u(x)=-\theta x$, Euler gives
-
-$$
-X_{(k+1)h}
-=
-X_{kh}-h\theta X_{kh}
-=
-(1-\theta h)X_{kh}.
-$$
-
-After $k$ steps,
-
-$$
-X_{kh}=(1-\theta h)^k x_0.
-$$
-
-Using $h=1/n$ and taking $n$ steps to $t=1$:
-
-$$
-X_1^{\mathrm{Euler}}
-=
-\left(1-\frac{\theta}{n}\right)^n x_0
-\xrightarrow[n\to\infty]{}
-e^{-\theta}x_0,
-$$
-
-which recovers the exact flow. It also shows why a step can be too large: if $\theta h$ is large, the multiplier $1-\theta h$ can overshoot, oscillate in sign, or even grow in magnitude instead of representing smooth decay.
-
-**Connection to residual networks.** The Euler update has exactly the form of a residual block:
-
-$$
-x_{k+1}=x_k+h\,u_\theta(x_k,t_k).
-$$
-
-A residual network composes a finite sequence of small learned changes; a neural ODE can be viewed as the continuous-depth limit, with an ODE solver choosing how to discretize that continuous vector field. Euler's method performs the simulation—it does not tell us how to train $u_\theta$. Flow matching will provide that learning objective later.
+_A large step uses fewer field evaluations but follows the curved trajectory less accurately. Source: [Mario Gemoll](https://mariogemoll.com/flow-matching), via the [MIT Lecture 1 slides](https://diffusion.csail.mit.edu/2026/docs/20260120_Lecture_01.pdf)._
 
 ### Improving Euler with Heun's Method
 
 _**TL;DR:** Euler uses only the velocity at the beginning of a step; Heun predicts the endpoint, evaluates the velocity there too, and moves using the average of the two velocities._
 
-Euler's method approximates
-
-$$
-\int_t^{t+h}u_s(X_s)\,ds
-$$
-
-using a rectangle whose height is the starting velocity $u_t(X_t)$. If the trajectory curves or the vector field changes during the interval, that single velocity can be a poor description of the whole step.
-
-Heun's method instead approximates the integral with a trapezoid. The true endpoint $X_{t+h}$ is not yet known, so it first uses Euler to predict one:
+Euler uses the velocity at the beginning of the step for the entire update, so it can miss changes in direction. Heun's method first takes an Euler step to predict the endpoint:
 
 $$
 \widetilde{X}_{t+h}
@@ -389,7 +318,7 @@ $$
 X_t+h\,u_t(X_t).
 $$
 
-It evaluates the vector field again at the predicted endpoint and corrects the step using the average velocity:
+It then evaluates the velocity at that predicted endpoint and performs the actual update using the average of the two velocities:
 
 $$
 \boxed{
@@ -410,34 +339,7 @@ The two stages are therefore:
 1. **Predict:** follow the initial arrow for one Euler step.
 2. **Correct:** compare the initial arrow with the arrow at the predicted endpoint and use their average.
 
-For a sufficiently smooth ODE, Heun's method has local error $O(h^3)$ and accumulated global error $O(h^2)$, compared with Euler's $O(h^2)$ local and $O(h)$ global errors. The cost is two vector-field evaluations per step instead of one. For a neural vector field, this normally means twice as many network evaluations for the same number of steps.
-
-For the linear field $u(x)=-\theta x$, the predictor is
-
-$$
-\widetilde{X}_{t+h}=(1-\theta h)X_t.
-$$
-
-The corrected step becomes
-
-$$
-\begin{aligned}
-X_{t+h}
-&=X_t+\frac{h}{2}
-\left[-\theta X_t-\theta\widetilde{X}_{t+h}\right] \\
-&=\left(1-\theta h+\frac{\theta^2h^2}{2}\right)X_t.
-\end{aligned}
-$$
-
-This matches the first three terms of
-
-$$
-e^{-\theta h}
-=
-1-\theta h+\frac{\theta^2h^2}{2}+O(h^3),
-$$
-
-whereas Euler retains only $1-\theta h$. Heun is thus a concrete example of spending an additional model evaluation to follow curvature more accurately.
+Heun usually follows curved trajectories more accurately than Euler at the same step size, but it requires two vector-field evaluations per step instead of one.
 
 ### Flow Models
 
@@ -502,6 +404,10 @@ or equivalently
 $$
 p_1^\theta\approx p_{\mathrm{data}}.
 $$
+
+![A simple initial distribution and a more structured data distribution](assets/course-mit-diffusion-2026/media/lecture-01/initial-and-data-distributions.png)
+
+_The random initial sample $X_0$ comes from a simple distribution; the desired endpoint $X_1$ follows the structured data distribution. Figure credit: Yaron Lipman, from the [MIT Lecture 1 slides](https://diffusion.csail.mit.edu/2026/docs/20260120_Lecture_01.pdf)._
 
 The source of randomness and the transformation play separate roles:
 
@@ -600,54 +506,92 @@ $$
 
 with a fresh independent $\epsilon_t$ at every step.
 
-**Why $\sqrt{h}$ rather than $h$?** If $\epsilon_t\sim\mathcal{N}(0,I_d)$, then
+![Three independently sampled two-dimensional Brownian paths](assets/course-mit-diffusion-2026/media/lecture-01/brownian-motion.gif)
+
+_The paths share the same initial point but use independent Gaussian increments. Locally rendered from the update above, adapted from [Mario Gemoll's Brownian-motion visualization](https://mariogemoll.com/flow-matching)._
+
+**Why $\sqrt{h}$ rather than $h$?** Consider simulating one unit of time with $n=1/h$ independent increments. Because $\epsilon_t\sim\mathcal{N}(0,I_d)$, a single correctly scaled increment has variance
 
 $$
 \operatorname{Var}(\sqrt{h}\,\epsilon_t)=hI_d.
 $$
 
-Over $n=1/h$ independent steps spanning one unit of time, the variances add:
+Independent variances add, so after all $n$ steps the total variance is
 
 $$
-n h I_d=I_d.
+\frac{1}{h}\cdot hI_d=I_d.
 $$
 
-Scaling the random increment by $h$ would instead produce total variance $nh^2=h\to0$, causing the randomness to disappear as the grid is refined. Using unscaled noise would make the total variance diverge.
+The alternatives fail as the step size shrinks:
 
-The $\sqrt{h}$ scaling has an important consequence. Over a short interval,
+- With $h\epsilon_t$, each step has variance $h^2I_d$, so the total variance is $hI_d\to0$: the randomness disappears.
+- With unscaled $\epsilon_t$, each step has variance $I_d$, so the total variance is $I_d/h\to\infty$: the randomness explodes.
+
+Thus $\sqrt h$ produces a finite, nonzero amount of randomness over a fixed time interval.
+
+It also explains why Brownian motion is not differentiable. Over one short step, the deterministic drift in an SDE moves by a quantity proportional to $h$, while the Brownian increment typically has size proportional to $\sqrt h$:
 
 $$
-\text{deterministic displacement}=O(h),
+\text{drift displacement}\sim h,
 \qquad
-\text{Brownian displacement}=O(\sqrt{h}).
+\text{Brownian displacement}\sim\sqrt h.
 $$
 
-Brownian paths are continuous but, with probability one, nowhere differentiable. This is why an SDE cannot be interpreted as an ordinary differential equation driven by a conventional derivative $dW_t/dt$.
+Both go to zero as $h\to0$, which is compatible with a continuous path. But the Brownian finite-difference slope behaves like
+
+$$
+\frac{W_{t+h}-W_t}{h}
+\stackrel{d}{=}
+\frac{\epsilon_t}{\sqrt h}.
+$$
+
+Its standard deviation is $1/\sqrt h$, which diverges as $h\to0$. The path therefore remains continuous while its local slope never settles to a finite value; with probability one, Brownian paths are nowhere differentiable. An SDE must be interpreted through Brownian increments or stochastic integrals, not as an ODE containing an ordinary derivative $dW_t/dt$.
 
 ### From ODEs to SDEs
 
 _**TL;DR:** An SDE combines a directed drift with Brownian spreading: locally it moves by $h$ times the drift plus $\sqrt h$ times fresh Gaussian noise._
 
-For an ODE, a small-time update is
+Using a step size $h$, Euler simulates an ODE with the update
 
 $$
 X_{t+h}
 =
-X_t+h\,u_t(X_t)+hR_t(h),
+X_t+h\,u_t(X_t).
 $$
 
-where $R_t(h)\to0$ as $h\to0$. Adding a Brownian increment gives
+Euler-Maruyama simulates an SDE by adding a Brownian increment:
 
 $$
 X_{t+h}
 =
 X_t
 +h\,u_t(X_t)
-+\sigma_t(W_{t+h}-W_t)
-+hR_t(h).
++\sigma_t(W_{t+h}-W_t).
 $$
 
-This motivates the symbolic SDE notation
+Because
+
+$$
+W_{t+h}-W_t
+\stackrel{d}{=}
+\sqrt h\,\epsilon_t,
+\qquad
+\epsilon_t\sim\mathcal N(0,I_d),
+$$
+
+the same update can be written as
+
+$$
+\boxed{
+X_{t+h}
+=
+X_t
++h\,u_t(X_t)
++\sigma_t\sqrt h\,\epsilon_t
+}.
+$$
+
+The continuous-time shorthand for these small-step dynamics is
 
 $$
 \boxed{
@@ -680,17 +624,7 @@ $$
 
 Thus the drift describes the conditional mean displacement, while the diffusion coefficient describes the conditional covariance of the random displacement.
 
-The notation $dW_t$ is symbolic. The corresponding integral equation is
-
-$$
-X_t
-=
-X_0
-+\int_0^t u_s(X_s)\,ds
-+\int_0^t\sigma_s\,dW_s.
-$$
-
-The last term is an Itô stochastic integral rather than an ordinary Riemann integral. The course avoids developing the full stochastic-calculus machinery and works through the simulation rule instead.
+The $dX_t$ notation is symbolic shorthand for the small-step dynamics above; it should not be interpreted using an ordinary derivative $dW_t/dt$.
 
 **What happened to the flow map?** An ODE has a deterministic map $x_0\mapsto\psi_t(x_0)$. For an SDE, $X_t$ is not determined by $x_0$ alone; it also depends on the Brownian path. One can define a random flow after fixing that Brownian path, but there is no single deterministic map of $x_0$ that gives every outcome.
 
@@ -742,51 +676,24 @@ This is the **Ornstein-Uhlenbeck (OU) process**. Its two forces compete:
 - The drift $-\theta X_t$ pulls the state toward zero. Farther points receive a stronger restoring force.
 - The diffusion term $\sigma dW_t$ continually injects noise and spreads trajectories apart.
 
-Using the integrating factor $e^{\theta t}$ gives the exact solution
+![Ornstein-Uhlenbeck trajectories under increasing diffusion strength](assets/course-mit-diffusion-2026/media/lecture-01/ornstein-uhlenbeck-diffusion.png)
+
+_As $\sigma$ increases from left to right, the restoring drift remains but the paths fluctuate more strongly. Source: [MIT Lecture 1 slides](https://diffusion.csail.mit.edu/2026/docs/20260120_Lecture_01.pdf)._
+
+For a fixed initial state $X_0=x_0$,
 
 $$
 X_t
-=
-e^{-\theta t}X_0
-+\sigma\int_0^t e^{-\theta(t-s)}\,dW_s.
-$$
-
-For fixed $X_0=x_0$, the stochastic integral is Gaussian, so
-
-$$
-X_t\mid X_0=x_0
-\sim
-\mathcal{N}\!\left(
-e^{-\theta t}x_0,
-\frac{\sigma^2}{2\theta}
-\left(1-e^{-2\theta t}\right)I_d
-\right).
-$$
-
-The mean decays toward zero:
-
-$$
-\mathbb{E}[X_t\mid X_0=x_0]=e^{-\theta t}x_0,
-$$
-
-while the variance grows from zero toward a finite limit:
-
-$$
-\operatorname{Var}(X_t\mid X_0=x_0)
-=
-\frac{\sigma^2}{2\theta}
-\left(1-e^{-2\theta t}\right)I_d.
-$$
-
-Hence, as $t\to\infty$,
-
-$$
-X_t
-\xrightarrow{d}
+=e^{-\theta t}x_0+\sigma\int_0^t e^{-\theta(t-s)}\,dW_s
+\sim\mathcal{N}\!\left(e^{-\theta t}x_0,\;\sigma^2\int_0^t e^{-2\theta(t-s)}\,ds\,I_d\right)
+=\mathcal{N}\!\left(e^{-\theta t}x_0,\;\frac{\sigma^2}{2\theta}\left(1-e^{-2\theta t}\right)I_d\right)
+\xrightarrow[t\to\infty]{d}
 \mathcal{N}\!\left(0,\frac{\sigma^2}{2\theta}I_d\right).
 $$
 
-This explains the trajectories in Figure 3 of the lecture notes:
+The first term is the fading memory of the initial state; the stochastic integral is the accumulated Gaussian noise. The inward drift keeps that accumulated noise from spreading the process without bound.
+
+This limiting behavior explains the trajectories in Figure 3 of the lecture notes:
 
 - With $\sigma=0$, all paths smoothly contract to zero, exactly as in the earlier linear ODE.
 - With $\sigma>0$, trajectories keep fluctuating, but mean reversion prevents them from wandering arbitrarily far.
@@ -921,15 +828,7 @@ X_0\sim p_{\mathrm{init}}
 X_1\sim p_{\mathrm{data}}.
 $$
 
-DDPM papers and the `offline_atari` implementation usually label the easy corruption direction oppositely:
-
-$$
-x_0\sim p_{\mathrm{data}}
-\longrightarrow
-x_1\approx\mathcal{N}(0,I),
-$$
-
-and generate by integrating from $t=1$ back to $t=0$. The substance is the same after reversing or relabeling time; the symbols $x_0$ and $x_1$ do not intrinsically mean “noise” and “data.” In particular, `ConditionalOTFlow` in `offline_atari` is a flow model in the lecture's terminology: its sampling dynamics contain no Brownian term, even though it lives inside the broader diffusion interface.
+DDPM papers use the opposite time convention: $x_0$ is data and $x_1$ is noise, so generation runs from $t=1$ back to $t=0$. This is only a relabeling of time.
 
 Lecture 1 has now specified what flow and diffusion generative models **are** and how to simulate them. It has not yet explained how to learn a drift that reaches $p_{\mathrm{data}}$: §3 introduces flow matching for deterministic flows, while §4 introduces score matching and reverse-SDE sampling for diffusion models.
 
@@ -1001,7 +900,7 @@ p_t(x)
 \tag{13}
 $$
 
-"Marginal" means that the latent choice of $z$ has been averaged out. Equation (12) is tractable with a dataset: sample a training example and corrupt it. Equation (13) is generally intractable because evaluating $p_t(x)$ requires integrating over all possible clean data points.
+"Marginal" means that the latent choice of $z$ has been averaged out. The [sampling construction above](#conditional-and-marginal-probability-paths) is tractable with a dataset: sample a training example and corrupt it. The corresponding [marginal-density integral](#conditional-and-marginal-probability-paths) is generally intractable because evaluating $p_t(x)$ requires integrating over all possible clean data points.
 
 The endpoints follow directly from the conditional endpoints. At $t=0$,
 
@@ -1037,6 +936,10 @@ The conditional and marginal views are two levels of the same construction:
 
 - $p_t(\cdot\mid z)$: what noisy versions of one particular $z$ look like at time $t$;
 - $p_t$: what noisy versions of the entire data distribution look like at time $t$.
+
+![Conditional and marginal Gaussian probability paths](assets/course-mit-diffusion-2026/media/lecture-02/conditional-and-marginal-probability-path.png)
+
+_The conditional path (top) contracts toward one fixed $z$; the marginal path (bottom) spreads toward the full data distribution as $z$ varies. Source: Figure 5 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
 
 ### The Gaussian Conditional Probability Path
 
@@ -1074,6 +977,10 @@ X_t=\alpha_tZ+\beta_t\epsilon.
 \tag{16}
 $$
 
+![Images sampled along a Gaussian conditional probability path](assets/course-mit-diffusion-2026/media/lecture-02/gaussian-image-probability-path.png)
+
+_As $t$ increases, $\alpha_t$ preserves more of each image and $\beta_t$ retains less Gaussian noise. Source: Figure 4 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
+
 Conditioned on $Z=z$,
 
 $$
@@ -1092,7 +999,7 @@ X_0=\epsilon\sim\mathcal N(0,I_d),
 X_1=Z\sim p_{\mathrm{data}}.
 $$
 
-A particularly simple choice is the conditional optimal-transport, or CondOT, schedule
+A particularly simple choice is the **conditional optimal transport**, or **CondOT**, schedule
 
 $$
 \alpha_t=t,
@@ -1106,16 +1013,113 @@ $$
 X_t=tZ+(1-t)\epsilon.
 $$
 
-The schedules need not satisfy $\alpha_t^2+\beta_t^2=1$ for general flow matching. Variance-preserving diffusion schedules often impose such a relation, but CondOT instead prioritizes straight conditional trajectories.
+**Why is this called conditional optimal transport?** Fix one data point $z$. The conditional problem is then to move the initial Gaussian distribution to the point mass $\delta_z$. For each initial noise sample $\epsilon$, the minimum-energy path between the two fixed endpoints is the straight line
 
-**Time convention.** In these notes, $t=0$ is noise and $t=1$ is data. Many DDPM presentations call clean data $x_0$ and increase noise with $t$. The formulas can be translated by reversing or relabeling time; always check which endpoint is noise.
+$$
+\underset{\substack{x_0=\epsilon\\x_1=z}}{\operatorname{argmin}}
+\int_0^1\left\|\frac{dx_t}{dt}\right\|^2\,dt
+\quad\Longrightarrow\quad
+x_t=tz+(1-t)\epsilon.
+$$
 
-**A path is not yet a dynamics.** Equation (16) can be used in two ways:
+It moves at the constant velocity
 
-- Drawing a fresh independent $\epsilon$ for every $t$ produces correct snapshots from $p_t(\cdot\mid z)$ but does not connect them into a trajectory.
-- Holding the same $\epsilon$ fixed while varying $t$ couples the snapshots into the path $X_t=\alpha_tz+\beta_t\epsilon$. This coupling will produce the convenient conditional vector field below.
+$$
+\frac{dx_t}{dt}=z-\epsilon.
+$$
 
-The fixed $\epsilon$ here is an initial latent variable, not a stream of Brownian increments. An SDE simulation instead adds fresh noise throughout time.
+Since $\epsilon\sim\mathcal N(0,I_d)$, the population of these straight trajectories has
+
+$$
+X_t\mid Z=z
+\sim
+\mathcal N\!\left(tz,(1-t)^2I_d\right),
+$$
+
+which is exactly the Gaussian path obtained from $\alpha_t=t$ and $\beta_t=1-t$. It is **conditional** OT because this argument is made separately for every fixed endpoint $z$.
+
+This name does **not** imply that independently pairing $\epsilon\sim p_{\mathrm{init}}$ with $Z\sim p_{\mathrm{data}}$ gives the globally optimal transport coupling between the full noise and data distributions. The conditional trajectories are straight, but after averaging over all $z$, trajectories of the learned marginal vector field need not be straight or globally OT-optimal.
+
+The original [Flow Matching paper](https://arxiv.org/abs/2210.02747) calls these **conditional OT paths**, while [Flow Matching Guide and Code](https://arxiv.org/abs/2412.06264) uses the shorthand **CondOT** and exposes `CondOTPath` and `CondOTScheduler` in its library. The term is therefore standard within flow matching, but not universal across generative modeling. Other presentations may say **straight-line path** or **linear interpolation path**; closely related rectified-flow work uses the same interpolation under its own terminology.
+
+**Variance along the path.** Let
+
+$$
+X_t=\alpha_tZ+\beta_t\epsilon,
+\qquad
+\epsilon\sim\mathcal N(0,I_d),
+$$
+
+with $Z$ and $\epsilon$ independent. If $Z$ has mean $\mu_{\mathrm{data}}$ and covariance $\Sigma_{\mathrm{data}}$, then
+
+$$
+\mathbb E[X_t]=\alpha_t\mu_{\mathrm{data}}
+$$
+
+and
+
+$$
+\begin{aligned}
+\operatorname{Cov}(X_t)
+&=\operatorname{Cov}(\alpha_tZ+\beta_t\epsilon)\\
+&=\alpha_t^2\operatorname{Cov}(Z)
++\beta_t^2\operatorname{Cov}(\epsilon)\\
+&=\alpha_t^2\Sigma_{\mathrm{data}}+\beta_t^2I_d.
+\end{aligned}
+$$
+
+The cross-covariance terms vanish because $Z$ and $\epsilon$ are independent. The squares appear because scaling a random vector by $c$ scales its covariance by $c^2$:
+
+$$
+\operatorname{Cov}(cY)=c^2\operatorname{Cov}(Y).
+$$
+
+If the data has been whitened, or is idealized as isotropic, so that $\Sigma_{\mathrm{data}}=I_d$, this reduces to
+
+$$
+\operatorname{Cov}(X_t)
+=(\alpha_t^2+\beta_t^2)I_d.
+$$
+
+Therefore, the condition
+
+$$
+\alpha_t^2+\beta_t^2=1
+$$
+
+keeps the **marginal covariance** equal to $I_d$ throughout the path.
+
+CondOT instead uses $\alpha_t=t$ and $\beta_t=1-t$. Under the same unit-covariance assumption,
+
+$$
+\operatorname{Cov}(X_t)
+=\left(t^2+(1-t)^2\right)I_d.
+$$
+
+This equals $I_d$ at the endpoints but contracts to $\tfrac12I_d$ at $t=\tfrac12$. Flow matching does not require constant variance, so this contraction is allowed; CondOT chooses constant-speed straight trajectories instead.
+
+**A simple variance-preserving schedule**, using the course's noise-to-data time convention, is
+
+$$
+\alpha_t=\sqrt t,
+\qquad
+\beta_t=\sqrt{1-t},
+$$
+
+giving
+
+$$
+X_t=\sqrt t\,Z+\sqrt{1-t}\,\epsilon.
+$$
+
+Its covariance is
+
+$$
+\operatorname{Cov}(X_t)
+=t\Sigma_{\mathrm{data}}+(1-t)I_d
+=I_d
+\qquad\text{when }\Sigma_{\mathrm{data}}=I_d.
+$$
 
 ### Conditional Vector Fields
 
@@ -1134,7 +1138,7 @@ X_t\sim p_t(\cdot\mid z)
 \tag{17}
 $$
 
-The distinction between a path and a vector field is essential:
+The distinction between a probability path and a vector field is essential:
 
 - $p_t(x\mid z)$ is a scalar density describing where probability mass is found at time $t$;
 - $u_t(x\mid z)\in\mathbb R^d$ is a velocity describing the direction and speed of motion at $(x,t)$.
@@ -1142,101 +1146,64 @@ The distinction between a path and a vector field is essential:
 Consequently,
 
 $$
-\frac{p_t(x\mid z)-p_{t-\Delta t}(x\mid z)}{\Delta t}
+\frac{p_{t+\Delta t}(x\mid z)-p_t(x\mid z)}{\Delta t}
 $$
 
-approximates the scalar density derivative $\partial_tp_t(x\mid z)$, not the vector velocity. The density derivative constrains a vector field through the continuity equation
+approximates the scalar density derivative $\partial_tp_t(x\mid z)$, not the vector velocity. The continuity equation, explained after Example 10, connects density change to particle motion through conservation of probability mass. The density change does not by itself determine a unique vector field.
 
-$$
-\partial_tp_t(x\mid z)
-=
--\nabla\cdot\bigl(p_t(x\mid z)u_t(x\mid z)\bigr),
-$$
+For example, a rotational field can move particles around inside an isotropic Gaussian without changing the Gaussian density at all. The same probability snapshots can therefore admit different particle trajectories.
 
-but it does not uniquely determine $u_t$. For example, a rotational field can move particles around inside an isotropic Gaussian without changing the Gaussian density at all. The same probability snapshots can therefore admit different particle trajectories.
-
-By contrast, if $X_t$ and $X_{t-\Delta t}$ are coupled points on the same trajectory, then
-
-$$
-\frac{X_t-X_{t-\Delta t}}{\Delta t}
-\longrightarrow
-\frac{dX_t}{dt}
-$$
-
-does give the trajectory's velocity. The Gaussian construction obtains its vector field from exactly such a shared-$\epsilon$ coupling.
-
-The conditional field is analytically convenient but not itself a useful unconditional generator: it requires knowing $z$, and every trajectory ends at that already-known $z$. Its role is to provide tractable building blocks and, later, tractable regression targets.
+The conditional field is analytically convenient but not itself a useful unconditional generator: it must be given a data point $z$, and every trajectory conditioned on it ends at that same already-known example rather than producing a new sample from $p_{\mathrm{data}}$. Its role is to provide tractable building blocks and, later, tractable regression targets.
 
 ### The Marginalization Trick
 
 _**TL;DR:** At a noisy location $x$, average the conditional velocities using the posterior probability that each clean datum $z$ generated that $x$._
 
-Theorem 9 defines the marginal vector field
+The marginalization result is easiest to understand as follows:
+
+- Each possible $z$ proposes a conditional velocity $u_t^{\mathrm{target}}(x\mid z)$.
+- At the current $x$, some values of $z$ are more plausible than others.
+- Average the proposed velocities according to $p_t(z\mid x)$, the probability of $z$ given the current $x$.
+
+Thus the marginal vector field is
 
 $$
+\boxed{
 u_t^{\mathrm{target}}(x)
 =
 \int
 u_t^{\mathrm{target}}(x\mid z)
-\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}
-\,dz.
+p_t(z\mid x)\,dz
+=
+\int
+u_t^{\mathrm{target}}(x\mid z)
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}\,dz
+}.
 \tag{18}
 $$
 
-By Bayes' rule,
+Equivalently, it is the conditional expectation
 
 $$
-p_t(z\mid x)
-=
-\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)},
-$$
-
-so Equation (18) is the conditional expectation
-
-$$
-\boxed{
 u_t^{\mathrm{target}}(x)
 =
 \mathbb E\!\left[
 u_t^{\mathrm{target}}(x\mid Z)
 \mid X_t=x
 \right].
-}
 $$
 
-The weighting must use the posterior $p_t(z\mid x)$, not just the prior $p_{\mathrm{data}}(z)$. The prior says how common $z$ is globally; the posterior says how much of the probability mass currently located at this particular $x$ came from the component indexed by $z$.
-
-A probability-current view makes both the likelihood factor and the denominator unavoidable. The component associated with $z$ contributes local density
+Why not average directly with $p_{\mathrm{data}}(z)$? The prior $p_{\mathrm{data}}(z)$ says only how common $z$ is globally. It does not account for whether $z$ could plausibly have produced this particular $x$. Bayes' rule gives the required posterior:
 
 $$
-\rho_z(x)=p_t(x\mid z)p_{\mathrm{data}}(z)
-$$
-
-and local probability current
-
-$$
-J_z(x)=\rho_z(x)u_t(x\mid z).
-$$
-
-After forgetting the component label $z$, currents and densities add:
-
-$$
-J(x)=\int J_z(x)\,dz,
-\qquad
-p_t(x)=\int\rho_z(x)\,dz.
-$$
-
-The effective velocity is current divided by density,
-
-$$
-u_t(x)
+p_t(z\mid x)
 =
-\frac{J(x)}{p_t(x)}
-=
-\frac{\int p_t(x\mid z)p_{\mathrm{data}}(z)u_t(x\mid z)\,dz}{p_t(x)},
+p_t(x\mid z)\frac{p_{\mathrm{data}}(z)}{p_t(x)}.
 $$
 
-which is Equation (18). Matching the total current makes the marginal density obey the same continuity equation as the mixture of conditional paths. Therefore
+The likelihood $p_t(x\mid z)$ increases the weight of data points compatible with $x$ and decreases the weight of unrelated data points.
+
+The posterior-averaged field follows the marginal probability path. Therefore
 
 $$
 X_0\sim p_{\mathrm{init}},
@@ -1249,35 +1216,9 @@ $$
 
 and in particular $X_1\sim p_{\mathrm{data}}$.
 
-For a concrete two-mode CondOT example, suppose $Z\in\{-a,+a\}$ with equal prior probability. The conditional velocities derived below are
-
-$$
-u_t(x\mid z)=\frac{z-x}{1-t}.
-$$
-
-Using only the prior would give
-
-$$
-\frac12u_t(x\mid+a)+\frac12u_t(x\mid-a)
-=
--\frac{x}{1-t},
-$$
-
-which pushes everything toward the mean zero. The correct marginal field is instead
-
-$$
-u_t(x)
-=
-\frac{\mathbb E[Z\mid X_t=x]-x}{1-t}.
-$$
-
-Positive $x$ values that are more plausibly noisy versions of $+a$ receive more of the $+a$ velocity; negative values receive more of the $-a$ velocity. The averaging is local and $x$-dependent, so the marginal flow can produce multiple modes rather than collapse to the global mean.
-
-The theorem guarantees the correct distribution at every time. It does not say that a trajectory of the marginal ODE secretly chooses one fixed $z$ and follows that conditional trajectory. Once $z$ is marginalized out, the deterministic ODE uses only the posterior-averaged velocity at its current location.
-
 ### Gaussian Conditional Vector Field and Its Derivation (Example 10)
 
-_**TL;DR:** Couple all times with the same initial noise, differentiate that explicit flow, and rewrite the velocity in terms of the current state._
+_**TL;DR:** Write a Gaussian sample as $X_t=\alpha_tz+\beta_t\epsilon$, differentiate it, and then eliminate $\epsilon$ in favor of the current point $x$._
 
 For the Gaussian path
 
@@ -1301,58 +1242,49 @@ u_t^{\mathrm{target}}(x\mid z)
 \tag{20}
 $$
 
-To derive it without guessing, first define an explicit conditional flow map using an initial point $x_0$:
-
-$$
-\psi_t^{\mathrm{target}}(x_0\mid z)
-=
-\alpha_tz+\beta_tx_0.
-\tag{21}
-$$
-
-If $X_0\sim\mathcal N(0,I_d)$, then
+The proof can be written directly from the Gaussian sampling formula. Draw one $\epsilon\sim\mathcal N(0,I_d)$ and write
 
 $$
 X_t
 =
-\psi_t^{\mathrm{target}}(X_0\mid z)
-=
-\alpha_tz+\beta_tX_0
+\alpha_tz+\beta_t\epsilon.
+$$
+
+At every $t$,
+
+$$
+X_t
 \sim
 \mathcal N(\alpha_tz,\beta_t^2I_d)
 =
 p_t(\cdot\mid z).
 $$
 
-Thus this flow has the desired conditional snapshots. Differentiate it while holding $x_0$ and $z$ fixed:
+Differentiate $X_t=\alpha_tz+\beta_t\epsilon$ while holding $z$ and $\epsilon$ fixed. The resulting derivative is the conditional vector field evaluated at the current position $X_t$:
 
 $$
-\frac{d}{dt}\psi_t^{\mathrm{target}}(x_0\mid z)
+u_t^{\mathrm{target}}(X_t\mid z)
 =
-\dot\alpha_tz+\dot\beta_tx_0.
-$$
-
-This is a trajectory velocity expressed using its starting point $x_0$. A vector field must instead be a function of the current state
-
-$$
-x=\psi_t^{\mathrm{target}}(x_0\mid z)
+\frac{dX_t}{dt}
 =
-\alpha_tz+\beta_tx_0.
+\dot\alpha_tz+\dot\beta_t\epsilon.
 $$
 
-For $0\leq t<1$ with $\beta_t>0$, solve for the initial point:
+To express this velocity using the current point $X_t=x$, solve the sampling equation for the noise:
 
 $$
-x_0
+\epsilon
 =
 \frac{x-\alpha_tz}{\beta_t}.
 $$
 
-Substitution gives
+Substitute this into the velocity:
 
 $$
 \begin{aligned}
 u_t^{\mathrm{target}}(x\mid z)
+&=\dot\alpha_tz
++\dot\beta_t\epsilon\\
 &=\dot\alpha_tz
 +\dot\beta_t\frac{x-\alpha_tz}{\beta_t}\\
 &=\left(
@@ -1363,29 +1295,512 @@ u_t^{\mathrm{target}}(x\mid z)
 \end{aligned}
 $$
 
-which is Equation (20).
+which is the [Gaussian conditional vector field](#gaussian-conditional-vector-field-and-its-derivation-example-10).
 
-Equivalently, along the shared-noise coupling $X_t=\alpha_tz+\beta_t\epsilon$,
+For CondOT, $\alpha_t=t$ and $\beta_t=1-t$, so $\dot\alpha_t=1$ and $\dot\beta_t=-1$. The [general Gaussian conditional vector field](#gaussian-conditional-vector-field-and-its-derivation-example-10) simplifies to
 
 $$
-\frac{X_t-X_{t-\Delta t}}{\Delta t}
-\longrightarrow
-\dot\alpha_tz+\dot\beta_t\epsilon.
+u_t^{\mathrm{target}}(x\mid z)
+=
+\left(1-\frac{-1}{1-t}t\right)z
++\frac{-1}{1-t}x
+=
+\frac{z-x}{1-t}
+=
+\frac{z-\left[tz+(1-t)\epsilon\right]}{1-t}
+=
+z-\epsilon.
 $$
 
-Replacing $\epsilon=(x-\alpha_tz)/\beta_t$ yields the same vector field. This is why differencing **coupled sample locations** can recover velocity whereas differencing density values cannot.
+The final form is especially intuitive: the conditional trajectory is a straight line from initial noise $\epsilon$ to data $z$, so its constant velocity is simply endpoint minus starting point. The expression $(z-x)/(1-t)$ appears singular at $t=1$ only because it infers that constant velocity from a vanishing remaining displacement and time. Along a valid trajectory the ratio has the finite limit $z-\epsilon$.
 
-For CondOT, $\alpha_t=t$ and $\beta_t=1-t$, so $\dot\alpha_t=1$ and $\dot\beta_t=-1$. Equation (20) simplifies to
+![Conditional and marginal probability paths simulated with ODEs](assets/course-mit-diffusion-2026/media/lecture-02/conditional-and-marginal-odes.png)
+
+_Top: for one fixed $z$, the conditional ODE follows the conditional probability path and every trajectory ends at $z$. Bottom: the marginal ODE follows the full marginal probability path and transports noise toward every mode of the data distribution without requiring a data-point label. Source: Figure 6 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
+
+For any sampled data point $z$, both $u_t^{\mathrm{target}}(x\mid z)$ and $p_t(x\mid z)$ are easy to compute. The marginal field, however, requires the posterior average
+
+$$
+u_t^{\mathrm{target}}(x)
+=
+\int u_t^{\mathrm{target}}(x\mid z)
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}\,dz,
+\qquad
+p_t(x)=\int p_t(x\mid z)p_{\mathrm{data}}(z)\,dz.
+$$
+
+The data distribution is normally available only through samples, not as a density that can be integrated analytically. Computing $p_t(x)$ would therefore require averaging $p_t(x\mid z)$ over every possible clean data point $z$; the same problem makes the posterior weights and the exact marginal field intractable. Conditional flow matching avoids evaluating any of these integrals: it trains on sampled $z$ using the easy conditional target, and the network learns the marginal field by averaging across training examples.
+
+### The Divergence Operator
+
+A vector field $v:\mathbb R^d\to\mathbb R^d$ assigns a vector $v(x)$ to every point $x$. Its **divergence** is the scalar
+
+$$
+\operatorname{div}(v)(x)
+=
+\sum_{i=1}^d
+\frac{\partial v^i(x)}{\partial x_i}.
+\tag{22}
+$$
+
+It measures local net outflow. Positive divergence means that more of the field flows out of a tiny region around $x$ than flows in; negative divergence means net inflow.
+
+![Vector fields with positive, negative, and zero divergence](assets/course-mit-diffusion-2026/media/lecture-02/divergence-positive-negative-zero.jpg)
+
+_Positive divergence behaves locally like a source, negative divergence like a sink, and zero divergence means no net local expansion or compression; it does not necessarily mean no motion. Diagram by Bfoshizzle1, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Divergence_(captions).svg), licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)._
+
+In one dimension there is only one component, so divergence is simply the ordinary spatial derivative
+
+$$
+\operatorname{div}(v)(x)=\frac{dv(x)}{dx}.
+$$
+
+For example, if $v(x)$ increases with $x$, the arrow at the right side of a small interval is larger than the arrow at the left side: more flows out than in, so the divergence is positive. The continuity equation applies this idea to the flow of probability.
+
+For more visual explanations, see Khan Academy's articles on [divergence](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/divergence) and the [intuition behind the divergence formula](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/intuition-for-divergence-formula).
+
+### The Continuity Equation
+
+**Continuity equation.** Consider a flow model with vector field $u_t^{\mathrm{target}}$ and
+
+$$
+X_0\sim p_{\mathrm{init}}=p_0.
+$$
+
+Then $X_t\sim p_t$ for every $0\leq t\leq1$ if and only if
+
+$$
+\boxed{
+\partial_t p_t(x)
+=
+-\operatorname{div}\!\left(p_tu_t^{\mathrm{target}}\right)(x)
+}.
+\tag{23}
+$$
+
+where $\partial_t p_t(x)=\frac{d}{dt}p_t(x)$ is the time derivative of the density at $x$. This is the **continuity equation**.
+
+The left-hand side describes how much the probability density at $x$ changes over time. This change must equal the net inflow of probability mass. A particle $X_t$ follows the vector field $u_t^{\mathrm{target}}$, while divergence measures net outflow. Therefore, negative divergence measures net inflow.
+
+The velocity must also be weighted by how much probability is present. The product $p_tu_t^{\mathrm{target}}$ is the probability flow: a region containing more probability transports more probability at the same velocity. Thus $-\operatorname{div}(p_tu_t^{\mathrm{target}})(x)$ is the net inflow of probability mass at $x$. Since probability mass is conserved, it must equal $\partial_t p_t(x)$.
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-02/continuity-equation-inflow-outflow.png" alt="Inflow and outflow around a small region in a vector field" width="420">
+
+_The small box around $x$ gains or loses probability according to the balance between flow entering and leaving it. In the continuity equation, that flow is the probability current $p_tu_t$. Source: [Lecture 2 slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf#page=20), slide 20._
+
+#### The Fokker-Planck Equation
+
+The continuity equation describes how a probability density evolves under the deterministic motion of an ODE. The **Fokker-Planck equation** generalizes it to the SDE
+
+$$
+X_0\sim p_{\mathrm{init}},
+\qquad
+dX_t=u_t(X_t)\,dt+\sigma_t\,dW_t,
+$$
+
+whose density evolves according to
+
+$$
+\boxed{
+\partial_t p_t(x)
+=
+-\operatorname{div}(p_tu_t)(x)
++
+\frac{\sigma_t^2}{2}\Delta p_t(x)
+}.
+\tag{108}
+$$
+
+There are now two ways for the density to change:
+
+- The drift $u_t$ transports probability, giving the same $-\operatorname{div}(p_tu_t)$ term as in the continuity equation.
+- Brownian noise spreads probability into nearby locations, giving the diffusion term $\frac{\sigma_t^2}{2}\Delta p_t$. The **Laplacian**
+
+  $$
+  \Delta p_t(x)
+  =
+  \sum_{i=1}^d\frac{\partial^2p_t(x)}{\partial x_i^2}
+  $$
+
+  adds the density's curvature along every coordinate. At a local peak it is typically negative, so diffusion lowers the density; at a local dip it is typically positive, so diffusion raises the density. In this way, the Laplacian describes probability spreading from concentrated regions into their surroundings.
+
+When $\sigma_t=0$, no random noise is added and the diffusion term disappears. The Fokker-Planck equation then reduces exactly to the continuity equation.
+
+The formal proof of the Fokker-Planck equation, including the continuity equation as its deterministic special case, is in [Appendix B](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=72).
+
+#### Proof That the Marginal Vector Field Generates the Marginal Probability Path
+
+Recall that averaging the conditional probability paths over data points gives the [marginal probability path](#conditional-and-marginal-probability-paths)
+
+$$
+p_t(x)
+=
+\int p_t(x\mid z)p_{\mathrm{data}}(z)\,dz,
+$$
+
+and averaging their conditional velocities according to the posterior $p_t(z\mid x)$ gives the [marginal vector field](#the-marginalization-trick)
+
+$$
+u_t^{\mathrm{target}}(x)
+=
+\int u_t^{\mathrm{target}}(x\mid z)p_t(z\mid x)\,dz
+=
+\int
+u_t^{\mathrm{target}}(x\mid z)
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}\,dz.
+$$
+
+We want to prove that the ODE
+
+$$
+\frac{dX_t}{dt}=u_t^{\mathrm{target}}(X_t)
+$$
+
+actually moves samples through the marginal distributions $p_t$. In particular, it must turn $p_0=p_{\mathrm{init}}$ into $p_1=p_{\mathrm{data}}$. This is what turns the posterior-averaged field into an unconditional generative model rather than merely a formal average of conditional velocities.
+
+The [continuity equation](#the-continuity-equation) gives the condition we need to check:
+
+$$
+\partial_t p_t(x)
+=
+-\operatorname{div}\!\left(p_tu_t^{\mathrm{target}}\right)(x).
+$$
+
+Each conditional pair $p_t(\cdot\mid z)$ and $u_t^{\mathrm{target}}(\cdot\mid z)$ already satisfies its own continuity equation. The calculation below averages those conditional equations over $z$ and shows that the result is exactly the marginal continuity equation:
 
 $$
 \begin{aligned}
+\partial_t p_t(x)
+&\overset{(i)}{=}
+\partial_t\int p_t(x\mid z)p_{\mathrm{data}}(z)\,dz\\
+&=
+\int \partial_t p_t(x\mid z)p_{\mathrm{data}}(z)\,dz\\
+&\overset{(ii)}{=}
+-\int
+\operatorname{div}\!\left(
+p_t(\cdot\mid z)u_t^{\mathrm{target}}(\cdot\mid z)
+\right)(x)
+p_{\mathrm{data}}(z)\,dz\\
+&\overset{(iii)}{=}
+-\operatorname{div}\!\left(
+\int
+p_t(x\mid z)u_t^{\mathrm{target}}(x\mid z)p_{\mathrm{data}}(z)\,dz
+\right)(x)\\
+&\overset{(iv)}{=}
+-\operatorname{div}\!\left(
+p_t(x)
+\int
 u_t^{\mathrm{target}}(x\mid z)
-&=\frac{z-x}{1-t}\\
-&=z-\epsilon
-\qquad\text{when }x=tz+(1-t)\epsilon.
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}\,dz
+\right)(x)\\
+&\overset{(v)}{=}
+-\operatorname{div}\!\left(p_tu_t^{\mathrm{target}}\right)(x).
 \end{aligned}
 $$
 
-The second form is especially intuitive: the conditional trajectory is a straight line from initial noise $\epsilon$ to data $z$, so its constant velocity is simply endpoint minus starting point. The expression $(z-x)/(1-t)$ appears singular at $t=1$ only because it infers that constant velocity from a vanishing remaining displacement and time. Along a valid trajectory the ratio has the finite limit $z-\epsilon$.
+In $(i)$ we used the [sampling definition of the marginal path](#conditional-and-marginal-probability-paths); in $(ii)$, the continuity equation for each conditional probability path $p_t(\cdot\mid z)$; in $(iii)$, linearity to exchange the integral and divergence; in $(iv)$, multiplication and division by $p_t(x)$; and in $(v)$, the [definition of the marginal vector field](#the-marginalization-trick). Therefore $u_t^{\mathrm{target}}$ satisfies the continuity equation and follows the marginal probability path, proving the [marginalization result](#the-marginalization-trick).
 
-Up to this point, the analytically known objects are conditional on $z$, while the useful generative field $u_t^{\mathrm{target}}(x)$ involves an intractable integral over all $z$. The next part of Lecture 2 explains how conditional flow matching trains a neural network on tractable conditional targets while implicitly learning this marginal field.
+### Learning the Marginal Vector Field
+
+_**TL;DR:** Marginal flow matching states the ideal learning problem but cannot be evaluated. Conditional flow matching is computable from individual training examples and has exactly the same population gradient._
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-02/flow-matching-matrix.png" alt="The conditional and marginal rows of the flow matching construction" width="700">
+
+_The flow-matching construction has two rows. A probability path defines the distributions from noise to data; its vector field defines the target dynamics; and its loss trains the neural network. Source: [Lecture 2 slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf#page=32), slide 32._
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-02/conditional-flow-matching-summary-slide.png" alt="Conditional probability path, vector field, and flow matching loss" width="700">
+
+_Conditional probability path, vector field, and flow-matching loss. Source: [Lecture 2 slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf#page=33), slide 33._
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-02/marginal-flow-matching-summary-slide.png" alt="Marginal probability path, vector field, and flow matching loss" width="700">
+
+_Marginal probability path, vector field, and flow-matching loss. Source: [Lecture 2 slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf#page=34), slide 34._
+
+The two rows serve different purposes:
+
+- The **marginal row** describes the distribution and vector field we actually want for generation, but evaluating its density, vector field, or loss requires intractable integrals over the data distribution.
+- The **conditional row** fixes one sampled data point $z$. Its probability path, vector field, and loss all have tractable analytical formulas.
+
+There is one useful nuance: although the marginal density $p_t(x)$ cannot generally be evaluated, sampling from it is easy. Draw $z\sim p_{\mathrm{data}}$ and then $x\sim p_t(\cdot\mid z)$.
+
+#### The Ideal but Intractable Objective
+
+Ideally, the neural network would directly match the marginal vector field:
+
+$$
+\mathcal L_{\mathrm{FM}}(\theta)
+=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\x\sim p_t}}
+\left[
+\left\|u_t^\theta(x)-u_t^{\mathrm{target}}(x)\right\|^2
+\right].
+\tag{24}
+$$
+
+Samples from $p_t$ are easy to obtain by first sampling $z\sim p_{\mathrm{data}}$ and then $x\sim p_t(\cdot\mid z)$, so the same loss can be written as
+
+$$
+\mathcal L_{\mathrm{FM}}(\theta)
+=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}
+\left[
+\left\|u_t^\theta(x)-u_t^{\mathrm{target}}(x)\right\|^2
+\right].
+\tag{25}
+$$
+
+The remaining obstacle is the label $u_t^{\mathrm{target}}(x)$: the [marginalization formula](#the-marginalization-trick) requires an intractable integral over the data distribution. Thus we can sample the input $x$, but we cannot compute the marginal velocity that should label it.
+
+#### The Tractable Objective
+
+The tractable alternative is the **conditional flow matching loss**
+
+$$
+\boxed{
+\mathcal L_{\mathrm{CFM}}(\theta)
+=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}
+\left[
+\left\|u_t^\theta(x)-u_t^{\mathrm{target}}(x\mid z)\right\|^2
+\right]
+}.
+\tag{26}
+$$
+
+| | Marginal flow matching | Conditional flow matching |
+| --- | --- | --- |
+| Regression target | Marginal velocity $u_t^{\mathrm{target}}(x)$ | Conditional velocity $u_t^{\mathrm{target}}(x\mid z)$ |
+| Can the target be evaluated? | No: it requires the posterior average over the data distribution | Yes: it is known analytically for the sampled $z$ |
+| Role | The ideal objective we want to minimize | The objective we can actually train with |
+| Population result | Learns the marginal vector field directly | Learns the same marginal vector field through regression |
+
+“Tractable” has a concrete meaning here: one training example can be produced by sampling $t$, sampling a dataset example $z$, sampling $x\sim p_t(\cdot\mid z)$, and evaluating $u_t^{\mathrm{target}}(x\mid z)$. This requires no evaluation of $p_{\mathrm{data}}(z)$, $p_t(x)$, or $p_t(z\mid x)$; no integral over the dataset; and no ODE simulation.
+
+The network receives only $(x,t)$, not $z$. The sampled $z$ is used to construct the input and its target. Because the network does not know which $z$ produced $x$, squared-error regression forces it to average the compatible conditional velocities.
+
+#### Why Conditional Flow Matching Learns the Marginal Vector Field
+
+The key result is that the marginal and conditional flow-matching losses differ only by a constant that does not depend on $\theta$:
+
+$$
+\mathcal L_{\mathrm{FM}}(\theta)
+=
+\mathcal L_{\mathrm{CFM}}(\theta)+C.
+$$
+
+Consequently, their gradients are equal, so minimizing the tractable conditional loss also minimizes the intractable marginal loss. The lecture notes prove this by expanding the marginal mean-squared error into three terms:
+
+$$
+\begin{aligned}
+\mathcal L_{\mathrm{FM}}(\theta)
+&=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\x\sim p_t}}
+\left[
+\left\|u_t^\theta(x)-u_t^{\mathrm{target}}(x)\right\|^2
+\right]\\
+&=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\x\sim p_t}}
+\left[\left\|u_t^\theta(x)\right\|^2\right]
+-2\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\x\sim p_t}}
+\left[u_t^\theta(x)^Tu_t^{\mathrm{target}}(x)\right]
++
+\underbrace{
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\x\sim p_t}}
+\left[\left\|u_t^{\mathrm{target}}(x)\right\|^2\right]
+}_{C_1}\\
+&=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}
+\left[\left\|u_t^\theta(x)\right\|^2\right]
+-2\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\x\sim p_t}}
+\left[u_t^\theta(x)^Tu_t^{\mathrm{target}}(x)\right]
++C_1.
+\end{aligned}
+$$
+
+The second line uses $\lVert a-b\rVert^2=\lVert a\rVert^2-2a^Tb+\lVert b\rVert^2$. The final term is called $C_1$ because it does not depend on $\theta$. In the last line, the first expectation is rewritten using the sampling procedure for the marginal path.
+
+The crucial remaining step is rewriting the cross term that contains the intractable marginal vector field. Substitute the [posterior average that defines the marginal vector field](#the-marginalization-trick):
+
+$$
+\begin{aligned}
+&\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\x\sim p_t}}
+\left[u_t^\theta(x)^Tu_t^{\mathrm{target}}(x)\right]\\
+&=
+\int_0^1\!\int
+p_t(x)u_t^\theta(x)^Tu_t^{\mathrm{target}}(x)\,dx\,dt\\
+&=
+\int_0^1\!\int
+p_t(x)u_t^\theta(x)^T
+\left[
+\int
+u_t^{\mathrm{target}}(x\mid z)
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}\,dz
+\right]dx\,dt\\
+&=
+\int_0^1\!\int\!\int
+u_t^\theta(x)^Tu_t^{\mathrm{target}}(x\mid z)
+p_t(x\mid z)p_{\mathrm{data}}(z)
+\,dz\,dx\,dt\\
+&=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}
+\left[u_t^\theta(x)^Tu_t^{\mathrm{target}}(x\mid z)\right].
+\end{aligned}
+$$
+
+This equality is the heart of the proof: its left side uses the marginal vector field, while its right side uses the tractable conditional vector field. Substitute it back into the expanded marginal loss, then add and subtract the squared norm of the conditional vector field:
+
+$$
+\begin{aligned}
+\mathcal L_{\mathrm{FM}}(\theta)
+&=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}
+\left[
+\left\|u_t^\theta(x)\right\|^2
+-2u_t^\theta(x)^Tu_t^{\mathrm{target}}(x\mid z)
+\right]+C_1\\
+&=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}
+\left[
+\left\|u_t^\theta(x)-u_t^{\mathrm{target}}(x\mid z)\right\|^2
+-\left\|u_t^{\mathrm{target}}(x\mid z)\right\|^2
+\right]+C_1\\
+&=
+\mathcal L_{\mathrm{CFM}}(\theta)
++
+\underbrace{
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}
+\left[-\left\|u_t^{\mathrm{target}}(x\mid z)\right\|^2\right]
+}_{C_2}
++C_1\\
+&=
+\mathcal L_{\mathrm{CFM}}(\theta)+C,
+\qquad C=C_1+C_2.
+\end{aligned}
+$$
+
+Both $C_1$ and $C_2$ are independent of $\theta$. Therefore,
+
+$$
+\nabla_\theta\mathcal L_{\mathrm{CFM}}(\theta)
+=
+\nabla_\theta\mathcal L_{\mathrm{FM}}(\theta).
+$$
+
+Thus conditional flow matching and direct flow matching have the same population gradient and the same minimizers. CFM is not an approximation to the marginal objective: it is the tractable loss whose parameter-dependent part is exactly the same.
+
+The lecture notes emphasize three striking features of this training algorithm:
+
+- **Simulation-free:** We never actually simulate any ODE during training. This makes training extremely cheap because we do not have to roll out ODE trajectories, which take many steps.
+- **Similar to supervised learning:** Training is a simple regression objective against $u_t^{\mathrm{target}}(x\mid z)$.
+- **Extremely simple algorithm:** It is hard to think of a much simpler training objective. This makes flow matching especially appealing for large-scale machine-learning models.
+
+#### What Is Used at Generation Time
+
+After training, generation uses the learned marginal field:
+
+$$
+X_0\sim p_{\mathrm{init}},
+\qquad
+dX_t=u_t^\theta(X_t)\,dt.
+\tag{27}
+$$
+
+Numerically solving this ODE from $t=0$ to $t=1$ produces the generated sample $X_1$.
+
+### Gaussian and CondOT Flow Matching
+
+For the Gaussian conditional path, sample
+
+$$
+z\sim p_{\mathrm{data}},
+\qquad
+\epsilon\sim\mathcal N(0,I_d),
+\qquad
+x_t=\alpha_tz+\beta_t\epsilon.
+\tag{28}
+$$
+
+The [Gaussian conditional vector field derived above](#gaussian-conditional-vector-field-and-its-derivation-example-10), evaluated at this sampled $x_t$, is
+
+$$
+u_t^{\mathrm{target}}(x_t\mid z)
+=
+\dot\alpha_tz+\dot\beta_t\epsilon.
+$$
+
+Therefore, Gaussian conditional flow matching trains on
+
+$$
+\boxed{
+\mathcal L_{\mathrm{CFM}}(\theta)
+=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\\epsilon\sim\mathcal N(0,I_d)}}
+\left[
+\left\|
+u_t^\theta(x_t)
+-(\dot\alpha_tz+\dot\beta_t\epsilon)
+\right\|^2
+\right]
+}.
+\tag{31}
+$$
+
+For the [straight-line CondOT schedule derived above](#gaussian-conditional-vector-field-and-its-derivation-example-10), this becomes
+
+$$
+x_t=tz+(1-t)\epsilon,
+\qquad
+u_t^{\mathrm{target}}(x_t\mid z)=z-\epsilon,
+$$
+
+and the objective becomes
+
+$$
+\boxed{
+\mathcal L_{\mathrm{CFM}}(\theta)
+=
+\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\\epsilon\sim\mathcal N(0,I_d)}}
+\left[
+\left\|u_t^\theta(x_t)-(z-\epsilon)\right\|^2
+\right]
+}.
+$$
+
+The input is a linear interpolation of noise and data, and the target is the constant velocity from that noise sample to that data sample.
+
+### Flow Matching Training Procedure
+
+For the Gaussian CondOT path, one training step is:
+
+1. Sample a data example $z$ from the dataset.
+2. Sample $t\sim\operatorname{Unif}[0,1]$.
+3. Sample $\epsilon\sim\mathcal N(0,I_d)$.
+4. Form $x_t=tz+(1-t)\epsilon$.
+5. Compute $\|u_t^\theta(x_t)-(z-\epsilon)\|^2$ and update $\theta$.
+
+These steps instantiate the simulation-free regression objective described above. ODE simulation is needed only after training, when generation starts from fresh Gaussian noise and follows the learned marginal field to $t=1$.
+
+The lecture highlights Stable Diffusion 3 and Meta Movie Gen as large-scale examples trained with flow-matching-style objectives. Their architectures and datasets are much more elaborate, but the basic training signal is the regression objective above.
+
+### Flow Matching Summary
+
+Flow matching separates the construction into tractable conditional objects and useful marginal objects:
+
+1. Choose $p_t(x\mid z)$, a conditional probability path from noise to one data point $z$.
+2. Derive $u_t^{\mathrm{target}}(x\mid z)$, a tractable conditional vector field that follows that path.
+3. Train $u_t^\theta(x)$ with conditional flow matching. Although the targets depend on sampled $z$, the network learns the marginal field because squared-error regression averages over compatible data points.
+4. Generate by sampling $X_0\sim p_{\mathrm{init}}$ and solving $dX_t=u_t^\theta(X_t)\,dt$ to $t=1$.
+
+For the Gaussian CondOT path, the complete training pair is simply
+
+$$
+\boxed{
+x_t=tz+(1-t)\epsilon,
+\qquad
+\text{target}=z-\epsilon
+}.
+$$
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-02/learned-flow-matching-path.png" alt="Ground-truth and learned marginal probability paths" width="520">
+
+_The ground-truth marginal path (top) and samples produced by the trained flow-matching ODE (bottom) closely agree. Source: Figure 7 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._

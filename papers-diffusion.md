@@ -1,7 +1,7 @@
 # Diffusion
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-08-14
+- **Last Updated**: 2026-08-18
 - **Status**: `In Progress`
 - **Related**:
   - [[course-mit-diffusion]] — Structured MIT course with lecture notes, slides, recordings, and labs on flow matching and diffusion models.
@@ -49,6 +49,8 @@
   - Understand the reverse-time SDE and probability-flow ODE.
 - [ ] [2023] [YaronLipman] Flow Matching for Generative Modeling - [paper](https://arxiv.org/abs/2210.02747)
   - Learn conditional flow matching and why simulation-free training recovers a marginal vector field.
+- [ ] [2024] [YaronLipman] Flow Matching Guide and Code - [paper](https://arxiv.org/abs/2412.06264), [code](https://github.com/facebookresearch/flow_matching)
+  - Practical, self-contained treatment of continuous and discrete flow matching; read after the original Flow Matching paper for clearer derivations, design choices, and implementations.
 - [ ] [2022] Elucidating the Design Space of Diffusion-Based Generative Models - [paper](https://arxiv.org/abs/2206.00364)
   - Separate parameterization, preconditioning, noise distribution, loss weighting, and sampler choice.
 
