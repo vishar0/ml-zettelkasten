@@ -17,8 +17,8 @@
 | :--: | :--: | --- | :--: | :--: | --- | --- | --- |
 | ☑ | 1 | **[Flow and Diffusion Models](#lecture1-flow-and-diffusion-models)**<br>• Introduction to generative models<br>• Ordinary and stochastic differential equations<br>• Sampling from flow and diffusion models | [slides](assets/course-mit-diffusion-2026/lecture-01-flow-and-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=9eJQQVrUUoI) | [§§1-2](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix A: A Reminder on Probability Theory](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=70) | [Lab 1: ODEs and SDEs](https://colab.research.google.com/drive/18W-IB1QwdK7zuKlWrx5uB76FM-9Ak3eW?usp=sharing) | • [3blue1brown: ODEs](https://www.3blue1brown.com/lessons/differential-equations/)<br>• [3blue1brown: PDEs](https://www.3blue1brown.com/lessons/pdes/) |
 | ☑ | 2 | **[Flow Matching](#lecture2-flow-matching)**<br>• Conditional and marginal probability path<br>• Conditional and marginal vector field<br>• Flow matching training objective | [slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf) | [recording](https://www.youtube.com/watch?v=PNkMKWW8Khw) | [§3](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix B: A Proof of the Fokker-Planck Equation](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=72) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | • [Mario Gemoll: Flow Matching](https://mariogemoll.com/flow-matching)<br>• [Khan Academy: Divergence](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/divergence)<br>• [Khan Academy: Intuition for the Divergence Formula](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/intuition-for-divergence-formula)<br>• [Greg Wayne: Flow Matching Notes](../flourish/assets/2026-greg-wayne-sessions/Notes_Flow_Matching.pdf) |
-| ☐ | 3-A | **[Score Functions and Score Matching](#lecture3-a-score-functions-and-score-matching)**<br>• Score functions<br>• Denoising score matching<br>• SDE sampling | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=ngC3QnYSVNM) | [§4](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | • [Mario Gemoll: Diffusion](https://mariogemoll.com/diffusion) |
-| ☐ | 3-B | **Classifier-free Guidance**<br>• Guided generation<br>• Classifier guidance<br>• Classifier-free guidance | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=8oWZ1bHwyRI) | [§5](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
+| ☑ | 3-A | **[Score Functions and Score Matching](#lecture3-a-score-functions-and-score-matching)**<br>• Score functions<br>• Denoising score matching<br>• SDE sampling | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=ngC3QnYSVNM) | [§4](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | • [Mario Gemoll: Diffusion](https://mariogemoll.com/diffusion) |
+| ☑ | 3-B | **[Classifier-free Guidance](#lecture3-b-classifier-free-guidance)**<br>• Guided generation<br>• Classifier guidance<br>• Classifier-free guidance | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=8oWZ1bHwyRI) | [§5](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
 | ☐ | 4 | **Latent Spaces and Neural Network Architectures**<br>• Variational autoencoders and latent spaces<br>• Diffusion Transformer and U-Nets<br>• Case studies: Large-scale models | [slides](assets/course-mit-diffusion-2026/lecture-04-latent-spaces-and-neural-network-architectures.pdf) | [recording](https://www.youtube.com/watch?v=g0MB1CCBmsI) | [§6](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix D: Additional Perspectives on VAEs](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=77) | [Lab 3: Diffusion Transformer and VAEs](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_three.ipynb) | — |
 | ☐ | 5 | **Discrete Diffusion Models**<br>• Continuous-time Markov chains (CTMCs)<br>• Sampling from CTMC models<br>• Training CTMC models | [slides](assets/course-mit-diffusion-2026/lecture-05-discrete-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=d0kmyEJN2hI) | [§7](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix C: Existence and Uniqueness of Continuous-time Markov Chains](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=74) | — | — |
 | ☐ | — | **A Guide to the Diffusion Model Literature** | — | — | [Appendix E](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=81) | — | — |
@@ -559,7 +559,7 @@ X_{t+h}
 X_t+h\,u_t(X_t).
 $$
 
-Euler-Maruyama simulates an SDE by adding a Brownian increment:
+[Euler-Maruyama](#simulating-an-sde-with-euler-maruyama) simulates an SDE by adding a Brownian increment:
 
 $$
 X_{t+h}
@@ -2694,7 +2694,7 @@ X_0\sim p'
 p_t\longrightarrow p.
 $$
 
-An Euler-Maruyama step makes the mechanism concrete:
+An [Euler-Maruyama step](#simulating-an-sde-with-euler-maruyama) makes the mechanism concrete:
 
 $$
 X_{k+1}
@@ -2984,3 +2984,234 @@ Repeated evaluations move an initial Gaussian sample through the learned probabi
 3. For Gaussian conditional paths, the conditional score is $-\epsilon/\beta_t$, so score prediction can be reparameterized as noise prediction.
 4. Noise prediction is usually better conditioned, while the score is the intrinsic distributional object used by the sampling dynamics.
 5. After training, convert the learned score or noise prediction into the vector field and repeatedly integrate an ODE or SDE from noise to data.
+
+## [Lecture3-B] Classifier-Free Guidance
+
+### From Unconditional to Guided Generation
+
+_**TL;DR:** Give the model a prompt $y$ so that it generates from $p_{\mathrm{data}}(\cdot\mid y)$ rather than the unconditional data distribution._
+
+So far, the goal has been unconditional generation:
+
+$$
+X_1\sim p_{\mathrm{data}}.
+$$
+
+For a prompt, class label, or other condition $y\in\mathcal Y$, the desired distribution becomes
+
+$$
+X_1\sim p_{\mathrm{data}}(\cdot\mid y).
+$$
+
+The notes call this **guided** generation to avoid overloading “conditional.” Earlier, $p_t(x\mid z)$ meant a probability path conditioned on a clean training example $z$. Here, $p_{\mathrm{data}}(z\mid y)$ means the data distribution conditioned on a prompt or label $y$.
+
+### Vanilla Guidance
+
+_**TL;DR:** Pass $y$ to the same vector-field network during both training and sampling; otherwise, flow matching proceeds as before._
+
+A guided vector-field network additionally receives $y$:
+
+$$
+u^\theta:\mathbb R^d\times\mathcal Y\times[0,1]\to\mathbb R^d,
+\qquad
+(x,y,t)\mapsto u_t^\theta(x\mid y).
+$$
+
+For a fixed prompt $y$, sample by simulating
+
+$$
+X_0\sim p_{\mathrm{init}},
+\qquad
+dX_t=u_t^\theta(X_t\mid y)\,dt+\sigma_t\,dW_t,
+\qquad
+\text{goal: }X_1\sim p_{\mathrm{data}}(\cdot\mid y).
+$$
+
+When $\sigma_t=0$, this is a guided flow model: the same prompt-conditioned field is integrated as an ODE.
+
+Training uses paired examples $(z,y)$, such as an image and its caption. The guided conditional flow-matching loss is
+
+$$
+\boxed{
+\mathcal L_{\mathrm{guided\text{-}CFM}}(\theta)
+=
+\mathbb E_{\substack{(z,y)\sim p_{\mathrm{data}}(z,y)\\t\sim\operatorname{Unif}[0,1]\\x\sim p_t(\cdot\mid z)}}
+\left[
+\left\|u_t^\theta(x\mid y)-u_t^{\mathrm{target}}(x\mid z)\right\|^2
+\right].
+}
+$$
+
+This differs from ordinary [conditional flow matching](#the-tractable-objective) only in two places:
+
+- The dataset supplies a pair $(z,y)$ rather than only $z$.
+- The model receives $y$, so it can learn a different marginal vector field for each prompt.
+
+The analytic target $u_t^{\mathrm{target}}(x\mid z)$ does not need $y$: once the clean sample $z$ is fixed, the conditional probability path and its velocity are constructed exactly as before. Because the network sees $(x,t,y)$ but not $z$, squared-error regression averages the compatible targets for that particular prompt and learns the prompt-conditioned marginal field.
+
+Vanilla guidance has no separate guidance scale or auxiliary classifier. It simply trains and samples a conditional model. In theory this should produce $p_{\mathrm{data}}(\cdot\mid y)$; in practice its samples may not follow the prompt strongly enough, which motivates classifier and classifier-free guidance in the next section.
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-03/vanilla-vs-classifier-free-guidance-corgi.png" alt="Corgi samples from vanilla guidance on the left and classifier-free guidance on the right" width="1000">
+
+_For the prompt “corgi dog,” vanilla-guided samples on the left often fit the requested class poorly; CFG with $w=4$ on the right produces much more consistent corgis. Source: Figure 11 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf), adapted from [Classifier-Free Diffusion Guidance](https://arxiv.org/abs/2207.12598)._
+
+### Classifier Guidance
+
+_**TL;DR:** Train a classifier on noisy inputs and use its gradient to strengthen the prompt-dependent part of the vector field._
+
+Vanilla guidance can underemphasize the prompt because the model underfits or because the paired data is imperfect. Guidance deliberately strengthens the prompt-dependent part of the learned dynamics. The lecture first derives this idea using a classifier, then removes the classifier.
+
+For a Gaussian probability path, the earlier [score-vector-field conversion](#converting-between-the-score-and-vector-field) also holds after conditioning on a prompt:
+
+$$
+u_t^{\mathrm{target}}(x\mid y)=a_t\nabla_x\log p_t(x\mid y)+b_tx.
+$$
+
+Apply Bayes' rule and differentiate with respect to $x$:
+
+$$
+\begin{aligned}
+p_t(x\mid y)&=\frac{p_t(x)p_t(y\mid x)}{p_t(y)},\\
+\nabla_x\log p_t(x\mid y)
+&=\nabla_x\log p_t(x)+\nabla_x\log p_t(y\mid x).
+\end{aligned}
+$$
+
+The term $\nabla_x\log p_t(y)$ vanishes because $p_t(y)$ does not depend on $x$. Substituting the score decomposition into the vector field gives
+
+$$
+\boxed{u_t^{\mathrm{target}}(x\mid y)=a_t\left[\nabla_x\log p_t(x)+\nabla_x\log p_t(y\mid x)\right]+b_tx=\left[a_t\nabla_x\log p_t(x)+b_tx\right]+a_t\nabla_x\log p_t(y\mid x)=u_t^{\mathrm{target}}(x)+a_t\nabla_x\log p_t(y\mid x).}
+$$
+
+The first term says how to generate a plausible sample without a prompt. The second points in the direction that makes the current noisy state more likely to be classified as $y$. **Classifier guidance** strengthens that prompt-dependent direction with a guidance scale $w>1$:
+
+$$
+\widetilde u_t(x\mid y)
+=u_t^{\mathrm{target}}(x)+w a_t\nabla_x\log p_t(y\mid x).
+$$
+
+Classifier guidance has three drawbacks:
+
+1. **It requires a separate classifier.** We must train a time-dependent classifier $p_t(y\mid x)$ on noisy inputs alongside the flow or diffusion model, giving us two networks instead of one.
+
+2. **High-dimensional conditions are difficult.** If $y$ is a text prompt rather than a class label, learning $p_t(y\mid x)$ and obtaining $\nabla_x\log p_t(y\mid x)$ can be very hard.
+
+3. **Guidance with $w>1$ is heuristic.** In that case $\widetilde u_t(x\mid y)\neq u_t^{\mathrm{target}}(x\mid y)$, so it is no longer the true guided vector field.
+
+### Classifier-Free Guidance
+
+_**TL;DR:** Learn both the prompt-conditioned and unconditional vector fields in one network, then extrapolate from the unconditional field toward the conditioned field during sampling._
+
+#### Removing the Classifier
+
+Bayes' rule also implies
+
+$$
+\nabla_x\log p_t(y\mid x)
+=\nabla_x\log p_t(x\mid y)-\nabla_x\log p_t(x).
+$$
+
+Following the lecture notes, substitute this identity into classifier guidance, then add and subtract $b_tx$ inside the term multiplied by $w$ so that the Gaussian score-vector-field formulas appear:
+
+$$
+\begin{aligned}
+\widetilde u_t(x\mid y)
+&=u_t^{\mathrm{target}}(x)+wa_t\nabla_x\log p_t(y\mid x)\\
+&=u_t^{\mathrm{target}}(x)+wa_t\left[\nabla_x\log p_t(x\mid y)-\nabla_x\log p_t(x)\right]\\
+&=u_t^{\mathrm{target}}(x)+w\left[\left(b_tx+a_t\nabla_x\log p_t(x\mid y)\right)-\left(b_tx+a_t\nabla_x\log p_t(x)\right)\right]\\
+&=u_t^{\mathrm{target}}(x)+w\left[u_t^{\mathrm{target}}(x\mid y)-u_t^{\mathrm{target}}(x)\right]\\
+&=\boxed{(1-w)u_t^{\mathrm{target}}(x)+w u_t^{\mathrm{target}}(x\mid y)}.
+\end{aligned}
+$$
+
+The classifier gradient has disappeared. We only need the unconditional and prompt-conditioned vector fields. This is **classifier-free guidance (CFG)**: “classifier-free” means that no separate classifier is trained.
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-03/classifier-vs-classifier-free-guidance.png" alt="Classifier guidance scales a classifier gradient, while classifier-free guidance scales the difference between conditional and unconditional vector fields" width="1050">
+
+_Classifier guidance and classifier-free guidance reinforce the same prompt-dependent component in two different ways. Source: Figure 12 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
+
+Although the classifier-based derivation used a Gaussian path, the final CFG combination
+
+$$
+\widetilde u_t(x\mid y)=(1-w)u_t^{\mathrm{target}}(x)+w u_t^{\mathrm{target}}(x\mid y)
+$$
+
+can be used with general probability paths. The Gaussian assumption is needed for the classifier interpretation, not for evaluating and combining two learned vector fields.
+
+#### Training One Network for Both Fields
+
+Use a special null condition $\varnothing$ and identify
+
+$$
+u_t^{\mathrm{target}}(x)=u_t^{\mathrm{target}}(x\mid\varnothing).
+$$
+
+During training, replace the real condition by $\varnothing$ with label-dropout probability $\eta$:
+
+$$
+y'=\begin{cases}
+\varnothing,&\text{with probability }\eta,\\
+y,&\text{with probability }1-\eta.
+\end{cases}
+$$
+
+The CFG conditional flow-matching objective is then
+
+$$
+\boxed{
+\mathcal L_{\mathrm{CFG\text{-}CFM}}(\theta)
+=\mathbb E_{\substack{(z,y)\sim p_{\mathrm{data}}(z,y)\\t\sim\operatorname{Unif}[0,1]\\x\sim p_t(\cdot\mid z)\\y'\text{ obtained by label dropout}}}
+\left[\left\|u_t^\theta(x\mid y')-u_t^{\mathrm{target}}(x\mid z)\right\|^2\right].
+}
+$$
+
+The regression target is unchanged. Examples whose label is retained train the prompt-conditioned field; examples whose label is dropped train the unconditional field in the same network.
+
+For a Gaussian path, one training example is especially simple:
+
+1. Sample a paired example $(z,y)$, a time $t$, and $\epsilon\sim\mathcal N(0,I_d)$.
+2. Form $x=\alpha_tz+\beta_t\epsilon$.
+3. Replace $y$ by $\varnothing$ with probability $\eta$.
+4. Minimize $\left\|u_t^\theta(x\mid y')-(\dot\alpha_tz+\dot\beta_t\epsilon)\right\|^2$.
+
+The label-dropout probability $\eta$ is a training hyperparameter. It is distinct from the inference-time guidance scale $w$.
+
+#### Sampling with CFG
+
+At every ODE step, evaluate the same network twice:
+
+$$
+u_{\mathrm{uncond}}=u_t^\theta(x\mid\varnothing),
+\qquad
+u_{\mathrm{cond}}=u_t^\theta(x\mid y),
+$$
+
+then use
+
+$$
+\boxed{
+\widetilde u_t^\theta(x\mid y)
+=(1-w)u_{\mathrm{uncond}}+w u_{\mathrm{cond}}
+=u_{\mathrm{uncond}}+w(u_{\mathrm{cond}}-u_{\mathrm{uncond}}).
+}
+$$
+
+The cases are easy to interpret:
+
+- $w=0$ gives unconditional generation.
+- $w=1$ gives ordinary vanilla-guided generation.
+- $w>1$ extrapolates beyond the conditional field, strengthening prompt adherence.
+
+For $w>1$, this is not a convex average: the unconditional field has negative coefficient $1-w$. **CFG therefore no longer promises $X_1\sim p_{\mathrm{data}}(\cdot\mid y)$.** Nevertheless, it usually improves alignment with the condition and makes outputs more canonical, at the cost of diversity and potentially more artifacts. CFG is therefore a heuristic justified predominantly by its excellent empirical results. The lecture notes emphasize its practical importance: almost any AI-generated image or video relies heavily on CFG, often with guidance scale $w\geq4$.
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-03/cfg-guidance-scale-mnist.png" alt="MNIST samples generated with classifier-free guidance scales 1, 2, and 4" width="760">
+
+_Increasing the guidance scale makes the generated digits adhere more strongly to their requested class while reducing variation. Source: Figure 13 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
+
+For a flow model, sampling integrates
+
+$$
+dX_t=\widetilde u_t^\theta(X_t\mid y)\,dt.
+$$
+
+For a diffusion model, use the same CFG-combined prediction in the corresponding [SDE sampler](#sampling-with-sdes). CFG changes the drift, score, or noise prediction used during sampling; the numerical ODE or SDE machinery remains the same.
