@@ -1,7 +1,7 @@
 # [Introduction to Flow Matching and Diffusion Models, MIT](https://diffusion.csail.mit.edu/2026/index.html)
 
 - **Created**: 2026-08-04
-- **Last Updated**: 2026-08-19
+- **Last Updated**: 2026-08-25
 - **Status**: `In Progress`
 - **Related**:
   - [[papers-diffusion]] — Broader reading list covering the foundations, objectives, architectures, and applications of diffusion models.
@@ -15,9 +15,9 @@
 
 | Done | Lecture | Topic | Slides | Recording | Lecture Notes | Lab | Additional Material |
 | :--: | :--: | --- | :--: | :--: | --- | --- | --- |
-| ☑ | 1 | **Flow and Diffusion Models**<br>• Introduction to generative models<br>• Ordinary and stochastic differential equations<br>• Sampling from flow and diffusion models | [slides](assets/course-mit-diffusion-2026/lecture-01-flow-and-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=9eJQQVrUUoI) | [§§1-2](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix A: A Reminder on Probability Theory](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=70) | [Lab 1: ODEs and SDEs](https://colab.research.google.com/drive/18W-IB1QwdK7zuKlWrx5uB76FM-9Ak3eW?usp=sharing) | [3blue1brown: ODEs](https://www.3blue1brown.com/lessons/differential-equations/)<br>[3blue1brown: PDEs](https://www.3blue1brown.com/lessons/pdes/) |
-| ☑ | 2 | **Flow Matching**<br>• Conditional and marginal probability path<br>• Conditional and marginal vector field<br>• Flow matching training objective | [slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf) | [recording](https://www.youtube.com/watch?v=PNkMKWW8Khw) | [§3](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix B: A Proof of the Fokker-Planck Equation](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=72) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | [Mario Gemoll: Flow Matching](https://mariogemoll.com/flow-matching)<br>[Khan Academy: Divergence](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/divergence)<br>[Khan Academy: Intuition for the Divergence Formula](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/intuition-for-divergence-formula)<br>[Greg Wayne: Flow Matching Notes](../flourish/assets/2026-greg-wayne-sessions/Notes_Flow_Matching.pdf) |
-| ☐ | 3-A | **Score Functions and Score Matching**<br>• Score functions<br>• Denoising score matching<br>• SDE sampling | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=ngC3QnYSVNM) | [§4](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | [Mario Gemoll: Diffusion](https://mariogemoll.com/diffusion) |
+| ☑ | 1 | **[Flow and Diffusion Models](#lecture1-flow-and-diffusion-models)**<br>• Introduction to generative models<br>• Ordinary and stochastic differential equations<br>• Sampling from flow and diffusion models | [slides](assets/course-mit-diffusion-2026/lecture-01-flow-and-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=9eJQQVrUUoI) | [§§1-2](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix A: A Reminder on Probability Theory](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=70) | [Lab 1: ODEs and SDEs](https://colab.research.google.com/drive/18W-IB1QwdK7zuKlWrx5uB76FM-9Ak3eW?usp=sharing) | • [3blue1brown: ODEs](https://www.3blue1brown.com/lessons/differential-equations/)<br>• [3blue1brown: PDEs](https://www.3blue1brown.com/lessons/pdes/) |
+| ☑ | 2 | **[Flow Matching](#lecture2-flow-matching)**<br>• Conditional and marginal probability path<br>• Conditional and marginal vector field<br>• Flow matching training objective | [slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf) | [recording](https://www.youtube.com/watch?v=PNkMKWW8Khw) | [§3](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix B: A Proof of the Fokker-Planck Equation](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=72) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | • [Mario Gemoll: Flow Matching](https://mariogemoll.com/flow-matching)<br>• [Khan Academy: Divergence](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/divergence)<br>• [Khan Academy: Intuition for the Divergence Formula](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/intuition-for-divergence-formula)<br>• [Greg Wayne: Flow Matching Notes](../flourish/assets/2026-greg-wayne-sessions/Notes_Flow_Matching.pdf) |
+| ☐ | 3-A | **[Score Functions and Score Matching](#lecture3-a-score-functions-and-score-matching)**<br>• Score functions<br>• Denoising score matching<br>• SDE sampling | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=ngC3QnYSVNM) | [§4](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | • [Mario Gemoll: Diffusion](https://mariogemoll.com/diffusion) |
 | ☐ | 3-B | **Classifier-free Guidance**<br>• Guided generation<br>• Classifier guidance<br>• Classifier-free guidance | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=8oWZ1bHwyRI) | [§5](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
 | ☐ | 4 | **Latent Spaces and Neural Network Architectures**<br>• Variational autoencoders and latent spaces<br>• Diffusion Transformer and U-Nets<br>• Case studies: Large-scale models | [slides](assets/course-mit-diffusion-2026/lecture-04-latent-spaces-and-neural-network-architectures.pdf) | [recording](https://www.youtube.com/watch?v=g0MB1CCBmsI) | [§6](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix D: Additional Perspectives on VAEs](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=77) | [Lab 3: Diffusion Transformer and VAEs](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_three.ipynb) | — |
 | ☐ | 5 | **Discrete Diffusion Models**<br>• Continuous-time Markov chains (CTMCs)<br>• Sampling from CTMC models<br>• Training CTMC models | [slides](assets/course-mit-diffusion-2026/lecture-05-discrete-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=d0kmyEJN2hI) | [§7](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix C: Existence and Uniqueness of Continuous-time Markov Chains](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=74) | — | — |
@@ -1420,9 +1420,38 @@ There are now two ways for the density to change:
   \Delta p_t(x)
   =
   \sum_{i=1}^d\frac{\partial^2p_t(x)}{\partial x_i^2}
+  =
+  \operatorname{div}(\nabla p_t)(x)
+  =
+  \operatorname{tr}\!\left(\nabla_x^2p_t(x)\right)
   $$
 
-  adds the density's curvature along every coordinate. At a local peak it is typically negative, so diffusion lowers the density; at a local dip it is typically positive, so diffusion raises the density. In this way, the Laplacian describes probability spreading from concentrated regions into their surroundings.
+  is simultaneously the **divergence of the gradient** and the **trace of the Hessian**. To see the first equality, recall that for a vector field $v:\mathbb R^d\to\mathbb R^d$,
+
+  $$
+  \operatorname{div}v(x)
+  =
+  \sum_{i=1}^d\frac{\partial v_i(x)}{\partial x_i}.
+  $$
+
+  The $i$th component of the gradient is $(\nabla p_t)_i=\partial p_t/\partial x_i$. Substituting $v=\nabla p_t$ therefore gives
+
+  $$
+  \operatorname{div}(\nabla p_t)(x)
+  =
+  \sum_{i=1}^d
+  \frac{\partial}{\partial x_i}
+  \left(
+  \frac{\partial p_t(x)}{\partial x_i}
+  \right)
+  =
+  \sum_{i=1}^d
+  \frac{\partial^2p_t(x)}{\partial x_i^2}.
+  $$
+
+  The Hessian $\nabla_x^2p_t(x)$ contains every second partial derivative. Its diagonal entries are exactly $\partial^2p_t/\partial x_i^2$, and the trace adds those diagonal entries, giving the same sum.
+
+  Thus the Laplacian adds the density's curvature along every coordinate. At a local peak it is typically negative, so diffusion lowers the density; at a local dip it is typically positive, so diffusion raises the density. In this way, the Laplacian describes probability spreading from concentrated regions into their surroundings.
 
 When $\sigma_t=0$, no random noise is added and the diffusion term disappears. The Fokker-Planck equation then reduces exactly to the continuity equation.
 
@@ -1804,3 +1833,908 @@ $$
 <img src="assets/course-mit-diffusion-2026/media/lecture-02/learned-flow-matching-path.png" alt="Ground-truth and learned marginal probability paths" width="520">
 
 _The ground-truth marginal path (top) and samples produced by the trained flow-matching ODE (bottom) closely agree. Source: Figure 7 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
+
+## [Lecture3-A] Score Functions and Score Matching
+
+### From Vector Fields to Score Functions
+
+_**TL;DR:** A score tells us which local direction makes a point more likely. For a Gaussian probability path, the score, vector field, and denoiser are different parameterizations of the same information._
+
+Lecture 2 built a generative model around the marginal vector field $u_t^{\mathrm{target}}(x)$. Diffusion models often describe the same probability path using its **score function** instead.
+
+For any density $q(x)$, its score is
+
+$$
+\boxed{
+\nabla_x \log q(x)
+}.
+$$
+
+The gradient is with respect to the state $x$, not model parameters such as $\theta$. It is a vector with the same dimension as $x$.
+
+The score points in the direction in which the log-density increases most rapidly. Since
+
+$$
+\nabla_x\log q(x)
+=
+\frac{\nabla_x q(x)}{q(x)},
+$$
+
+it points in the same direction as $\nabla_xq(x)$ wherever $q(x)>0$, but measures the increase relative to the current density. Near a high-density mode the arrows point inward; at the exact top of a smooth mode the score is zero.
+
+<p align="center">
+  <img src="assets/course-mit-diffusion-2026/media/lecture-03/score-density.png" alt="A multimodal probability density" width="300">
+  <img src="assets/course-mit-diffusion-2026/media/lecture-03/score-vector-field.png" alt="The corresponding score vector field, pointing toward locally higher density" width="300">
+</p>
+
+_A multimodal density $q(x)$ and its score field $\nabla\log q(x)$. Each arrow gives the locally steepest direction toward higher log-density. Source: Figure 8 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
+
+### Conditional and Marginal Scores
+
+As in [Lecture 2](#lecture2-flow-matching), begin with a conditional probability path $p_t(x\mid z)$ around one clean data point $z$, and marginalize over the data distribution:
+
+$$
+p_t(x)
+=
+\int p_t(x\mid z)\,p_{\mathrm{data}}(z)\,dz.
+$$
+
+The corresponding scores are:
+
+$$
+\begin{aligned}
+\text{conditional score:}\qquad
+&\nabla_x\log p_t(x\mid z),\\
+\text{marginal score:}\qquad
+&\nabla_x\log p_t(x).
+\end{aligned}
+$$
+
+The conditional score is the local uphill direction if we know which clean endpoint $z$ generated the noisy point. The marginal score is the local uphill direction for the full mixture over all possible data points. The marginal score is what a generative model can use when $z$ is unknown at sampling time.
+
+### The Marginal Score Is a Posterior Average
+
+Recall that the [marginal vector field](#the-marginalization-trick) is the posterior average of the conditional vector fields:
+
+$$
+\boxed{
+\begin{aligned}
+u_t^{\mathrm{target}}(x)
+&=
+\int
+u_t^{\mathrm{target}}(x\mid z)\,
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}
+     {p_t(x)}
+\,dz\\
+&=
+\mathbb E_{z\sim p_t(z\mid x)}
+\left[
+u_t^{\mathrm{target}}(x\mid z)
+\right].
+\end{aligned}
+}
+$$
+
+The marginal score has exactly the same posterior-averaging structure:
+
+$$
+\boxed{
+\begin{aligned}
+\nabla_x\log p_t(x)
+&=
+\int
+\nabla_x\log p_t(x\mid z)\,
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}
+     {p_t(x)}
+\,dz\\
+&=
+\int
+\nabla_x\log p_t(x\mid z)\,
+p_t(z\mid x)\,dz\\
+&=
+\mathbb E_{z\sim p_t(z\mid x)}
+\left[
+\nabla_x\log p_t(x\mid z)
+\right].
+\end{aligned}
+}
+$$
+
+The only difference is the object being averaged: conditional velocities for the marginal vector field, and conditional scores for the marginal score.
+
+- Each possible clean point $z$ proposes a conditional score $\nabla_x\log p_t(x\mid z)$.
+- At the current noisy point $x$, some clean points are more plausible explanations than others.
+- Weight each proposed score by $p_t(z\mid x)$, the posterior probability of that clean point given the current $x$, and average.
+
+The weights cannot be just the global prior $p_{\mathrm{data}}(z)$. They must depend on the current location $x$. A clean point contributes strongly only when it is both common under the data distribution and capable of producing this particular $x$ under the corruption path. Bayes' rule gives exactly those local weights:
+
+$$
+p_t(z\mid x)
+=
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}.
+$$
+
+The denominator $p_t(x)$ normalizes the contributions from all possible $z$ values so that the posterior weights integrate to one.
+
+**Derivation.** Differentiate the marginal density directly:
+
+$$
+\begin{aligned}
+\nabla_x\log p_t(x)
+&=
+\frac{\nabla_xp_t(x)}{p_t(x)}\\
+&=
+\frac{
+\int \nabla_xp_t(x\mid z)p_{\mathrm{data}}(z)\,dz
+}{
+p_t(x)
+}\\
+&=
+\int
+\frac{\nabla_xp_t(x\mid z)}{p_t(x\mid z)}
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}
+\,dz\\
+&=
+\int
+\nabla_x\log p_t(x\mid z)\,
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}
+     {p_t(x)}
+\,dz.
+\end{aligned}
+$$
+
+The two ingredients are $\nabla\log p=(\nabla p)/p$ and moving the gradient through the integral over $z$.
+
+### Score of a Gaussian Probability Path
+
+For the Gaussian conditional path
+
+$$
+p_t(x\mid z)
+=
+\mathcal N\left(x;\alpha_tz,\beta_t^2I_d\right)
+=
+\frac{1}{(2\pi)^{d/2}\beta_t^d}
+\exp\left(
+-\frac{1}{2\beta_t^2}
+\left\|x-\alpha_tz\right\|^2
+\right),
+$$
+
+the full log-density is
+
+$$
+\log p_t(x\mid z)
+=
+\log\mathcal N\left(x;\alpha_tz,\beta_t^2I_d\right)
+=
+-\frac{d}{2}\log(2\pi)
+-d\log\beta_t
+-
+\frac{1}{2\beta_t^2}
+\left\|x-\alpha_tz\right\|^2,
+$$
+
+where $d$ is the dimension of $x$. The first two terms are constant with respect to $x$, so only the squared-distance term contributes to the gradient. Differentiating gives
+
+$$
+\boxed{
+\nabla_x\log p_t(x\mid z)
+=
+-\frac{x-\alpha_tz}{\beta_t^2}
+}.
+$$
+
+The numerator points from the current point $x$ toward the Gaussian mean $\alpha_tz$. The factor $1/\beta_t^2$ sets the strength:
+
+- Small variance means the density is sharply concentrated, so moving away from its mean causes a steep drop and the score has large magnitude.
+- Large variance means the density is broad, so the same displacement changes log-density less and the score is weaker.
+- At $x=\alpha_tz$, the point is at the conditional mode and the score is zero.
+
+### Converting Between the Score and Vector Field
+
+**Key observation.** For a Gaussian probability path, both the conditional score and the conditional vector field are linear functions of $x$ and $z$. They therefore contain the same information with different time-dependent coefficients, which is what makes it possible to convert between them.
+
+**Proposition 1 (Conversion Formula for Gaussian Probability Paths).** For the Gaussian probability path $p_t(x\mid z)=\mathcal N(\alpha_tz,\beta_t^2I_d)$, the conditional and marginal vector fields are related to their corresponding scores by
+
+$$
+\boxed{
+\begin{aligned}
+u_t^{\mathrm{target}}(x\mid z)
+&=
+a_t\nabla_x\log p_t(x\mid z)+b_tx,\\
+u_t^{\mathrm{target}}(x)
+&=
+a_t\nabla_x\log p_t(x)+b_tx,
+\end{aligned}
+}
+$$
+
+where
+
+$$
+a_t
+=
+\beta_t^2\frac{\dot\alpha_t}{\alpha_t}
+-
+\beta_t\dot\beta_t,
+\qquad
+b_t
+=
+\frac{\dot\alpha_t}{\alpha_t}.
+$$
+
+Thus, the conditional or marginal vector field can be recovered from the corresponding score, and vice versa.
+
+**Proof.** As discussed earlier under [Gaussian Conditional Vector Field and Its Derivation](#gaussian-conditional-vector-field-and-its-derivation-example-10), start from
+
+$$
+x_t
+=
+\alpha_tz+\beta_t\epsilon,
+\qquad
+\epsilon=\frac{x_t-\alpha_tz}{\beta_t}.
+$$
+
+Holding $z$ and $\epsilon$ fixed while differentiating, and then writing the current $x_t$ as $x$,
+
+$$
+\begin{aligned}
+u_t^{\mathrm{target}}(x\mid z)
+&=
+\frac{dx_t}{dt}\\
+&=
+\dot\alpha_tz+\dot\beta_t\epsilon\\
+&=
+\dot\alpha_tz
++
+\frac{\dot\beta_t}{\beta_t}
+\left(x-\alpha_tz\right)\\
+&=
+\left(
+\dot\alpha_t
+-
+\frac{\dot\beta_t}{\beta_t}\alpha_t
+\right)z
++
+\frac{\dot\beta_t}{\beta_t}x.
+\end{aligned}
+$$
+
+For comparison, write the conditional score in the same linear form:
+
+$$
+\nabla_x\log p_t(x\mid z)
+=
+\frac{\alpha_t}{\beta_t^2}z
+-
+\frac{1}{\beta_t^2}x
+$$
+
+To expose the score term $\alpha_tz-x$, first rewrite
+
+$$
+z
+=
+\frac{(\alpha_tz-x)+x}{\alpha_t}.
+$$
+
+Substitute this identity into the conditional vector field and simplify:
+
+$$
+\begin{aligned}
+u_t^{\mathrm{target}}(x\mid z)
+&=
+\left(
+\dot\alpha_t
+-
+\frac{\dot\beta_t}{\beta_t}\alpha_t
+\right)z
++
+\frac{\dot\beta_t}{\beta_t}x\\
+&=
+\left(
+\frac{\dot\alpha_t}{\alpha_t}
+-
+\frac{\dot\beta_t}{\beta_t}
+\right)
+\bigl((\alpha_tz-x)+x\bigr)
++
+\frac{\dot\beta_t}{\beta_t}x\\
+&=
+\left(
+\frac{\dot\alpha_t}{\alpha_t}
+-
+\frac{\dot\beta_t}{\beta_t}
+\right)
+(\alpha_tz-x)
++
+\frac{\dot\alpha_t}{\alpha_t}x\\
+&=
+\left(
+\beta_t^2\frac{\dot\alpha_t}{\alpha_t}
+-
+\beta_t\dot\beta_t
+\right)
+\frac{\alpha_tz-x}{\beta_t^2}
++
+\frac{\dot\alpha_t}{\alpha_t}x\\
+&=
+\underbrace{
+\left(
+\beta_t^2\frac{\dot\alpha_t}{\alpha_t}
+-
+\beta_t\dot\beta_t
+\right)
+}_{a_t}
+\nabla_x\log p_t(x\mid z)
++
+\underbrace{
+\frac{\dot\alpha_t}{\alpha_t}
+}_{b_t}x.
+\end{aligned}
+$$
+
+This proves the conversion formula between the conditional vector field and conditional score. To derive the corresponding formula for the marginal vector field and marginal score, start from the [marginal vector field](#the-marginalization-trick) and posterior-average the conditional formula:
+
+$$
+\begin{aligned}
+u_t^{\mathrm{target}}(x)
+&\overset{\text{marginalization trick}}{=}
+\int
+u_t^{\mathrm{target}}(x\mid z)
+p_t(z\mid x)\,dz\\
+&\overset{\text{conditional conversion formula}}{=}
+\int
+\left[
+a_t\nabla_x\log p_t(x\mid z)+b_tx
+\right]
+p_t(z\mid x)\,dz\\
+&\overset{\text{linearity of integration}}{=}
+a_t
+\underbrace{
+\int
+\nabla_x\log p_t(x\mid z)
+p_t(z\mid x)\,dz
+}_{\substack{\text{posterior-average score}\\=\nabla_x\log p_t(x)}}
++
+b_tx
+\underbrace{
+\int p_t(z\mid x)\,dz
+}_{\substack{\text{posterior normalization}\\=1}}\\
+&=
+a_t\nabla_x\log p_t(x)+b_tx.
+\end{aligned}
+$$
+
+**This is the main bridge between flow and diffusion parameterizations for a Gaussian path.** If a model has learned the **marginal vector field, it can recover the marginal score, and vice versa**. Early diffusion models commonly learned the score and converted it into the dynamics needed for sampling.
+
+### The Denoiser as a Posterior Mean
+
+> **Remark: Reparameterization of the Score.**
+>
+> The [conversion formula above](#converting-between-the-score-and-vector-field) for Gaussian probability paths is possible because both sides (conditional vector field and conditional score) are linear functions of $x$ and $z$. Once we marginalize (marginal vector field and marginal score), both sides are just a linear reparameterization of the posterior mean $\mathbb E_{z\mid x}[z]$. It follows that any quantity that allows to recover $\mathbb E_{z\mid x}[z]$ can in turn be used to recover the unconditional vector field and score. Further, doing so might even be preferable from a numerical/training stability standpoint. One common choice is the posterior mean itself, often referred to as the denoiser.
+>
+> The denoiser has a very intuitive interpretation: it is the expected value of clean data $z$ given noisy data $x$. People often call such models **denoising diffusion models**, as learning $D_t$ and learning $u_t^{\mathrm{target}}$ are theoretically equivalent.
+
+Formally, we define the conditional and marginal denoiser as
+
+$$
+D_t(x\mid z)
+=
+z,
+\qquad
+D_t(x)
+=
+\int
+D_t(x\mid z)\,
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}
+\,dz
+\overset{D_t(x\mid z)=z}{=}
+\int
+z\,
+\frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}
+\,dz
+\overset{\text{Bayes' rule}}{=}
+\int z\,p_t(z\mid x)\,dz
+\overset{\text{definition of posterior mean}}{=}
+\mathbb E_{z\mid x}[z].
+$$
+
+For a Gaussian probability path, the same denoiser can be recovered from the marginal vector field. Start by posterior-averaging the conditional vector field, then solve for $D_t(x)$:
+
+$$
+\begin{aligned}
+u_t^{\mathrm{target}}(x)
+&\overset{\text{marginalization trick}}{=}
+\int u_t^{\mathrm{target}}(x\mid z)p_t(z\mid x)\,dz\\
+&\overset{\text{Gaussian conditional vector field}}{=}
+\int
+\left[
+\left(
+\dot\alpha_t-\frac{\dot\beta_t}{\beta_t}\alpha_t
+\right)z
++
+\frac{\dot\beta_t}{\beta_t}x
+\right]
+p_t(z\mid x)\,dz\\
+&\overset{\mathbb E_{z\mid x}[z]=D_t(x),\ \int p_t(z\mid x)dz=1}{=}
+\left(
+\dot\alpha_t-\frac{\dot\beta_t}{\beta_t}\alpha_t
+\right)D_t(x)
++
+\frac{\dot\beta_t}{\beta_t}x,
+\end{aligned}
+$$
+
+so
+
+$$
+\begin{aligned}
+\beta_tu_t^{\mathrm{target}}(x)
+&=
+(\dot\alpha_t\beta_t-\alpha_t\dot\beta_t)D_t(x)
++
+\dot\beta_tx,\\
+\beta_tu_t^{\mathrm{target}}(x)-\dot\beta_tx
+&=
+(\dot\alpha_t\beta_t-\alpha_t\dot\beta_t)D_t(x),\\
+D_t(x)
+&=
+\frac{
+\beta_tu_t^{\mathrm{target}}(x)-\dot\beta_tx
+}{
+\dot\alpha_t\beta_t-\alpha_t\dot\beta_t
+}.
+\end{aligned}
+$$
+
+- **What $\mathbb E_{z\mid x}[z]$ means.** Fix the current noisy point $x$. The posterior $p_t(z\mid x)$ assigns probability to each uncorrupted data point $z$ according to how plausibly it could have produced $x$. Its posterior mean is
+
+  $$
+  \mathbb E_{z\mid x}[z]
+  \overset{\text{definition of posterior mean}}{=}
+  \int z\,p_t(z\mid x)\,dz
+  \overset{\text{Bayes' rule}}{=}
+  \int
+  z\,
+  \frac{p_t(x\mid z)p_{\mathrm{data}}(z)}{p_t(x)}
+  \,dz
+  \overset{\text{definition of }D_t}{=}
+  D_t(x).
+  $$
+
+  The expectation averages over possible $z$ values; the observed $x$ is held fixed.
+
+- **Why the posterior mean of the uncorrupted data point $z$ is called the denoiser.** Given the noisy point $x$, a denoiser must choose one estimate $d$ of $z$. Under squared error, the posterior mean $\mathbb E_{z\mid x}[z]$ is the optimal choice:
+
+  $$
+  D_t(x)
+  =
+  \underset{d}{\operatorname{argmin}}
+  \,\mathbb E_{z\mid x}
+  \left[\lVert d-z\rVert^2\right].
+  $$
+
+  If $m=\mathbb E_{z\mid x}[z]$, then
+
+  $$
+  \mathbb E_{z\mid x}\left[\lVert d-z\rVert^2\right]
+  =
+  \lVert d-m\rVert^2
+  +
+  \mathbb E_{z\mid x}\left[\lVert z-m\rVert^2\right].
+  $$
+
+  The second term does not depend on $d$, so the loss is minimized at $d=m=D_t(x)$. Thus the posterior mean is the best mean-squared-error reconstruction of the clean data, which is why it is called the denoiser.
+
+- **Will the denoiser always output a “clean” data point?** No. The denoiser returns the posterior mean, not a sample from the posterior. For example, if two distinct clean points are equally plausible,
+
+  $$
+  p_t(z\mid x)
+  =
+  \frac{1}{2}\delta_{z_1}
+  +
+  \frac{1}{2}\delta_{z_2}
+  \qquad\Longrightarrow\qquad
+  D_t(x)
+  =
+  \frac{z_1+z_2}{2}.
+  $$
+
+  The average may lie between the two data modes and need not itself resemble valid data; for images, this can appear as a blurry or implausible reconstruction. Whether the exact denoiser is clean-looking depends mainly on the noise level, how concentrated or multimodal $p_t(z\mid x)$ is, the geometry of the data distribution, and any conditioning information that narrows the posterior. A learned denoiser can additionally depart from the exact posterior mean because of finite data, model capacity, or optimization error.
+
+- **Why the choice can still matter numerically.** The parameterizations are equivalent only if the predicted function is exact. With a finite neural network, finite precision, and optimization error, their scales can differ greatly across time. For example, the conditional score $-(x-\alpha_tz)/\beta_t^2=-\epsilon/\beta_t$ grows as $\beta_t\to0$, while converting a denoiser into a score multiplies denoiser error by $\alpha_t/\beta_t^2$. Other conversions divide by $\alpha_t$ or $\dot\alpha_t\beta_t-\alpha_t\dot\beta_t$, so small denominators can amplify error near an endpoint. Predicting $D_t(x)$ keeps the regression target on the scale of the data, but it induces a different effective weighting across noise levels. Thus, theoretically equivalent targets can have meaningfully different optimization and numerical stability.
+
+| Conditional object: $z$ is a fixed, known, uncorrupted data point | Formula | Intuition |
+| --- | --- | --- |
+| **Probability path** | $p_t(x\mid z)$ | A **distribution over possible $x$** at time $t$, conditioned on one known data point $z$. It specifies where the population should be at each time. |
+| **Vector field** | $\frac{dX_t}{dt}=u_t^{\mathrm{target}}(X_t\mid z)\ \Rightarrow\ X_t\sim p_t(\cdot\mid z)$ | The **instantaneous velocity of a point at $x$**. Its ODE realizes the conditional probability path associated with the known $z$. |
+| **Denoiser** | $D_t(x\mid z)=z$ | The **data-point estimate**. Because $z$ is already given, denoising is trivial: return $z$. |
+
+After $z$ is marginalized out, the corresponding objects are:
+
+| Marginal object: $z$ is unknown | Formula | Intuition |
+| --- | --- | --- |
+| **Probability path** | $p_t(x)=\int p_t(x\mid z)p_{\mathrm{data}}(z)\,dz$ | A **distribution over the whole population of $x$** at time $t$, obtained by mixing the conditional paths for all possible data points. |
+| **Vector field** | $u_t^{\mathrm{target}}(x)=\int u_t^{\mathrm{target}}(x\mid z)p_t(z\mid x)\,dz$ | The **instantaneous velocity at $x$**, obtained by averaging the conditional velocities according to which data points are plausible given the current $x$. |
+| **Denoiser** | $D_t(x)=\int D_t(x\mid z)p_t(z\mid x)\,dz=\int z\,p_t(z\mid x)\,dz$ | The **posterior mean of the data points** that could have produced the current $x$. |
+
+For the Gaussian path, posterior-averaging the conditional score gives
+
+$$
+\nabla_x\log p_t(x)
+=
+\frac{\alpha_tD_t(x)-x}{\beta_t^2},
+$$
+
+and therefore
+
+$$
+\boxed{
+D_t(x)
+=
+\frac{x+\beta_t^2\nabla_x\log p_t(x)}{\alpha_t}
+}.
+$$
+
+For Gaussian probability paths, the marginal score, marginal vector field, and denoiser are therefore linear reparameterizations of the same posterior information. Choosing which one a neural network predicts can still matter for numerical conditioning and training stability, even though they are equivalent in theory.
+
+At the end of this section, the three equivalent views are:
+
+$$
+\boxed{
+\text{score}
+\quad\longleftrightarrow\quad
+\text{vector field}
+\quad\longleftrightarrow\quad
+\text{denoiser}
+}
+\qquad
+\text{for Gaussian probability paths.}
+$$
+
+### Sampling with SDEs
+
+_**TL;DR:** The score lets us add Brownian noise to the learned ODE while preserving the same marginal probability path. Setting the diffusion coefficient to zero recovers deterministic ODE sampling; a positive coefficient produces stochastic trajectories._
+
+Suppose the marginal vector field follows the desired probability path:
+
+$$
+\frac{dX_t}{dt}
+=
+u_t^{\mathrm{target}}(X_t),
+\qquad
+X_t\sim p_t.
+$$
+
+For any time-dependent diffusion coefficient $\sigma_t\geq0$, we can instead use the SDE
+
+$$
+\boxed{
+\begin{aligned}
+dX_t
+&=
+u_t^{\mathrm{target}}(X_t)\,dt
++
+\frac{\sigma_t^2}{2}\nabla_x\log p_t(X_t)\,dt
++
+\sigma_t\,dW_t\\
+&=
+\left[
+u_t^{\mathrm{target}}(X_t)
++
+\frac{\sigma_t^2}{2}\nabla_x\log p_t(X_t)
+\right]dt
++
+\sigma_t\,dW_t
+\end{aligned}
+},
+\qquad
+X_t\sim p_t.
+$$
+
+In particular, the endpoint still has the desired data distribution:
+
+$$
+X_1\sim p_{\mathrm{data}}.
+$$
+
+The three terms play different roles:
+
+- $u_t^{\mathrm{target}}(X_t)dt$ performs the original deterministic transport along the probability path.
+- $\sigma_t\,dW_t$ injects fresh Brownian noise and makes individual trajectories stochastic.
+- $\frac{\sigma_t^2}{2}\nabla_x\log p_t(X_t)dt$ points toward higher-density regions and exactly compensates for the distributional spreading caused by the Brownian noise.
+
+The coefficient $\sigma_t$ controls the amount of stochasticity. When $\sigma_t=0$, the SDE reduces to the original ODE. Increasing $\sigma_t$ makes individual trajectories more jagged, but in the exact continuous-time theory it does not change their marginal distribution at any time.
+
+> **Note: Langevin dynamics.** Suppose the target distribution is fixed over time:
+> $$
+> p_t=p
+> \qquad\Longrightarrow\qquad
+> \partial_t p_t=0.
+> $$
+> The [continuity equation](#the-continuity-equation) therefore requires
+> $$
+> 0
+> =
+> -\operatorname{div}\!\left(p\,u_t^{\mathrm{target}}\right).
+> $$
+> This does **not** require $u_t^{\mathrm{target}}=0$: a nonzero vector field could circulate probability while leaving the density $p$ unchanged. For Langevin dynamics, we choose the simplest valid field,
+> $$
+> u_t^{\mathrm{target}}=0.
+> $$
+> The SDE then reduces to
+> $$
+> dX_t
+> =
+> \frac{\sigma_t^2}{2}\nabla_x\log p(X_t)\,dt
+> +
+> \sigma_t\,dW_t.
+> $$
+> This is **Langevin dynamics**. The general SDE above combines this score-directed stochastic motion with the vector field that transports the changing probability path $p_t$. For the Gaussian special case, cf. the earlier [Ornstein-Uhlenbeck process](#ornstein-uhlenbeck-process) section.
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-03/langevin-convergence.png" alt="Particles converging to a multimodal equilibrium distribution under Langevin dynamics" width="650">
+
+_Langevin dynamics moves an initially diffuse collection of particles toward a fixed multimodal target distribution. Source: Figure 10 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
+
+#### Why the Marginal Probability Path Stays the Same
+
+The [earlier Fokker-Planck section](#the-fokker-planck-equation) defines the Laplacian, explains the SDE generalization of the continuity equation, and links its full derivation in Appendix B. The result needed here is: for the SDE
+
+$$
+X_0\sim p_{\mathrm{init}},
+\qquad
+dX_t=b_t(X_t)\,dt+\sigma_t\,dW_t,
+$$
+
+$X_t$ has distribution $p_t$ for every $0\leq t\leq1$ if and only if
+
+$$
+\partial_t p_t(x)
+=
+-\operatorname{div}(p_tb_t)(x)
++
+\frac{\sigma_t^2}{2}\Delta p_t(x).
+$$
+
+This is a generic statement about an SDE with drift $b_t$. For the proposed sampler, the complete drift is
+
+$$
+b_t(x)
+=
+u_t^{\mathrm{target}}(x)
++
+\frac{\sigma_t^2}{2}\nabla_x\log p_t(x),
+$$
+
+so the score term is included inside $b_t$. The ODE and SDE share the same proposed probability path $p_t$, but they have **different dynamics**:
+
+$$
+\begin{aligned}
+\text{ODE:}\quad
+&dX_t=u_t^{\mathrm{target}}(X_t)\,dt,\\
+\text{SDE:}\quad
+&dX_t=
+\underbrace{\left[
+u_t^{\mathrm{target}}(X_t)
++
+\frac{\sigma_t^2}{2}\nabla_x\log p_t(X_t)
+\right]dt}_{\text{drift}}
++
+\underbrace{\sigma_t\,dW_t}_{\text{diffusion}}.
+\end{aligned}
+$$
+
+The path $p_t$ is not being derived here. It is already known to be generated by the original ODE, so it satisfies the [continuity equation](#the-continuity-equation):
+
+$$
+\partial_t p_t
+=
+-\operatorname{div}(p_tu_t^{\mathrm{target}}).
+$$
+
+The remaining question is whether the proposed SDE also has this same $p_t$. The Fokker-Planck equation provides the test: substitute the SDE drift $b_t$ and check whether the already-known $p_t$ satisfies it. Following the direction of the proof in the lecture notes, begin with the known continuity equation and rewrite it into Fokker-Planck form.
+
+$$
+\begin{aligned}
+\partial_t p_t
+&=
+-\operatorname{div}(p_tu_t^{\mathrm{target}})
+&&\text{(continuity equation)}\\
+&=
+-\operatorname{div}(p_tu_t^{\mathrm{target}})
+-
+\frac{\sigma_t^2}{2}\Delta p_t
++
+\frac{\sigma_t^2}{2}\Delta p_t
+&&\text{(add and subtract the same term)}\\
+&=
+-\operatorname{div}(p_tu_t^{\mathrm{target}})
+-
+\frac{\sigma_t^2}{2}\operatorname{div}(\nabla_x p_t)
++
+\frac{\sigma_t^2}{2}\Delta p_t
+&&\left(
+\Delta p_t
+=
+\sum_{i=1}^d\frac{\partial^2p_t}{\partial x_i^2}
+=
+\operatorname{div}(\nabla p_t),
+\ \text{see Laplacian section earlier}
+\right)\\
+&=
+-\operatorname{div}(p_tu_t^{\mathrm{target}})
+-
+\operatorname{div}\!\left(
+p_t\frac{\sigma_t^2}{2}\nabla_x\log p_t
+\right)
++
+\frac{\sigma_t^2}{2}\Delta p_t
+&&\text{($\nabla p_t=p_t\nabla\log p_t$)}\\
+&=
+-\operatorname{div}\!\left[
+p_t\left(
+u_t^{\mathrm{target}}
++
+\frac{\sigma_t^2}{2}\nabla_x\log p_t
+\right)
+\right]
++
+\frac{\sigma_t^2}{2}\Delta p_t
+&&\text{(linearity of divergence)}\\
+&=
+-\operatorname{div}(p_tb_t)
++
+\frac{\sigma_t^2}{2}\Delta p_t
+&&\text{(definition of $b_t$)}.
+\end{aligned}
+$$
+
+The first line is the known rate of change of $p_t$ under the ODE. The last line is exactly the Fokker-Planck equation for the proposed SDE. Therefore, the same candidate $p_t$ satisfies the SDE's required density-evolution equation. By the Fokker-Planck result above, this means that the SDE has distribution $p_t$ at every time.
+
+**The added score drift and Brownian diffusion cancel only at the level of the population density. They do not cancel along each sample trajectory.** Over a small step $h$,
+
+$$
+X_{t+h}
+\approx
+X_t
++
+\left[
+u_t^{\mathrm{target}}(X_t)
++
+\frac{\sigma_t^2}{2}\nabla_x\log p_t(X_t)
+\right]h
++
+\sigma_t\sqrt{h}\,\epsilon,
+\qquad
+\epsilon\sim\mathcal N(0,I_d).
+$$
+
+The random $O(\sqrt h)$ displacement makes an SDE trajectory zig-zag even though the collection of trajectories still has distribution $p_t$ at every time.
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-03/sde-conditional-and-marginal-paths.png" alt="Conditional and marginal probability paths simulated with stochastic differential equations" width="700">
+
+_The SDE samples match the same conditional and marginal probability paths as their ODE counterparts, but individual trajectories are stochastic and jagged. Source: Figure 9 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf)._
+
+For a Gaussian probability path, the [score-vector-field conversion](#converting-between-the-score-and-vector-field)
+
+$$
+u_t^{\mathrm{target}}(x)
+=
+a_t\nabla_x\log p_t(x)+b_tx
+$$
+
+lets us write the SDE entirely in terms of the score:
+
+$$
+\begin{aligned}
+dX_t
+&=
+u_t^{\mathrm{target}}(X_t)\,dt
++
+\frac{\sigma_t^2}{2}\nabla_x\log p_t(X_t)\,dt
++
+\sigma_t\,dW_t\\
+&=
+\left[
+a_t\nabla_x\log p_t(X_t)
++
+b_tX_t
+\right]dt
++
+\frac{\sigma_t^2}{2}\nabla_x\log p_t(X_t)\,dt
++
+\sigma_t\,dW_t\\
+&=
+\left[
+\left(a_t+\frac{\sigma_t^2}{2}\right)
+\nabla_x\log p_t(X_t)
++
+b_tX_t
+\right]dt
++
+\sigma_t\,dW_t.
+\end{aligned}
+$$
+
+Thus a separately trained score network is not theoretically necessary for a Gaussian path if the marginal vector field has already been learned.
+
+#### Is Stochastic Sampling Better?
+
+Not automatically. As the SDE extension establishes, **the SDE has the same marginal distribution $p_t$ at every time as the original ODE, even though their individual trajectories differ.** The result is striking because we can choose any diffusion coefficient $\sigma_t\geq0$, even after training the networks. In theory, the result holds for every choice of $\sigma_t$.
+
+In practice, however, we suffer from two sources of error:
+
+1. **Training error:** The neural network does not perfectly approximate the marginal vector field and score.
+2. **Simulation error:** Numerically discretizing the ODE or SDE introduces error. For example, when $\sigma_t\gg0$, prohibitively small step sizes may be needed.
+
+For a fixed trained model, there is therefore often an empirically optimal $\sigma_t\geq0$.
+
+_The existence of a “best” $\sigma_t$ is an artifact of imperfectly trained models and finite compute budgets, not a theoretical property of the exact continuous-time dynamics._
+
+Some downstream procedures, including search, fine-tuning, and inference-time optimization, may benefit from continued stochastic evolution. Nevertheless, the [lecture slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf#page=21) emphasize that ODE sampling often gives the best practical results: **SDE sampling is an option, not a requirement.**
+
+#### Langevin Dynamics as a Sampler
+
+For the Langevin special case defined above, the fixed target $p$ is a **stationary distribution**:
+
+$$
+X_0\sim p
+\quad\Longrightarrow\quad
+X_t\sim p
+\qquad (t\geq0).
+$$
+
+More importantly for sampling, under suitable regularity and mixing conditions, Langevin dynamics can begin from another distribution $p'\neq p$ and converge toward $p$:
+
+$$
+X_0\sim p'
+\quad\Longrightarrow\quad
+p_t\longrightarrow p.
+$$
+
+An Euler-Maruyama step makes the mechanism concrete:
+
+$$
+X_{k+1}
+=
+X_k
++
+\frac{\sigma_{t_k}^2}{2}
+\nabla_x\log p(X_k)h
++
+\sigma_{t_k}\sqrt h\,\epsilon_k,
+\qquad
+\epsilon_k\sim\mathcal N(0,I_d).
+$$
+
+Unlike ODE sampling, this uses fresh $\epsilon_k$ at every step. Continuous Langevin dynamics therefore provides a basis for MCMC: repeated local score-directed and random moves can converge to $p$ without requiring samples from $p$ initially. The Euler update approximates this process and requires a sufficiently small $h$; a fixed nonzero step size generally introduces some discretization bias.
+
+For a Gaussian target $p=\mathcal N(0,I_d)$,
+
+$$
+\nabla_x\log p(x)=-x,
+$$
+
+so Langevin dynamics reduces to an [Ornstein-Uhlenbeck process](#ornstein-uhlenbeck-process):
+
+$$
+dX_t
+=
+\underbrace{
+-\frac{\sigma_t^2}{2}X_t\,dt
+}_{\text{linear mean-reverting drift toward zero}}
++
+\underbrace{
+\sigma_t\,dW_t
+}_{\text{Brownian noise}}.
+$$
+
+An Ornstein-Uhlenbeck process is precisely this combination: the farther $X_t$ moves from zero, the stronger the linear drift pulling it back, while Brownian noise continually perturbs it.
+
+This connection underlies early diffusion-model formulations. More generally, Langevin dynamics is widely used for molecular simulation and MCMC in Bayesian statistics. Early score-based generative models extended it across a sequence of noise levels, using annealed Langevin dynamics to move from an easy noisy distribution toward the data distribution.
+
+#### Optional: GLASS Flows
+
+The distinguishing feature of SDE sampling is that the initial point $X_0$ does not fully determine $X_t$ for $t>0$: fresh randomness enters throughout the evolution. Perhaps surprisingly, [GLASS Flows](https://arxiv.org/abs/2509.25170) can reproduce the same stochastic transitions using ODEs through an additional sampling construction. The aim is to retain stochastic capabilities, such as search over multiple continuations, while preserving the computational advantages of ODE sampling.

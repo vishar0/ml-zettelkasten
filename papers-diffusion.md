@@ -1,7 +1,7 @@
 # Diffusion
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-08-18
+- **Last Updated**: 2026-08-25
 - **Status**: `In Progress`
 - **Related**:
   - [[course-mit-diffusion]] — Structured MIT course with lecture notes, slides, recordings, and labs on flow matching and diffusion models.
@@ -145,6 +145,426 @@ Start this section only after the core generative-modeling path.
   - Explore diffusion as an iterative refinement process over solutions rather than only as a data generator.
 
 ---
+
+## [2026] [Greg-rec] [KaimingHe] [ELF: Embedded Language Flows](https://arxiv.org/abs/2605.10938)
+
+- **Date**: 2026-08-20
+
+---
+
+- **Abstract**:
+  > Diffusion and flow-based models have become the de facto approaches for generating continuous data, e.g., in domains such as images and videos. Their success has attracted growing interest in applying them to language modeling. Unlike their image-domain counterparts, today's leading diffusion language models (DLMs) primarily operate over discrete tokens. In this paper, we show that continuous DLMs can be made effective with minimal adaptation to the discrete domain.
+  >
+  > We propose Embedded Language Flows (ELF), a class of diffusion models in continuous embedding space based on continuous-time Flow Matching. Unlike existing DLMs, ELF predominantly stays within the continuous embedding space until the final time step, where it maps to discrete tokens using a shared-weight network. This formulation makes it straightforward to adapt established techniques from image-domain diffusion models, e.g., classifier-free guidance (CFG).
+  >
+  > Experiments show that ELF substantially outperforms leading discrete and continuous DLMs, achieving better generation quality with fewer sampling steps. These results suggest that ELF offers a promising path toward effective continuous DLMs.
+
+- **Continuous versus discrete DLMs**: DLMs are commonly formulated in one of two ways: continuous or discrete. Continuous DLMs map discrete tokens into continuous representations and perform denoising in the resulting continuous space. Discrete DLMs, in contrast, operate directly in token space and formulate a probabilistic diffusion model over discrete random variables.
+  - More precisely, “continuous” versus “discrete” describes the **random state being corrupted and generated**, not merely whether the neural network has continuous hidden activations. Every Transformer already represents tokens with continuous vectors internally.
+  - A continuous DLM such as ELF embeds the sequence as $x\in\mathbb R^{L\times d}$, corrupts and denoises these continuous vectors, and converts the final vectors to token probabilities only at the end.
+  - A discrete DLM such as [D3PM](https://arxiv.org/abs/2107.03006), [MDLM](https://arxiv.org/abs/2406.07524), or [Duo](https://arxiv.org/abs/2506.10892) corrupts the categorical token identities themselves. At an intermediate time, each position still contains a vocabulary symbol—perhaps the original token, `[MASK]`, or a random replacement token.
+- **The motivating question**: Recent advances in discrete DLMs have substantially improved their generation quality and sampling efficiency. By contrast, continuous DLMs have seen relatively limited progress. It remains an open question whether the current performance gap is due to the inherently discrete nature of language modeling or to underexplored algorithmic design choices for continuous models.
+- **ELF is continuous in two senses**:
+  - It operates in **continuous embedding space**, directly denoising continuous representations throughout the flowing process and considering discretization only at the final time step.
+  - It is formulated in **continuous time**, following Flow Matching, which allows the velocity field to be defined through a time derivative. This formulation lets ELF benefit directly from advances in Flow Matching.
+- **Constructing the embedding space**: Following Latent Diffusion Models, ELF constructs its continuous embedding space by applying an encoder model to the input discrete tokens. The encoder can be pretrained, jointly trained, or even frozen with random weights. The paper uses pretrained bidirectional T5 contextual embeddings by default:
+  $$
+  (s_1,\ldots,s_L)\in\mathcal V^L
+  \xrightarrow{E}
+  x\in\mathbb R^{L\times512}.
+  $$
+  The default encoder is a frozen pretrained T5-small encoder. Its output is **contextual and token-position-aligned**: there is one vector per sequence position, but the vector for a token depends on the entire input sentence rather than being a fixed vocabulary lookup. The encoder supplies clean continuous targets during training. It is not needed for unconditional inference, because generation starts directly from Gaussian noise with the same shape as $x$; conditional generation still uses it to encode the source sequence.
+- **“Latent” does not necessarily mean “compressed”**: A latent is simply an unobserved internal representation. Latent diffusion typically chooses a deliberately compressed bottleneck to reduce denoising compute. For example, image latent diffusion maps
+  $$
+  256\times256\times3
+  \xrightarrow{E}
+  32\times32\times4,
+  $$
+  performs diffusion in the smaller representation, and relies on a separately trained decoder to reconstruct pixels. A language latent model can similarly reduce sequence length, feature width, or both:
+  $$
+  (s_1,\ldots,s_L)
+  \xrightarrow{E}
+  (h_1,\ldots,h_M),
+  \qquad M<L,
+  $$
+  after which a decoder must expand the generated latent sequence back into $L$ tokens.
+- **ELF's latent is high-dimensional and token-position-aligned**: ELF retains one contextual embedding per token position rather than shortening the sequence into a compressed latent code:
+  $$
+  s_i\longleftrightarrow x_i\in\mathbb R^{512}.
+  $$
+  The model does use a $128$-dimensional internal channel bottleneck before projecting to the Transformer width, but this is not the kind of sequence compression used by latent-diffusion autoencoders: every token position remains represented and the model projects back to one output vector per position. This makes the continuous flow more expensive than operating on a short latent sequence, but preserves a direct positional interface to vocabulary prediction. The trade-off is therefore
+  $$
+  \begin{aligned}
+  \text{compressed latent diffusion:}&\quad
+  \text{cheaper denoising}+\text{separate decoder}+\text{information bottleneck},\\
+  \text{ELF:}&\quad
+  \text{higher-dimensional denoising}+\text{token alignment}+\text{no separate decoder}.
+  \end{aligned}
+  $$
+- **No separate decoder**: A conventional language latent-diffusion pipeline would be
+  $$
+  s
+  \xrightarrow{E}
+  x
+  \xrightarrow{\text{diffusion or flow}}
+  \hat x
+  \xrightarrow{D_\phi}
+  \hat s,
+  $$
+  where $D_\phi$ is another learned model that must run during generation. Unlike these methods, ELF does not require such a separately parameterized decoder. It repurposes the final Flow Matching time as a continuous-to-discrete decoding step: the same Transformer performs denoising at $t<1$ and decoding at $t=1$. See **Figure 2**.
+  - During denoising,
+    $$
+    x_\theta
+    =
+    \operatorname{net}_\theta(z_t,t,\mathrm{denoise}).
+    $$
+  - During decoder training, ELF corrupts a clean embedding to create a nontrivial endpoint input $\tilde z$, then uses
+    $$
+    h
+    =
+    \operatorname{net}_\theta(\tilde z,1,\mathrm{decode}),
+    \qquad
+    \operatorname{logits}=Wh,
+    $$
+    with token-level cross-entropy against $s$. Corruption prevents the final branch from learning only an identity map and prepares it to correct the imperfect endpoint produced by numerical sampling.
+  - At inference,
+    $$
+    z_0\sim\mathcal N(0,I)
+    \xrightarrow[\text{multiple ODE steps}]{\operatorname{net}_\theta\text{ in denoise mode}}
+    z_1
+    \xrightarrow{\operatorname{net}_\theta(\cdot,1,\mathrm{decode})}
+    h
+    \xrightarrow{W}
+    \text{tokens}.
+    $$
+  “No decoder” therefore does **not** mean that no decoding computation occurs. ELF still performs one final shared-Transformer call and applies a learned unembedding matrix $W$; the claim is that it needs no second generative network with separate parameters. The encoder is training-only, whereas the shared Transformer and unembedding layer are used at inference.
+- **A deliberately minimal continuous DLM**: ELF builds on prior continuous DLMs but aims for a minimalist design focused on the interface between continuous and discrete spaces.
+  - In contrast to pioneering continuous DLMs and many later methods that employ a per-step discretization loss such as cross-entropy, ELF performs denoising in continuous embedding space at nearly all steps, offering maximal flexibility for the flow dynamics.
+  - Unlike latent-diffusion methods that operate in a compressed latent space and rely on a separate decoder, ELF directly operates in a high-dimensional latent space and requires no extra decoder. Here “latent space” means the sequence of contextual token embeddings, not a compressed representation with its own decoder.
+  - These two choices are connected: because the continuous state remains high-dimensional and token-aligned, the denoiser can share its weights with the final token decoder. A heavily compressed, non-token-aligned latent would generally require a more expressive separate decoder.
+- **Headline empirical result**: Following the evaluation protocols of prior work, ELF outperforms leading discrete DLMs and existing continuous DLMs (**Figure 1**). It achieves better generation quality with fewer sampling steps than discrete models such as MDLM and Duo and concurrent continuous models such as FLM and LangFlow. It reports this performance using $10\times$ fewer training tokens and without distillation. The authors take these results as evidence that continuous DLMs can be highly competitive while requiring only minimal treatment of discretization.
+- **Flow-matching recap for ELF**: Let $x$ be the clean sequence of contextual token embeddings and let $\epsilon\sim\mathcal N(0,I)$ have the same shape. ELF uses the straight conditional path
+  $$
+  z_t=t x+(1-t)\epsilon,
+  \qquad 0\leq t\leq1,
+  $$
+  so $t=0$ is Gaussian noise and $t=1$ is the clean embedding. Holding the sampled pair $(x,\epsilon)$ fixed and differentiating gives the conditional velocity
+  $$
+  \frac{dz_t}{dt}=x-\epsilon.
+  $$
+  A Transformer is trained on these easy conditional targets. As in ordinary conditional flow matching, regression over many examples makes its output approximate the marginal vector field—the average conditional velocity appropriate at the current $(z_t,t)$.
+- **ELF predicts the clean embedding**: The network outputs $x_\theta(z_t,t)$ rather than velocity directly. Since
+  $$
+  z_t=t x+(1-t)\epsilon
+  \quad\Longrightarrow\quad
+  x-\epsilon=\frac{x-z_t}{1-t},
+  $$
+  ELF converts the clean-embedding prediction to
+  $$
+  v_\theta(z_t,t)=\frac{x_\theta(z_t,t)-z_t}{1-t}.
+  $$
+  Consequently, velocity matching and clean-embedding regression are the same objective with a time-dependent weight:
+  $$
+  \left\|v_\theta-(x-\epsilon)\right\|^2
+  =
+  \frac{1}{(1-t)^2}\left\|x_\theta-x\right\|^2.
+  $$
+  Generation starts from Gaussian $z_0$ and numerically integrates the learned ODE $dz_t/dt=v_\theta(z_t,t)$ toward $t=1$, using Euler's method or another ODE solver.
+  - Thus the **direct network output** is the current clean-endpoint estimate $x_\theta$, while the **quantity used by the ODE solver** is the derived velocity $v_\theta$. Predicting $x$ does not remove iterative sampling: under MSE, $x_\theta(z_t,t)$ approximates $\mathbb E[x\mid z_t]$, so a highly noisy input does not identify a unique final sample. The model recomputes the estimate and velocity after every step.
+  - $x$-prediction also aligns the two shared-weight tasks: both continuous denoising and final token decoding ask the network to recover a clean embedding. The paper reports that direct $v$-prediction works poorly when the same weights must also perform final discretization.
+- **Final token objective**: If $W$ is the vocabulary unembedding matrix, the decoder-mode prediction for position $i$ has logits
+  $$
+  \operatorname{logits}(s_i)=W x_{\theta,i}.
+  $$
+  A softmax and categorical sample or argmax then produce the token. Training selects continuous denoising with the MSE objective for $80\%$ of examples and endpoint decoding with token-level cross-entropy for $20\%$.
+- **Training algorithm**: **Algorithm 1** is easiest to read as two supervised tasks that share the same Transformer parameters. The first learns the continuous flow; the second teaches the endpoint to spell its continuous prediction as tokens.
+
+  ```python
+  clean = encoder(tokens)  # frozen T5; training only
+
+  if random() < 0.8:  # continuous denoising branch
+      t = sample_denoising_time()
+      noise = 2 * normal_like(clean)
+      state = t * clean + (1 - t) * noise
+
+      clean_hat = model(state, t=t, mode="denoise")
+      velocity = clean - noise
+      velocity_hat = (clean_hat - state) / (1 - t)
+      loss = mse(velocity_hat, velocity)
+  else:  # endpoint discretization branch
+      endpoint_input = corrupt_each_token(clean)
+      decoded = model(endpoint_input, t=1, mode="decode")
+      logits = unembedding(decoded)
+      loss = cross_entropy(logits, tokens)
+  ```
+
+  The `if` statement is conceptual. The implementation places both kinds of example in a batch, masks the inapplicable operations and losses, and provides a learned **mode token** so the shared network knows which task it is performing. The two branches are not two sequential stages: each training example contributes to one of the two losses.
+- **Endpoint corruption and time sampling**:
+  - Before corruption, the clean T5 embeddings are normalized with the mean and standard deviation estimated on OpenWebText.
+  - For denoising, ELF samples $t' \sim \mathcal N(-1.5,0.8^2)$ and uses $t=\operatorname{sigmoid}(t')$. Gaussian noise is scaled by $2$. This logit-normal schedule emphasizes the difficult, noisy region near $t=0$ more than uniform sampling does.
+  - The decoder cannot simply be trained on exactly clean $x$ because the numerical sampler will arrive at an imperfect approximation to $x$. ELF therefore samples a separate corruption strength $p_i$ for each token position,
+    $$
+    p_i=\operatorname{sigmoid}(p'_i),
+    \qquad
+    p'_i\sim\mathcal N(0.8,0.8^2),
+    $$
+    and constructs
+    $$
+    \tilde z_i=p_i x_i+(1-p_i)\epsilon_i.
+    $$
+    The decoder noise scale is $5$ on OpenWebText and $1$ on the conditional tasks. Varying $p_i$ within a sequence makes the endpoint branch repair different amounts of local corruption instead of learning an identity map.
+- **Inference algorithm**: **Algorithm 2** uses ordinary Euler integration for the clearest version of ELF. The model repeatedly predicts the clean endpoint, converts that prediction into the velocity at the current state, and takes one ODE step. Only after the final continuous step does it produce vocabulary logits.
+
+  ```python
+  state = normal(embedding_shape)
+
+  for t, t_next in adjacent_pairs(time_grid):
+      clean_hat = model(state, t=t, mode="denoise")
+      velocity = (clean_hat - state) / (1 - t)
+      state = state + (t_next - t) * velocity
+
+  decoded = model(state, t=1, mode="decode")
+  logits = unembedding(decoded)
+  tokens = logits.argmax(dim=-1)
+  ```
+
+  `clean_hat` is an estimate of the final clean embedding, not the next state. The next state is obtained by following its implied velocity for only the current time interval. This is why $x$-prediction still requires iterative inference.
+- **Self-conditioning**: A first denoising prediction $\hat x'$ is fed back as context for a second prediction:
+  $$
+  \hat x
+  =
+  \operatorname{net}_\theta(z_t\mid \operatorname{stopgrad}(\hat x'),t).
+  $$
+  Concretely, ELF concatenates $[z_t,\hat x']$ along the channel dimension and linearly projects the result back to the original embedding dimension. During training, half of the examples use $\hat x'$ and half replace it with zeros. During sampling, the previous timestep's clean prediction becomes the next step's self-condition, so self-conditioning does not require an additional inference pass at every step. Decoder-mode examples always use a zero self-condition.
+- **Classifier-free guidance from self-conditioning**: In unconditional language generation there is no prompt or class label, so ELF treats the intermediate self-conditioning prediction as the condition $c$. Standard CFG would form
+  $$
+  v_{\mathrm{cfg}}(z_t\mid c,\omega)
+  =
+  \omega v(z_t\mid c)
+  +(1-\omega)v(z_t\mid\varnothing),
+  $$
+  where $\omega$ is the guidance scale and $\varnothing$ is the zero condition. For $\omega>1$, this extrapolates away from the unconditional prediction and makes samples more strongly follow the self-condition. As usual, stronger guidance tends to improve apparent quality while reducing diversity.
+  - Ordinary CFG needs conditional and unconditional network calls at every sampling step. ELF instead uses **training-time CFG**: it conditions the model on $\omega$ and trains one call to predict the already-guided output.
+  - For a self-conditioned example, the velocity target is
+    $$
+    v_{\mathrm{target}}
+    =
+    v
+    +
+    \left(1-\frac{1}{\omega}\right)
+    \left(v_{\mathrm{sc}}-v_{\mathrm{no\text{-}sc}}\right),
+    $$
+    with `stopgrad` applied to the target. When $\omega=1$, this reduces to the ordinary flow-matching target $v=x-\epsilon$.
+  - Training samples $\omega\in[0.5,5]$ from a distribution biased toward smaller values. Time, guidance scale, and denoise/decode mode are represented by four prepended control tokens apiece. This in-context conditioning is slightly better in the ablation and reduces ELF-B from $148$M parameters with adaLN-Zero to $105$M.
+  - The full denoising branch in **Algorithm 3** can be reduced to the following skeleton:
+
+    ```python
+    no_sc_input = project(concat(state, zeros_like(state)))
+    x_no_sc = model(no_sc_input, t=t, cfg_scale=w, mode="denoise")
+
+    sc_input = project(concat(state, stopgrad(x_no_sc)))
+    x_sc = model(sc_input, t=t, cfg_scale=w, mode="denoise")
+
+    v_no_sc = (x_no_sc - state) / (1 - t)
+    v_sc = (x_sc - state) / (1 - t)
+    guided_target = velocity + (1 - 1 / w) * (v_sc - v_no_sc)
+
+    use_sc = random_per_example() < 0.5
+    prediction = where(use_sc, v_sc, v_no_sc)
+    target = where(use_sc, guided_target, velocity)
+    loss = mse(prediction, stopgrad(target))
+    ```
+
+    The first pass supplies both the zero-self-conditioned prediction and the detached context for the second pass. The mask also keeps ordinary, unguided examples in training; otherwise the network would not learn what its null condition means.
+- **Conditional text-to-text generation**: For translation or summarization, the clean contextual embeddings of the source sequence are prepended to the target and are never corrupted. Full self-attention lets the noisy target positions condition on this clean prefix. The CFG condition then includes both the prefix and the self-conditioning prediction; the unconditional counterpart zeros these conditions. During training, ELF zeros the source embeddings with probability $0.1$ so the same model learns the conditional and unconditional cases required for CFG. The same generative Transformer and final decoding mechanism therefore extend to sequence-to-sequence tasks; the frozen T5 encoder is additionally run at inference to embed the source.
+- **SDE-inspired sampler**: ELF's baseline sampler follows the deterministic flow ODE. The paper also uses a practical stochastic approximation that re-injects noise at each step and asks the denoiser to evaluate a slightly noisier state:
+
+  ```python
+  def sde_like_step(state, t, dt, gamma):
+      noise = normal_like(state)
+      alpha = 1 - gamma * dt
+      t_back = alpha * t
+      noisy_state = alpha * state + (1 - alpha) * noise
+
+      clean_hat = model(noisy_state, t=t_back, mode="denoise")
+      velocity = (clean_hat - state) / (1 - t)
+      return state + dt * velocity
+  ```
+
+  This is deliberately called **SDE-inspired**, not an exact numerical integration of the corresponding SDE. $\gamma$ controls the re-injected noise; $\gamma=0$ recovers the deterministic Euler update. The authors hypothesize that moderate stochasticity can correct early mistakes instead of letting a deterministic trajectory amplify them. Empirically it helps most when the step budget is small, usually lowering generative perplexity while slightly lowering entropy.
+- **Discrete diffusion uses categorical Markov dynamics**: An ordinary ODE moves a point infinitesimally in $\mathbb R^d$, and a diffusion SDE adds infinitesimal Gaussian increments. Neither operation is directly defined for token identities: there is no token “slightly between” `cat` and `dog`. A discrete DLM instead specifies probabilities of jumping between vocabulary symbols.
+  - In discrete time, a transition matrix $Q_t$ defines a categorical Markov chain:
+    $$
+    q(s_t\mid s_{t-1})=\operatorname{Cat}(Q_t s_{t-1}),
+    \qquad
+    q(s_t\mid s_0)=\operatorname{Cat}(\bar Q_t s_0),
+    $$
+    where tokens are represented as one-hot vectors and $\bar Q_t=Q_tQ_{t-1}\cdots Q_1$.
+  - In continuous time, the analogue is a **continuous-time Markov chain** (CTMC) with a rate matrix $R_t$. With $p_t$ written as a row vector, its distribution follows the master equation
+    $$
+    \frac{dp_t}{dt}=p_tR_t.
+    $$
+    An individual sample remains at one token for a while and then jumps to another. This is not a Brownian SDE, even though the literature still calls the overall construction “diffusion.”
+- **State space and time are separate choices**: “Discrete diffusion” means that the state being generated is discrete; it does not imply that the time variable must also be discrete. Likewise, the original DDPM uses continuous-valued states but a finite set of timesteps. Continuous-time models are still evaluated with finitely many numerical steps on a computer.
+
+  | Model | State space | Mathematical time | Representative dynamics |
+  | --- | --- | --- | --- |
+  | Original DDPM | continuous, $X_t\in\mathbb R^d$ | discrete, $t\in\{0,\ldots,T\}$ | $q(X_t\mid X_{t-1})=\mathcal N(\sqrt{1-\beta_t}\,X_{t-1},\beta_t I)$ |
+  | Score SDE | continuous, $X_t\in\mathbb R^d$ | continuous, $t\in[0,1]$ | $dX_t=f_t(X_t)\,dt+g_t\,dW_t$ |
+  | D3PM | discrete, $S_t\in\mathcal V$ | usually discrete | $q(S_t\mid S_{t-1})=\operatorname{Cat}(Q_tS_{t-1})$ |
+  | MDLM | discrete, $S_t\in\mathcal V\cup\{\mathrm{MASK}\}$ | continuous | $q(S_t\mid S_0)=\alpha_t\delta_{S_0}+(1-\alpha_t)\delta_{\mathrm{MASK}}$ |
+  | Duo / uniform-state diffusion | discrete, $S_t\in\mathcal V$ | continuous | $q(S_t\mid S_0)=\alpha_t\delta_{S_0}+(1-\alpha_t)\operatorname{Uniform}(\mathcal V)$ |
+  | ELF | continuous, $Z_t\in\mathbb R^{L\times d}$ | continuous | $dZ_t/dt=v_\theta(Z_t,t)$ |
+
+  MDLM and Duo therefore have continuous schedules and continuously evolving categorical probabilities, but a realized sample is always a token and changes through jumps. ELF has both continuous time and a continuous state, so its realized trajectory has an ordinary velocity $dZ_t/dt$.
+- **What replaces velocity for discrete tokens**: A continuous point can move a small distance in the direction $u_t(x)$, but there is no meaningful direction or intermediate value between two token identities such as `cat` and `dog`. A discrete model instead specifies a jump rate $R_t(i,j)$: the probability per unit time that a sample currently at token $i$ switches to token $j$. All the rates together determine how the categorical probabilities change:
+  $$
+  \frac{dp_t}{dt}=p_tR_t.
+  $$
+  [Discrete Flow Matching](https://arxiv.org/abs/2407.15595) therefore does not learn an ODE velocity over token IDs. It learns the transition rates needed to move probability from one token to another, and generation samples the resulting token jumps. “Flow” here refers to probability moving among categories, not to individual tokens moving continuously through space.
+- **Masked or absorbing diffusion (MDLM)**: For one clean token $S_0$, the forward marginal is
+  $$
+  q(S_t\mid S_0)
+  =
+  \alpha_t\,\delta_{S_0}
+  +(1-\alpha_t)\,\delta_{\mathrm{MASK}},
+  $$
+  where:
+  - $q(S_t\mid S_0)$ is the distribution of the token at time $t$, conditioned on the original clean token;
+  - $\delta_a$ is a point mass that assigns probability $1$ to symbol $a$ and $0$ to every other symbol;
+  - $\alpha_t\in[0,1]$ is the **clean-token survival probability**, or noise schedule. It is a decreasing function of time, with $\alpha_0\approx1$ and $\alpha_1\approx0$.
+
+  Thus the mixture says exactly:
+  $$
+  S_t=
+  \begin{cases}
+  S_0, & \text{with probability }\alpha_t,\\
+  \mathrm{MASK}, & \text{with probability }1-\alpha_t.
+  \end{cases}
+  $$
+  For example, if $\alpha_t=0.7$, then a token remains $S_0$ with probability $0.7$ and is `[MASK]` with probability $0.3$. At the endpoints,
+  $$
+  \alpha_0=1
+  \;\Longrightarrow\;
+  q(S_0\mid S_0)=\delta_{S_0},
+  \qquad
+  \alpha_1=0
+  \;\Longrightarrow\;
+  q(S_1\mid S_0)=\delta_{\mathrm{MASK}}.
+  $$
+  This $\alpha_t$ is not a Gaussian variance or standard deviation. It is a categorical mixture weight, although it plays the analogous role of measuring how much clean signal remains. The displayed equation is a **marginal** from the clean token directly to time $t$, rather than a one-step transition. For two times $s<t$, an unmasked token survives from $s$ to $t$ with conditional probability $\alpha_t/\alpha_s$; if it has already become `[MASK]`, it remains masked. For sequences, the forward corruption applies this mechanism independently at each token position.
+- **Useful taxonomy**:
+
+  | Model family | Corrupted state | Forward dynamics | Learned object | Sampling path |
+  | --- | --- | --- | --- | --- |
+  | D3PM | categorical tokens | discrete Markov chain | reverse categorical transitions / clean-token prediction | token-to-token steps |
+  | MDLM | tokens and `[MASK]` | absorbing-mask Markov process | clean-token distribution at masked positions | progressive unmasking |
+  | Duo | categorical tokens | uniform-state Markov process | reverse categorical transitions | repeated token revision |
+  | SEDD | categorical tokens | CTMC | probability ratios / reverse rates | continuous-time token jumps |
+  | Discrete Flow Matching | categorical tokens | discrete probability path | posterior or transition rates | token jumps |
+  | ELF | continuous contextual embeddings | Euclidean interpolation | clean embedding, converted to velocity | ODE through embedding space, then one token decode |
+
+- **Architecture and default training recipe**:
+  - The clean targets come from a frozen $35$M-parameter T5-small encoder with embedding dimension $512$. A learned linear bottleneck maps each embedding through $128$ channels and then into the Transformer's hidden width. The bottleneck changes channel dimension, not sequence length.
+  - The denoiser-decoder is a DiT-style bidirectional Transformer with SwiGLU, RMSNorm, RoPE, and query-key normalization. Unlike a causal LM, it uses full attention because all token positions are refined together.
+
+    | Model | Layers | Hidden width | Heads | Parameters | OWT epochs |
+    | --- | ---: | ---: | ---: | ---: | ---: |
+    | ELF-B | 12 | 768 | 12 | 105M | 5 |
+    | ELF-M | 24 | 1056 | 16 | 342M | 4 |
+    | ELF-L | 32 | 1280 | 16 | 652M | 3 |
+
+  - The OpenWebText configuration uses sequences of $1024$ tokens, global batch size $512$, Muon with learning rate $0.002$, no weight decay, a constant learning rate after $0.5$ warmup epochs, and EMA decay $0.9999$. The reported setup uses $64$ TPU v5p chips and takes about $1.5$ hours per epoch.
+  - The training allocation is $80\%$ denoising and $20\%$ endpoint decoding. Self-conditioning is used with probability $0.5$. The default SDE noise-reinjection scale is $\gamma=1$, though the system comparison tunes it by sampling budget.
+- **Evaluation protocol**:
+  - Unconditional ELF is trained on OpenWebText, about $9$B tokens, and evaluated on $1{,}000$ generated sequences. **Generative perplexity** is the perplexity that a separate pretrained GPT-2 Large assigns to those samples. It is a fluency proxy supplied by an external evaluator, not ELF's own likelihood.
+  - The paper pairs perplexity with per-sample unigram entropy. For a generated sequence $S$ of length $L$,
+    $$
+    \hat p_S(w)
+    =
+    \frac{\#\{i:s_i=w\}}{L},
+    \qquad
+    H(S)
+    =
+    -\sum_w \hat p_S(w)\log \hat p_S(w),
+    $$
+    and it averages $H(S)$ across the $1{,}000$ samples. Higher entropy means that an individual sample uses a broader token vocabulary. It is mainly a repetition/collapse check: it ignores word order, semantics, and diversity across different samples.
+  - Most ablation plots therefore show a **Gen. PPL–entropy frontier**. Lower perplexity and higher entropy are preferred; pushing CFG harder often improves one while worsening the other. The paper treats entropy below $5$ as typically repetitive or degenerate and generative perplexity above $300$ as typically meaningless or ungrammatical.
+  - The authors do not report validation perplexity from ELF itself because exact likelihood evaluation for a flow can require additional likelihood-specific training. For conditional generation they instead use BLEU on WMT14 German-to-English and ROUGE-1/2/L on XSum.
+- **Unconditional-generation results**: **Figure 7** compares the $105$M-parameter ELF-B with roughly $170$M-parameter discrete models MDLM and Duo and continuous models FLM and LangFlow, all on OpenWebText.
+  - With the SDE-inspired sampler and self-conditioning CFG scale $3$, ELF-B reaches generative perplexity $24.08\pm0.16$ and entropy $5.15\pm0.002$ at $32$ sampling steps using $\gamma=1.5$. The corresponding $8$- and $16$-step perplexities are $67.32$ and $33.66$, using the stronger $\gamma=2$ correction.
+  - Undistilled ELF is also better in the paper's few-step comparison than the distilled MDLM+SDTT, Duo+DCD, and FMLM baselines.
+  - The reported effective training budget is $45.2$B tokens—five passes over OpenWebText—versus more than $500$B for the compared baselines. This accounting measures training examples consumed by the diffusion models; it does **not** include the prior cost of pretraining the frozen T5 encoder.
+- **Conditional-generation results**: ELF-B uses $64$-step ODE sampling, self-conditioning CFG scale $1$, and source-condition CFG scale $2$. In the paper's matched-scale comparison it reports the best result on both tasks:
+
+  | Model | WMT14 De-En BLEU | XSum R1 | XSum R2 | XSum R-L |
+  | --- | ---: | ---: | ---: | ---: |
+  | Autoregressive baseline | 25.2 | 30.5 | 10.2 | 24.4 |
+  | MDLM | 18.4 | 33.4 | 11.6 | 25.8 |
+  | Duo | 21.3 | 31.4 | 10.1 | 25.0 |
+  | ELF-B | **26.4** | **36.0** | **12.2** | **27.8** |
+
+  WMT14 uses $64$ clean source positions and $64$ generated target positions; XSum uses up to $1024$ source positions and $64$ generated target positions. The table is encouraging evidence that the method is not restricted to unconditional text, though it covers small, conventional sequence-to-sequence benchmarks rather than modern instruction-following evaluation.
+- **Main-method ablations**:
+  - **Guidance — Figure 4**: increasing self-conditioning CFG scale lowers generative perplexity but also lowers entropy. CFG is therefore a quality–diversity control, not an unqualified improvement.
+  - **Embedding choice — Figure 5a**: frozen pretrained contextual T5 embeddings give the best frontier. A contextual encoder trained from scratch on OpenWebText is close but slightly worse. Among noncontextual choices, frozen pretrained T5 token lookups beat frozen Gaussian vectors; jointly learned token embeddings perform worst, which the authors attribute to the difficulty of moving the target representation while simultaneously learning its denoiser.
+    - Thus ELF's best model is **not an end-to-end, from-scratch language model** in the GPT sense. It bootstraps its clean representation from a pretrained frozen encoder. The ablation shows that the ELF mechanism does not logically require this choice, but it materially helps.
+    - “Token-position-aligned” should not be confused with “token-identity-aligned.” Each position has a vector that can be decoded to a token, but contextual T5 means the same token can have different clean vectors in different sentences.
+  - **Shared versus separate decoder — Figure 5b**: a separately trained T5-shaped decoder and the shared-weight design trace similar quality–diversity curves, but weight sharing reaches lower perplexity and removes a separate training stage and inference module. This supports the minimalist design, though it does not show that separate decoding is fundamentally incapable.
+  - **ODE versus SDE-inspired sampling — Figure 5c**: stochastic noise reinjection gives substantially lower perplexity in the few-step regime. Its advantage shrinks with more steps.
+  - **Model scaling — Figure 6**: ELF-B, M, and L improve the frontier with scale. At matched entropy, larger models achieve lower perplexity; at matched perplexity, they retain higher entropy.
+- **Additional ablations**:
+  - **Prediction target — Figure 11**: $x$-prediction is stable for T5-small/base/large embedding dimensions $512/768/1024$. Direct $v$-prediction is competitive at $512$ but degrades at $768$ and $1024$; $\epsilon$-prediction collapses at every tested width. Besides the empirical result, $x$-prediction is the only target that naturally makes denoising and endpoint decoding ask the shared network for the same semantic object.
+  - **Bottleneck — Figure 12**: $32$ channels can obtain low perplexity but often collapses into the low-entropy region; $512$ preserves more entropy but has substantially worse perplexity. The default $128$-channel bottleneck gives the best balance.
+  - **Denoise/decode allocation — Figure 13**: too few denoising examples hurts the frontier, particularly with the SDE sampler. The tested optimum is the default $0.8/0.2$ denoising/decoding split.
+  - **Conditioning mechanism — Figure 14**: prepended in-context control tokens are slightly better than adaLN-Zero while reducing ELF-B's parameter count from $148$M to $105$M.
+  - **Optimizer — Figure 15**: tuned Muon outperforms tuned AdamW at matched entropy, especially with SDE-inspired sampling, but both optimizers remain better than the paper's DLM baselines. The headline result is therefore not solely an optimizer artifact.
+  - **Time grid — Figure 16a**: a logit-normal inference grid beats a uniform grid at every tested step count, especially with few steps. It both matches the training distribution and places finer intervals in the noisy early portion of the path.
+  - **Noise reinjection — Figure 16b**: moderate increases in $\gamma$ lower perplexity while slightly lowering entropy; $\gamma=0$ is the ODE sampler and $\gamma=1$ is the default.
+  - **Conditional CFG — Figure 17**: increasing source guidance from $1$ to $2$ improves translation and summarization, while stronger guidance begins to hurt. The default source-condition scale is therefore $2$.
+- **Progressive distillation extension (ELF+PD)**: Base ELF is strong at $8$–$32$ steps but deteriorates below that range. Appendix B compresses a fixed $64$-step teacher into a few-step student. If $K$ teacher substeps move $z_t$ to $z_r$, the displacement is converted back into the clean-prediction parameterization:
+  $$
+  \tilde x
+  =
+  z_t
+  +
+  \frac{1-t}{r-t}(z_r-z_t),
+  \qquad
+  \mathcal L_{\mathrm{distill}}
+  =
+  \mathbb E\left[
+  \left\|x_\theta(z_t,t)-\tilde x\right\|^2
+  \right].
+  $$
+  This follows by asking which clean prediction would make one Euler step over $[t,r]$ reproduce the teacher displacement. The distillation loss replaces the denoising MSE, while the shared endpoint decoder keeps its original cross-entropy loss.
+
+  | Round | Student steps | Teacher substeps per student step |
+  | --- | ---: | ---: |
+  | 1 | 16 | 4 |
+  | 2 | 8 | 8 |
+  | 3 | 4 | 16 |
+  | 4 | 2 | 32 |
+  | 5 | 1 | 64 |
+
+  Each round trains for one epoch; later students initialize from the previous round. **Figure 9** reports that the final ELF+PD student beats the distilled MDLM+SDTT, Duo+DCD, and FMLM baselines from $1$ through $32$ steps. Its one-step generative perplexity is $136.10$ at entropy $5.26$, while $8$ steps reach $23.18$ at entropy $5.07$. The curriculum matters: early-round students collapse when evaluated far below their trained step budget, while later rounds progressively improve $1$–$4$-step generation. ELF+PD consumes about $90$B effective tokens, still excluding the frozen encoder's pretraining cost.
+- **What is actually novel**: None of contextual embeddings, flow matching, $x$-prediction, self-conditioning, CFG, shared weights, or endpoint cross-entropy is individually new. ELF's contribution is the unusually clean combination:
+  $$
+  \text{frozen contextual embedding space}
+  +
+  \text{unrestricted continuous flow}
+  +
+  \text{no intermediate token projection or CE}
+  +
+  \text{final-only shared-weight discretization}.
+  $$
+  Previous continuous DLMs commonly tie intermediate states back to the vocabulary through per-step cross-entropy or projection. Latent DLMs can keep the path continuous but generally need a separate latent-to-text decoder. ELF occupies the missing design point: keep the whole generative path continuous, then make the denoiser itself perform the one discrete endpoint operation.
+- **Limitations and interpretation**:
+  - The default representation comes from a frozen pretrained T5 encoder, so the strongest result does not yet demonstrate joint end-to-end learning of the language representation and generative flow. The poor learnable-embedding ablation makes this an important open problem rather than a bookkeeping detail.
+  - The claimed $10\times$ data efficiency excludes T5 pretraining and compares effective token counts across systems with different training pipelines. It shows that the ELF stage is data-efficient, not that the complete system was trained from scratch on one tenth the total compute or data.
+  - Generative perplexity under GPT-2 Large and unigram entropy are convenient historical DLM metrics but weak measures of semantics, factuality, instruction following, long-range coherence, and cross-sample mode collapse.
+  - Undistilled ELF still needs iterative sampling. One-step generation becomes competitive only after a five-round progressive-distillation curriculum.
+  - The experiments establish a strong small-model result on OpenWebText and two sequence-to-sequence benchmarks. They do not yet establish GPT-scale pretraining behavior, long-context scaling, or parity with modern autoregressive foundation models.
+- **Core takeaway**: ELF's main question is not whether continuous vectors can represent language—all Transformers already use them—but whether the **generative state can remain continuous for the entire iterative trajectory**. The paper's answer is yes: with a good frozen contextual representation, $x$-prediction, a shared endpoint decoder, self-conditioning, guidance, and a carefully chosen sampler, continuous language flows can outperform the paper's discrete and continuous DLM baselines. The most consequential unresolved question is whether the representation and flow can be learned together at scale without relying on a separately pretrained encoder.
 
 ## [2022] [BillPeebles,SainingXie] [DiT: Scalable Diffusion Models with Transformers](https://arxiv.org/abs/2212.09748)
 
