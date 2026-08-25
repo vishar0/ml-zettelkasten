@@ -2485,7 +2485,7 @@ The [earlier Fokker-Planck section](#the-fokker-planck-equation) defines the Lap
 $$
 X_0\sim p_{\mathrm{init}},
 \qquad
-dX_t=b_t(X_t)\,dt+\sigma_t\,dW_t,
+dX_t=f_t(X_t)\,dt+\sigma_t\,dW_t,
 $$
 
 $X_t$ has distribution $p_t$ for every $0\leq t\leq1$ if and only if
@@ -2493,22 +2493,22 @@ $X_t$ has distribution $p_t$ for every $0\leq t\leq1$ if and only if
 $$
 \partial_t p_t(x)
 =
--\operatorname{div}(p_tb_t)(x)
+-\operatorname{div}(p_tf_t)(x)
 +
 \frac{\sigma_t^2}{2}\Delta p_t(x).
 $$
 
-This is a generic statement about an SDE with drift $b_t$. For the proposed sampler, the complete drift is
+This is a generic statement about an SDE with drift $f_t$. For the proposed sampler, the complete drift is
 
 $$
-b_t(x)
+f_t(x)
 =
 u_t^{\mathrm{target}}(x)
 +
 \frac{\sigma_t^2}{2}\nabla_x\log p_t(x),
 $$
 
-so the score term is included inside $b_t$. The ODE and SDE share the same proposed probability path $p_t$, but they have **different dynamics**:
+so the score term is included inside $f_t$. The ODE and SDE share the same proposed probability path $p_t$, but they have **different dynamics**:
 
 $$
 \begin{aligned}
@@ -2534,7 +2534,7 @@ $$
 -\operatorname{div}(p_tu_t^{\mathrm{target}}).
 $$
 
-The remaining question is whether the proposed SDE also has this same $p_t$. The Fokker-Planck equation provides the test: substitute the SDE drift $b_t$ and check whether the already-known $p_t$ satisfies it. Following the direction of the proof in the lecture notes, begin with the known continuity equation and rewrite it into Fokker-Planck form.
+The remaining question is whether the proposed SDE also has this same $p_t$. The Fokker-Planck equation provides the test: substitute the SDE drift $f_t$ and check whether the already-known $p_t$ satisfies it. Following the direction of the proof in the lecture notes, begin with the known continuity equation and rewrite it into Fokker-Planck form.
 
 $$
 \begin{aligned}
@@ -2584,10 +2584,10 @@ u_t^{\mathrm{target}}
 \frac{\sigma_t^2}{2}\Delta p_t
 &&\text{(linearity of divergence)}\\
 &=
--\operatorname{div}(p_tb_t)
+-\operatorname{div}(p_tf_t)
 +
 \frac{\sigma_t^2}{2}\Delta p_t
-&&\text{(definition of $b_t$)}.
+&&\text{(definition of $f_t$)}.
 \end{aligned}
 $$
 
@@ -2738,3 +2738,249 @@ This connection underlies early diffusion-model formulations. More generally, La
 #### Optional: GLASS Flows
 
 The distinguishing feature of SDE sampling is that the initial point $X_0$ does not fully determine $X_t$ for $t>0$: fresh randomness enters throughout the evolution. Perhaps surprisingly, [GLASS Flows](https://arxiv.org/abs/2509.25170) can reproduce the same stochastic transitions using ODEs through an additional sampling construction. The aim is to retain stochastic capabilities, such as search over multiple continuations, while preserving the computational advantages of ODE sampling.
+
+### Score Matching
+
+_**TL;DR:** Directly regressing against the marginal score is intractable. Denoising score matching instead uses a tractable conditional score, yet learns the same marginal score. For the standard Gaussian probability path, this becomes noise prediction; after training, the predicted score or noise is converted into the vector field used by an ODE or SDE sampler._
+
+#### The Learning Problem
+
+The remaining task is to learn the marginal score $\nabla_x\log p_t(x)$.
+
+Why learn it? If both the marginal vector field and marginal score are available, then for any chosen diffusion coefficient $\sigma_t\geq0$ we can use the [SDE extension derived above](#sampling-with-sdes):
+
+$$
+\boxed{X_0\sim p_{\mathrm{init}},\qquad dX_t=\left[u_t^{\mathrm{target}}(X_t)+\frac{\sigma_t^2}{2}\nabla_x\log p_t(X_t)\right]dt+\sigma_t\,dW_t.}
+$$
+
+With the exact vector field and score, this SDE has $X_t\sim p_t$ at every time and ends with $X_1\sim p_{\mathrm{data}}$. Trained approximations give an approximate sampler.
+
+For a Gaussian probability path, the [score-vector-field conversion](#converting-between-the-score-and-vector-field) gives
+
+$$
+x_t=\alpha_tz+\beta_t\epsilon,\quad \epsilon\sim\mathcal N(0,I_d);\quad u_t^{\mathrm{target}}(x)=a_t\nabla_x\log p_t(x)+b_tx,\quad a_t=\beta_t^2\frac{\dot\alpha_t}{\alpha_t}-\beta_t\dot\beta_t,\quad b_t=\frac{\dot\alpha_t}{\alpha_t}.
+$$
+
+This means that we do not need separate vector-field and score networks. If we trained a vector-field model $u_t^\theta$, then $s_t^\theta(x)=(u_t^\theta(x)-b_tx)/a_t$. Substituting it into the general SDE gives the **vector-field-based formulation**
+
+$$
+\boxed{
+\begin{aligned}
+dX_t&=\left[u_t^\theta(X_t)+\frac{\sigma_t^2}{2a_t}\left(u_t^\theta(X_t)-b_tX_t\right)\right]dt+\sigma_t\,dW_t\\
+&=\left[\left(1+\frac{\sigma_t^2}{2a_t}\right)u_t^\theta(X_t)-\frac{\sigma_t^2b_t}{2a_t}X_t\right]dt+\sigma_t\,dW_t.
+\end{aligned}
+}
+$$
+
+Alternatively, if we trained a score network $s_t^\theta$, substitute $u_t^\theta(x)=a_ts_t^\theta(x)+b_tx$ to obtain the equivalent **score-based formulation**
+
+$$
+\boxed{
+\begin{aligned}
+dX_t&=\left[a_ts_t^\theta(X_t)+b_tX_t+\frac{\sigma_t^2}{2}s_t^\theta(X_t)\right]dt+\sigma_t\,dW_t\\
+&=\left[\left(a_t+\frac{\sigma_t^2}{2}\right)s_t^\theta(X_t)+b_tX_t\right]dt+\sigma_t\,dW_t.
+\end{aligned}
+}
+$$
+
+Setting $\sigma_t=0$ recovers the deterministic ODE in either parameterization. These conversions are special to Gaussian paths. For a general probability path, there may be no linear relationship between the marginal score and vector field, so introduce a time-conditioned score network $s_t^\theta:\mathbb R^d\to\mathbb R^d$ with $s_t^\theta(x)\approx\nabla_x\log p_t(x)$ directly.
+
+The ideal **score matching loss** is
+
+$$
+\boxed{\mathcal L_{\mathrm{SM}}(\theta)=\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\x\sim p_t}}\left[\left\|s_t^\theta(x)-\nabla_x\log p_t(x)\right\|^2\right]}.
+$$
+
+We can sample $x\sim p_t$ by first sampling $z\sim p_{\mathrm{data}}$ and then $x\sim p_t(\cdot\mid z)$. The difficulty is evaluating the target. The marginal density $p_t(x)=\int p_t(x\mid z)p_{\mathrm{data}}(z)\,dz$ averages over the entire unknown data distribution, so neither $p_t(x)$ nor $\nabla_x\log p_t(x)$ is generally available at a sampled $x$.
+
+#### Conditional Score Matching (Denoising Score Matching)
+
+As in [conditional flow matching](#learning-the-marginal-vector-field), replace the intractable marginal target with the tractable conditional one:
+
+$$
+\boxed{\mathcal L_{\mathrm{CSM}}(\theta)=\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}\left[\left\|s_t^\theta(x)-\nabla_x\log p_t(x\mid z)\right\|^2\right]}.
+$$
+
+This is the **conditional score matching loss**, commonly called the **denoising score matching loss** because the target is defined using a clean point and its corrupted version. It is tractable whenever we can sample from $p_t(x\mid z)$ and evaluate its conditional score. For a Gaussian path, this target reduces to predicting the injected noise, as derived below.
+
+The target uses the sampled clean point $z$, but $z$ is not passed to the network. The network receives only $(x,t)$ and must learn the best prediction shared across all clean points that could have produced that $x$.
+
+#### Why Conditional Score Matching Learns the Marginal Score
+
+The [posterior-average identity derived earlier](#the-marginal-score-is-a-posterior-average) gives
+
+$$
+\mathbb E\!\left[\nabla_x\log p_t(X_t\mid Z)\mid X_t=x\right]=\nabla_x\log p_t(x).
+$$
+
+For compactness, write $m_t(x):=\nabla_x\log p_t(x)$ and $c_t(x,z):=\nabla_x\log p_t(x\mid z)$.
+
+The claim is that the two losses differ only by a constant independent of $\theta$:
+
+$$
+\boxed{\mathcal L_{\mathrm{SM}}(\theta)=\mathcal L_{\mathrm{CSM}}(\theta)+C,\qquad C\text{ is independent of }\theta}
+$$
+
+The proof follows the same steps as the [conditional flow-matching derivation](#why-conditional-flow-matching-learns-the-marginal-vector-field). First expand the marginal loss, calling the final target-only term $C_1$:
+
+$$
+\begin{aligned}
+\mathcal L_{\mathrm{SM}}(\theta)
+&=\mathbb E_{t,x}\!\left[\|s_t^\theta(x)\|^2\right]
+-2\mathbb E_{t,x}\!\left[s_t^\theta(x)^\top m_t(x)\right]+C_1,\\
+C_1&=\mathbb E_{t,x}\!\left[\|m_t(x)\|^2\right].
+\end{aligned}
+$$
+
+Here and below, $\mathbb E_{t,x}$ means $t\sim\operatorname{Unif}[0,1]$ and $x\sim p_t$. The first term can equivalently be sampled by drawing $z\sim p_{\mathrm{data}}$ and then $x\sim p_t(\cdot\mid z)$.
+
+The crucial step is to rewrite the cross term using the posterior-average formula for the marginal score:
+
+$$
+\begin{aligned}
+\mathbb E_{t,x}\!\left[s_t^\theta(x)^\top m_t(x)\right]
+&=\mathbb E_{t,x}\!\left[s_t^\theta(x)^\top\int c_t(x,z)p_t(z\mid x)\,dz\right]\\
+&=\mathbb E_{\substack{t\sim\operatorname{Unif}[0,1]\\z\sim p_{\mathrm{data}}\\x\sim p_t(\cdot\mid z)}}
+\!\left[s_t^\theta(x)^\top c_t(x,z)\right],
+\end{aligned}
+$$
+
+where the second equality uses Bayes' rule, $p_t(x)p_t(z\mid x)=p_t(x\mid z)p_{\mathrm{data}}(z)$. Substitute this into the expanded marginal loss and complete the square:
+
+$$
+\begin{aligned}
+\mathcal L_{\mathrm{SM}}(\theta)
+&=\mathbb E_{t,z,x}\!\left[\|s_t^\theta(x)\|^2-2s_t^\theta(x)^\top c_t(x,z)\right]+C_1\\
+&=\mathbb E_{t,z,x}\!\left[\|s_t^\theta(x)-c_t(x,z)\|^2-\|c_t(x,z)\|^2\right]+C_1\\
+&=\mathcal L_{\mathrm{CSM}}(\theta)+C_1+C_2
+=\mathcal L_{\mathrm{CSM}}(\theta)+C,
+\end{aligned}
+$$
+
+where $\mathbb E_{t,z,x}$ denotes the joint sampling procedure above and $C_2=-\mathbb E_{t,z,x}[\|c_t(x,z)\|^2]$. Both $C_1$ and $C_2$ are independent of $\theta$, so
+
+$$
+\nabla_\theta\mathcal L_{\mathrm{CSM}}(\theta)=\nabla_\theta\mathcal L_{\mathrm{SM}}(\theta).
+$$
+
+Thus conditional and marginal score matching have the same population gradient and minimizers. The tractable conditional target implicitly teaches the network the marginal score, with $s_t^{\theta^*}(x)=\nabla_x\log p_t(x)$ at the optimum.
+
+#### Gaussian Probability Paths and Noise Prediction
+
+A **Gaussian probability path** means that the distribution conditioned on one clean data point is Gaussian, equivalently sampled as
+
+$$
+\boxed{p_t(x\mid z)=\mathcal N\!\left(x;\alpha_tz,\beta_t^2I_d\right),\qquad X_t=\alpha_tZ+\beta_t\epsilon,\quad \epsilon\sim\mathcal N(0,I_d).}
+$$
+
+**This does not mean that the marginal $p_t(x)$ is Gaussian.** After averaging over $z\sim p_{\mathrm{data}}$, $p_t$ is generally a complicated Gaussian mixture. Gaussian conditional corruption is nevertheless the standard and most important continuous diffusion setting; the Gaussian CondOT path is the special case $\alpha_t=t$ and $\beta_t=1-t$.
+
+The [conditional Gaussian score derived earlier](#score-of-a-gaussian-probability-path) is
+
+$$
+\begin{aligned}
+\nabla_x\log p_t(x\mid z)
+&=
+-\frac{x-\alpha_tz}{\beta_t^2}\\
+&\overset{x=\alpha_tz+\beta_t\epsilon}{=}
+-\frac{\epsilon}{\beta_t}.
+\end{aligned}
+$$
+
+Substituting this target into denoising score matching gives
+
+$$
+\begin{aligned}
+\mathcal L_{\mathrm{CSM}}(\theta)
+&=
+\mathbb E_{t,z,\epsilon}
+\left[
+\left\|
+s_t^\theta(x)
++
+\frac{\epsilon}{\beta_t}
+\right\|^2
+\right]\\
+&=
+\mathbb E_{t,z,\epsilon}
+\left[
+\frac{1}{\beta_t^2}
+\left\|
+\beta_ts_t^\theta(x)
++
+\epsilon
+\right\|^2
+\right].
+\end{aligned}
+$$
+
+For each sampled training example, the score target is the negative injected noise scaled by $1/\beta_t$. This is the origin of the name **denoising diffusion model**.
+
+There is one important regression subtlety. The network sees $(x_t,t)$, not the particular clean point $z$ or noise draw $\epsilon$. It generally cannot recover that exact $\epsilon$. Under squared error, the optimal network predicts its posterior mean: $s_t^{\theta^*}(x)=-\frac{1}{\beta_t}\mathbb E[\epsilon\mid X_t=x]=\nabla_x\log p_t(x)$.
+
+#### Score Prediction Versus Noise Prediction
+
+For a Gaussian path, define a noise-prediction network by $\epsilon_t^\theta(x)=-\beta_ts_t^\theta(x)$. Then score prediction and noise prediction contain the same information:
+
+$$
+\boxed{s_t^\theta(x)=-\frac{\epsilon_t^\theta(x)}{\beta_t}}.
+$$
+
+The raw score loss is poorly conditioned when $\beta_t\approx0$ because its target $-\epsilon/\beta_t$ and its weight $1/\beta_t^2$ become large. DDPM-style training therefore uses the reparameterized objective
+
+$$
+\boxed{\mathcal L_{\mathrm{DDPM}}(\theta)=\mathbb E_{t,z,\epsilon}\left[\left\|\epsilon_t^\theta(x)-\epsilon\right\|^2\right]}.
+$$
+
+The target $\epsilon\sim\mathcal N(0,I_d)$ has a stable scale at every noise level. Dropping the factor $1/\beta_t^2$ changes how different times are weighted during training, so the two practical objectives can behave differently even though their optimal predictions are algebraically convertible.
+
+The score remains the fundamental distribution-level object:
+
+- $\nabla_x\log p_t(x)$ is defined for any differentiable density, independently of how samples were corrupted.
+- The auxiliary noise $\epsilon$ and the conversion $s=-\epsilon/\beta_t$ depend on the chosen Gaussian parameterization.
+- The score appears directly in Langevin dynamics and in the [SDE sampler](#sampling-with-sdes). A model that predicts noise is converted back to a score whenever the sampler needs it.
+
+For non-Gaussian probability paths, denoising score matching still applies if $\nabla_x\log p_t(x\mid z)$ is tractable, but there need not be an equivalent standardized-noise prediction target.
+
+#### Score Matching Training Procedure
+
+For a Gaussian path, one training step is:
+
+1. Sample a data example $z\sim p_{\mathrm{data}}$.
+2. Sample $t\sim\operatorname{Unif}[0,1]$.
+3. Sample $\epsilon\sim\mathcal N(0,I_d)$.
+4. Form $x_t=\alpha_tz+\beta_t\epsilon$.
+5. Train with either $\left\|s_t^\theta(x_t)+\epsilon/\beta_t\right\|^2$ or $\left\|\epsilon_t^\theta(x_t)-\epsilon\right\|^2$.
+6. Update $\theta$ by gradient descent.
+
+As with flow matching, training is **simulation-free**: it samples independent points on the probability path and performs supervised regression. It does not run an ODE or SDE trajectory during training.
+
+#### From a Learned Score to Samples
+
+A score is local distributional information, not a sample by itself. Simply applying gradient ascent, $x\leftarrow x+\eta\nabla_x\log p_t(x)$, would move points toward modes and collapse diversity. Sampling instead places the learned score inside dynamics that transport an entire distribution.
+
+For a Gaussian path, recover the learned marginal vector field through $u_t^\theta(x)=a_ts_t^\theta(x)+b_tx$.
+
+Starting from $X_0\sim p_{\mathrm{init}}$, deterministic sampling solves
+
+$$
+dX_t=u_t^\theta(X_t)\,dt=\left[a_ts_t^\theta(X_t)+b_tX_t\right]dt.
+$$
+
+The stochastic alternative from [sampling with SDEs](#sampling-with-sdes) is
+
+$$
+dX_t=\left[\left(a_t+\frac{\sigma_t^2}{2}\right)s_t^\theta(X_t)+b_tX_t\right]dt+\sigma_t\,dW_t.
+$$
+
+At each numerical step, the sampler evaluates the network at the current $(X_t,t)$ and advances the ODE or SDE. If the network predicts noise, it first converts $s_t^\theta(X_t)=-\epsilon_t^\theta(X_t)/\beta_t$.
+
+Repeated evaluations move an initial Gaussian sample through the learned probability path until the endpoint approximates $p_{\mathrm{data}}$.
+
+#### Score Matching Summary
+
+1. The useful target is the marginal score $\nabla_x\log p_t(x)$, but it is generally intractable.
+2. Denoising score matching regresses against the tractable conditional score $\nabla_x\log p_t(x\mid z)$ and has the same population gradient as direct score matching.
+3. For Gaussian conditional paths, the conditional score is $-\epsilon/\beta_t$, so score prediction can be reparameterized as noise prediction.
+4. Noise prediction is usually better conditioned, while the score is the intrinsic distributional object used by the sampling dynamics.
+5. After training, convert the learned score or noise prediction into the vector field and repeatedly integrate an ODE or SDE from noise to data.
