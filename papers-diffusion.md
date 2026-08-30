@@ -21,7 +21,8 @@
 - [ ] TODO Alan's stuff
   - [ ] [Flourish] Alan's diffusion tutorial slides - [slides](../../flourish/presentations/2026-05-21-diffusion/README.md)
   - [ ] Alan's paper list <https://docs.google.com/document/d/1dgvsHthnVjYMl0nqfFWeP0GITSMz6lopmQUNP3gDQ9M/edit?usp=sharing>
-  - [ ] Alan's diffusion loss notebook <https://github.com/inductivebias/flourish/pull/1400>
+  - [x] Alan's diffusion loss notebook <https://github.com/inductivebias/flourish/pull/1400>
+  - [ ] Alan's diffusion ELBO notebook <https://github.com/inductivebias/flourish/pull/1597>
 
 ## 1. Classical Diffusion and Likelihood
 
@@ -60,6 +61,8 @@
 
 - [x] [2022] [BillPeebles,SainingXie] DiT: Scalable Diffusion Models with Transformers - [paper](https://arxiv.org/abs/2212.09748)
   - Standard DiT architecture and timestep / conditioning machinery.
+- [ ] [2026] [JiamingSong] Abra: Scaling Diffusion Image Training - [paper](https://arxiv.org/abs/2608.17286)
+  - Systematic compute-optimal scaling study of text-to-image flow-matching Transformers. Read after DiT for its findings on data/model allocation, robustness to overtraining, and predictable scaling of loss, generative quality, CFG, and learned representations.
 - [ ] [2021] [JonathanHo,ChitwanSaharia,TimSalimans] CDM: Cascaded Diffusion Models for High Fidelity Image Generation - [paper](https://arxiv.org/abs/2106.15282)
   - Generate images through a low-resolution base model followed by diffusion super-resolution models; conditioning augmentation makes later stages robust to errors from earlier generated stages.
 - [ ] [2021] LDM: High-Resolution Image Synthesis with Latent Diffusion Models - [paper](https://arxiv.org/abs/2112.10752)
@@ -87,6 +90,8 @@
   - Bridge from D3PM theory to masked-token diffusion in practice.
 - [ ] [2024] [YaronLipman] Discrete Flow Matching - [paper](https://arxiv.org/abs/2407.15595)
   - Connect conditional flow matching to continuous-time Markov chains and discrete rate matrices.
+- [ ] [2025] Edit Flows: Variable Length Discrete Flow Matching with Sequence-Level Edit Operations - [paper](https://proceedings.neurips.cc/paper_files/paper/2025/file/cb43f46154e750746602faaffd65fbbb-Paper-Conference.pdf)
+  - Extend discrete flow matching from fixed-position token transitions to sequence-level insertions, deletions, and substitutions, enabling non-autoregressive variable-length generation through a CTMC over sequences.
 - [ ] [2025] Block Diffusion: Interpolating Between Autoregressive and Diffusion Language Models - [paper](https://arxiv.org/abs/2503.09573)
   - Relevant to variable-length generation, KV caching, parallel token sampling, and controlling estimator variance.
 - [ ] [2026] Scaling Beyond Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2602.15014)
@@ -128,6 +133,8 @@ Start this section only after the core generative-modeling path.
   - Reweighted score matching for policy improvement without differentiating through the sampling chain.
 - [ ] [2024] [Greg-rec] Diffusion-Based Reinforcement Learning via Q-Weighted Variational Policy Optimization - [paper](https://arxiv.org/abs/2405.16173)
   - Explicit $Q$-weighted variational objective discussed in the Universal Learner work.
+- [ ] [2023] [SergeyLevine] DDPO: Training Diffusion Models with Reinforcement Learning - [paper](https://arxiv.org/abs/2305.13301), [project](https://rl-diffusion.github.io/)
+  - Treat each reverse denoising transition as an RL action and optimize the terminal reward using policy gradients. Read before AWM, which interprets DDPO as noisy-target matching and replaces it with advantage-weighted pretraining loss.
 - [ ] [2025] [Greg-rec] Advantage Weighted Matching: Aligning RL with Pretraining in Diffusion Models - [paper](https://arxiv.org/abs/2509.25050)
   - Recast diffusion policy gradients as noisy score / flow matching, then advantage-weight the original pretraining loss for a lower-variance RL objective. This is reward post-training of image generators rather than control, but directly complements the reweighted and $Q$-weighted objectives above.
 - [ ] Revisit [[papers-generative-decision-making]] and [Compress and Control](https://arxiv.org/abs/1411.5326)
@@ -137,14 +144,185 @@ Start this section only after the core generative-modeling path.
 
 - [ ] [2025] Large Language Diffusion Models - [paper](https://arxiv.org/abs/2502.09992), [project](https://ml-gsai.github.io/LLaDA-demo/)
 - [ ] [2026] Improved Large Language Diffusion Models - [paper](https://arxiv.org/abs/2606.25331), [code](https://github.com/ML-GSAI/LLaDA)
+- [ ] [2026] [FloorEijkelboom] An Intuitive Introduction to Flow-Based Language Generation - [blog](https://flow-based-llms.github.io/)
+  - Bridge from continuous flow matching to language: categorical endpoint distributions, cross-entropy-based Variational Flow Matching, simplex-valued denoisers, and flow-map distillation. Read before ELF.
 - [ ] [2026] [Greg-rec] [KaimingHe] ELF: Embedded Language Flows - [paper](https://arxiv.org/abs/2605.10938)
   - Continuous-time flow matching in token-embedding space, remaining continuous until a final shared-weight projection to discrete tokens. Use as the continuous-language foil to masked discrete diffusion models.
+- [ ] [2026] RePlaid: Continuous Diffusion Scales Competitively with Discrete Diffusion for Language - [paper](https://arxiv.org/abs/2605.18530), [project](https://research.nvidia.com/labs/genair/replaid/)
+  - Likelihood-based continuous diffusion over learned token embeddings; compare its scaling laws, learned noise schedule, and embedding geometry with MDLM, Duo, and ELF.
 - [ ] [2026] DiffusionGemma - [model card](https://ai.google.dev/gemma/docs/diffusiongemma/model_card), [project](https://deepmind.google/models/gemma/diffusiongemma/)
   - Read these as system-level capstones for masked / block diffusion, bidirectional attention, and parallel text decoding.
 - [ ] [2024] IRED: Learning Iterative Reasoning through Energy Diffusion - [paper](https://arxiv.org/abs/2406.11179)
   - Explore diffusion as an iterative refinement process over solutions rather than only as a data generator.
 
 ---
+
+## [2022] [BillPeebles,SainingXie] [DiT: Scalable Diffusion Models with Transformers](https://arxiv.org/abs/2212.09748)
+
+- **Date**: 2026-08-12
+
+---
+
+- **Abstract**:
+  > We explore a new class of diffusion models based on the Transformer architecture. We train latent diffusion models of images, replacing the commonly used U-Net backbone with a Transformer that operates on latent patches. We analyze the scalability of our Diffusion Transformers (DiTs) through the lens of forward-pass complexity, measured in Gflops. We find that DiTs with higher Gflops—through increased Transformer depth or width, or an increased number of input tokens—consistently have lower FID. In addition to possessing good scalability properties, our largest DiT-XL/2 models outperform all prior diffusion models on the class-conditional ImageNet $512\times512$ and $256\times256$ benchmarks, achieving a state-of-the-art FID of $2.27$ on the latter.
+- **Question**: Can the U-Net backbone traditionally used by image diffusion models be replaced by a standard, scalable Transformer without changing the underlying diffusion method?
+- **Answer**: Yes. By constructing and benchmarking the DiT design space within the Latent Diffusion Model (LDM) framework—where diffusion models are trained in a VAE's latent space—the paper successfully replaces the U-Net backbone with a homogeneous stack of Transformer blocks. It leaves the latent-diffusion process and DDPM training objective largely conventional. Its main empirical claim is a strong correlation between network complexity, measured in Gflops, and sample quality, measured by FID.
+- **What is—and is not—new**:
+  - DiT is primarily an **architecture paper**, not a new diffusion objective or sampler.
+  - The original DiT is a DDPM-style model that predicts Gaussian noise and a reverse-process covariance. It is not a flow-matching model, even though the same backbone can later be trained to predict velocity or other targets.
+  - It is a **latent diffusion model**: the Transformer denoises a learned, spatially compressed representation of the image rather than the image's raw pixels.
+  - It is not an end-to-end pure Transformer. A frozen convolutional VAE encodes and decodes images; the Transformer implements the learned diffusion backbone between those two operations.
+- **Historical context: why U-Nets came first**:
+  - DDPM inherited its denoising backbone from the convolutional architectures used by earlier image models. Later systems improved the residual blocks, attention layers, normalization, and channel allocation without changing the basic U-Net shape.
+  - In particular, Dhariwal and Nichol's ADM ablated two separate kinds of U-Net choice: **how to condition a block**, including adaptive normalization, and **how wide to make it**, including the number of convolutional channels at each resolution. Channel count controls capacity and compute; it is not information injected by adaptive normalization. DiT inherits the conditioning lesson while questioning whether the surrounding convolutional U-Net is necessary.
+  - The U-Net is a natural fit for image denoising: convolutions supply locality and translation-equivariance, its resolution hierarchy cheaply builds global context, and skip connections preserve fine spatial detail while the bottleneck reasons at coarser scales.
+  - Full self-attention over high-resolution pixels was historically expensive. Performing diffusion in a VAE latent reduces the spatial grid enough that a Transformer with global attention becomes practical.
+  - The paper shows that the U-Net inductive bias is not crucial to diffusion-model performance and can be readily replaced by a standard design such as a Transformer. This positions diffusion to benefit from architecture unification: it can inherit training practices from other domains while retaining favorable properties such as scalability, robustness, and efficiency, and a standardized architecture opens possibilities for cross-domain research.
+  - This does not establish that U-Nets are intrinsically bad. It shows that their hand-designed multiscale inductive bias is not necessary for strong image diffusion when sufficient compute, data, and a compressed latent representation are available.
+- **Latent-diffusion pipeline**:
+  - A pretrained VAE encoder maps an image $x$ to a spatial latent $z_0=E(x)$. For a $256\times256\times3$ image, the Stable Diffusion VAE used here produces a $32\times32\times4$ latent—an $8\times$ reduction along each spatial axis.
+  - Diffusion corrupts and denoises $z$, not $x$:
+    $$
+    x \xrightarrow{E} z_0
+    \xrightarrow{q(z_t\mid z_0)} z_t
+    \xrightarrow{\mathrm{DiT}} (\hat\epsilon,\hat\Sigma)
+    \xrightarrow{\text{reverse sampler}} \hat z_0
+    \xrightarrow{D} \hat x.
+    $$
+  - "Latent" here means the learned compressed variable $z$ produced by the VAE. Merely projecting raw inputs to Transformer embeddings would not make a model a latent diffusion model; the state being diffused must itself be encoded and later decoded.
+  - The VAE saves substantial diffusion compute, but it also imposes a reconstruction bottleneck: the generated image cannot contain information that the decoder cannot reconstruct from its latent representation.
+- **DDPM formulation retained by DiT**:
+  - Given a clean latent $z_0$, the forward process samples
+    $$
+    q(z_t\mid z_0)
+    =\mathcal N\!\left(
+      z_t;
+      \sqrt{\bar\alpha_t}\,z_0,
+      (1-\bar\alpha_t)I
+    \right),
+    $$
+    or equivalently
+    $$
+    z_t
+    =\sqrt{\bar\alpha_t}\,z_0
+    +\sqrt{1-\bar\alpha_t}\,\epsilon,
+    \qquad \epsilon\sim\mathcal N(0,I).
+    $$
+  - The reverse transition is parameterized as
+    $$
+    p_\theta(z_{t-1}\mid z_t)
+    =\mathcal N\!\left(
+      z_{t-1};
+      \mu_\theta(z_t,t,c),
+      \Sigma_\theta(z_t,t,c)
+    \right),
+    $$
+    where $c$ is the ImageNet class condition.
+  - As in DDPM/ADM, the principal regression target is the exact noise used to construct $z_t$:
+    $$
+    \mathcal L_{\mathrm{simple}}
+    =\mathbb E_{z_0,t,\epsilon}
+      \left[
+        \left\|\epsilon-\epsilon_\theta(z_t,t,c)\right\|_2^2
+      \right].
+    $$
+  - The model also learns the reverse covariance using the full variational objective. This is why the final layer emits $2C$ channels: $C$ for $\hat\epsilon$ and $C$ for the diagonal covariance parameterization.
+- **The DiT architecture (Figures 3 and 4)**:
+  1. **Patchify the noisy latent.** For $z_t\in\mathbb R^{I\times I\times C}$, split it into non-overlapping $p\times p$ patches and linearly project each flattened patch to width $d$. This gives
+     $$
+     T=\left(\frac{I}{p}\right)^2
+     $$
+     tokens, each in $\mathbb R^d$.
+  2. **Add position information.** Fixed sine-cosine positional embeddings retain each patch's location on the latent grid.
+  3. **Run ordinary Transformer blocks.** DiTs adhere to Vision Transformer (ViT) best practices, which had been shown to scale more effectively for visual recognition than traditional convolutional networks such as ResNets. Each block consists of multi-head self-attention and a GELU feed-forward network, with residual connections and layer normalization. The original DiT does not use SwiGLU.
+  4. **Condition every block.** Embeddings of the diffusion timestep $t$ and class label $c$ modulate the computation. The paper's preferred mechanism is adaLN-Zero.
+  5. **Decode and unpatchify.** A final adaptive layer normalization and linear projection turn each token into $p^2(2C)$ values; rearranging the patches recovers two $I\times I\times C$ spatial outputs for noise and covariance.
+- **Patch size controls token count and compute (Figure 4)**:
+  - At $256\times256$ image resolution, the VAE latent has $I=32$. Thus $p\in\{2,4,8\}$ produces respectively $256$, $64$, or $16$ tokens.
+  - Halving $p$ quadruples the sequence length. It barely changes the parameter count but substantially increases Gflops, because the same Transformer parameters are evaluated over more tokens and attention also couples more token pairs.
+  - Model names expose this choice: **DiT-XL/2** means the extra-large Transformer with $2\times2$ latent patches. The `/2` is not a diffusion-step count or image downsampling factor.
+- **Four conditioning mechanisms (Figure 3)**:
+  - **In-context conditioning** appends the timestep and class embeddings as two additional tokens. It is simple and has negligible extra compute.
+  - **Cross-attention conditioning** treats timestep and class as a length-two conditioning sequence and inserts a cross-attention layer after self-attention. It adds roughly $15\%$ compute in the paper's comparison.
+  - **Adaptive layer normalization (adaLN)** turns the summed timestep and class embeddings into feature-wise scale and shift parameters for layer normalization. The same global condition modulates every spatial token without adding attention layers; the modulation is feature-wise rather than spatially varying.
+  - **adaLN-Zero** additionally predicts feature-wise gates for the attention and MLP residual branches, then initializes the conditioning projection to zero. It gave the best FID throughout the conditioning ablation in Figure 5 while adding negligible compute.
+- **From GroupNorm to adaLN-Zero**:
+  - **GroupNorm** is the normalization used inside the ADM U-Net. It normalizes groups of channels and then applies learned scale and shift parameters. Those parameters are normally fixed after training: they do not change with the diffusion timestep or class.
+  - **Adaptive GroupNorm** makes the scale and shift depend on the condition $c$, which combines the timestep and class embeddings:
+    $$
+    \operatorname{AdaGN}(h,c)
+    =(1+s(c))\odot\operatorname{GN}(h)+b(c).
+    $$
+    Thus different timesteps and classes can emphasize, suppress, or shift different channels. The same adjustment is broadcast across all spatial positions. ADM retains GroupNorm's ordinary learned affine parameters as well; the conditional scale and shift are additional modifications.
+  - The U-Net's channel count $C$ only determines how many scale and shift values are needed. Choosing $C$ is a separate decision about model width and compute; it is not itself a way of injecting the condition.
+  - **Adaptive LayerNorm (adaLN)** applies the same idea to Transformer features. DiT uses LayerNorm without its own affine parameters, then obtains the scale and shift from the timestep and class condition:
+    $$
+    \operatorname{AdaLN}(x,c)
+    =(1+s(c))\odot\operatorname{LN}(x)+b(c).
+    $$
+    The $1+s$ form means that $s=b=0$ gives ordinary LayerNorm. Without the $1$, zero initialization would multiply the normalized features by zero.
+  - **adaLN-Zero** additionally predicts a gate $g(c)$ for each residual branch:
+    $$
+    x'
+    =x+g(c)\odot F\!\left(\operatorname{AdaLN}(x,c)\right),
+    $$
+    where $F$ is either attention or the MLP. Each branch has its own scale, shift, and gate.
+  - DiT initializes the conditioning projection so that $s=b=g=0$. Because $g=0$, the attention and MLP updates initially contribute nothing, and each block starts as the identity $x'=x$. The gate can then learn to open and admit the branch's output. Only this conditioning projection is zero-initialized; the attention and MLP weights are initialized normally.
+- **Classifier-free guidance**:
+  - During training, some class labels are replaced with a learned null label so that one model learns both conditional and unconditional denoising.
+  - At sampling time their noise estimates are combined as
+    $$
+    \hat\epsilon_{\mathrm{CFG}}
+    =\epsilon_\theta(z_t,t,\varnothing)
+    +s\left(
+      \epsilon_\theta(z_t,t,c)
+      -\epsilon_\theta(z_t,t,\varnothing)
+    \right).
+    $$
+    Increasing $s$ generally improves condition adherence and perceptual fidelity at the cost of sample diversity and recall.
+- **Model family (Table 1)**:
+
+  | Model | Blocks $N$ | Width $d$ | Heads |
+  | --- | ---: | ---: | ---: |
+  | DiT-S | 12 | 384 | 6 |
+  | DiT-B | 12 | 768 | 12 |
+  | DiT-L | 24 | 1024 | 16 |
+  | DiT-XL | 28 | 1152 | 16 |
+
+  - Each size is trained with patch sizes $p\in\{2,4,8\}$. This independently varies network capacity and token count, allowing the paper to ask whether compute predicts quality better than parameter count alone.
+- **Training recipe**:
+  - Class-conditional ImageNet at $256\times256$ and $512\times512$, using the frozen Stable Diffusion VAE with an $8\times$ spatial downsampling factor.
+  - The diffusion process follows ADM: $1000$ steps, a linear variance schedule from $10^{-4}$ to $2\times10^{-2}$, noise prediction, and learned reverse covariance.
+  - AdamW, learning rate $10^{-4}$, no weight decay, batch size $256$, horizontal flips as the only data augmentation, and an exponential moving average of model weights with decay $0.9999$.
+  - The paper deliberately avoids elaborate Transformer regularization and optimization recipes—no learning-rate warmup—so that model size, token count, and compute remain the central variables.
+- **Main empirical findings**:
+  - **Conditioning matters (Figure 5):** adaLN-Zero is substantially better than in-context, cross-attention, and ordinary adaLN conditioning; the paper attributes the gap chiefly to its zero initialization.
+  - **All three routes to more compute help (Figure 6):** increasing depth, increasing width, or decreasing patch size improves FID over the course of training.
+  - **Forward-pass compute predicts quality (Figure 8):** model Gflops has a strong negative correlation with FID, reported as $-0.93$. Parameter count alone misses the patch-size effect because more tokens increase compute without materially increasing parameters. Simply scaling the LDM to the high-capacity, $118.6$-Gflop DiT-XL/2 backbone yields the paper's headline FID of $2.27$ on class-conditional ImageNet $256\times256$.
+  - **Large models are more training-compute-efficient (Figure 9):** extending the training of a small DiT eventually costs more total compute than reaching the same or better FID with a larger model sooner.
+  - **Extra sampler steps do not rescue a small backbone (Figure 10):** spending inference compute on more denoising steps for DiT-L/2 does not close the quality gap to DiT-XL/2. Model compute and sampling compute are not interchangeable.
+  - **Visual quality scales consistently (Figure 7):** holding the initial noise and class label fixed makes the effects of model/patch scaling directly visible rather than confounding them with different samples.
+- **Headline results, read historically**:
+  - On class-conditional ImageNet $256\times256$, guided DiT-XL/2 reported FID $2.27$ at classifier-free guidance scale $1.5$, compared with the prior latent-diffusion result of $3.60$ in Table 2. The unguided DiT-XL/2 result was FID $9.62$.
+  - On ImageNet $512\times512$, guided DiT-XL/2 reported FID $3.04$ in Table 3.
+  - These are claims relative to the models and evaluations available in 2022–2023, not current state-of-the-art claims. The more durable contribution is the architecture and scaling evidence, not the absolute benchmark ranking.
+- **How to read the figures and tables**:
+  - **Figure 3:** the full latent-DiT pipeline and the four ways of injecting timestep/class conditioning.
+  - **Figure 4:** patchification and why the patch-size suffix controls sequence length and compute.
+  - **Figure 5:** the case for adaLN-Zero.
+  - **Figure 6:** separate scaling effects of depth, width, and token count.
+  - **Figure 7:** qualitative comparison with noise and class held fixed.
+  - **Figure 8:** the paper's central Gflops-versus-FID result.
+  - **Figure 9:** why larger models can be more efficient for a fixed training-compute budget.
+  - **Figure 10:** why more sampling steps are not a substitute for a more capable denoiser.
+  - **Table 1:** the S/B/L/XL configurations and patch-size compute.
+  - **Tables 2 and 3:** headline ImageNet benchmarks and the fidelity/diversity effect of guidance.
+  - **Appendix A and Table 4:** implementation details, including the timestep embedding, adaLN projections, initialization, optimizer, and diffusion hyperparameters.
+- **Connections to later DiT-style implementations**:
+  - The reusable idea is the conditional Transformer backbone, not a commitment to $\epsilon$-prediction. Later systems retain patch/token processing and adaLN-Zero while changing the generated modality, attention pattern, MLP, positional encoding, corruption path, or regression target.
+  - A trajectory model can therefore be recognizably DiT-derived while using rotary embeddings, SwiGLU, packed observation/action/reward tokens, structured attention, and a flow/velocity target. Those are architectural descendants, not the exact ImageNet DiT described in this paper.
+  - When reading code, separate three choices that are often bundled together: **representation** (pixels, VAE latents, or trajectory tokens), **backbone** (U-Net or Transformer), and **training target** ($x$, $\epsilon$, $v$, score, or flow velocity). DiT's central intervention is only the backbone choice.
+- **Core takeaway**: DiT made diffusion architecture look more like modern language-model architecture: a uniform Transformer whose quality improves as model and token compute increase. Its latent VAE, DDPM corruption process, noise target, covariance learning, and sampler remain conventional; the decisive replacement is U-Net $\rightarrow$ conditioned Transformer.
 
 ## [2026] [Greg-rec] [KaimingHe] [ELF: Embedded Language Flows](https://arxiv.org/abs/2605.10938)
 
@@ -565,176 +743,6 @@ Start this section only after the core generative-modeling path.
   - Undistilled ELF still needs iterative sampling. One-step generation becomes competitive only after a five-round progressive-distillation curriculum.
   - The experiments establish a strong small-model result on OpenWebText and two sequence-to-sequence benchmarks. They do not yet establish GPT-scale pretraining behavior, long-context scaling, or parity with modern autoregressive foundation models.
 - **Core takeaway**: ELF's main question is not whether continuous vectors can represent language—all Transformers already use them—but whether the **generative state can remain continuous for the entire iterative trajectory**. The paper's answer is yes: with a good frozen contextual representation, $x$-prediction, a shared endpoint decoder, self-conditioning, guidance, and a carefully chosen sampler, continuous language flows can outperform the paper's discrete and continuous DLM baselines. The most consequential unresolved question is whether the representation and flow can be learned together at scale without relying on a separately pretrained encoder.
-
-## [2022] [BillPeebles,SainingXie] [DiT: Scalable Diffusion Models with Transformers](https://arxiv.org/abs/2212.09748)
-
-- **Date**: 2026-08-12
-
----
-
-- **Abstract**:
-  > We explore a new class of diffusion models based on the Transformer architecture. We train latent diffusion models of images, replacing the commonly used U-Net backbone with a Transformer that operates on latent patches. We analyze the scalability of our Diffusion Transformers (DiTs) through the lens of forward-pass complexity, measured in Gflops. We find that DiTs with higher Gflops—through increased Transformer depth or width, or an increased number of input tokens—consistently have lower FID. In addition to possessing good scalability properties, our largest DiT-XL/2 models outperform all prior diffusion models on the class-conditional ImageNet $512\times512$ and $256\times256$ benchmarks, achieving a state-of-the-art FID of $2.27$ on the latter.
-- **Question**: Can the U-Net backbone traditionally used by image diffusion models be replaced by a standard, scalable Transformer without changing the underlying diffusion method?
-- **Answer**: Yes. By constructing and benchmarking the DiT design space within the Latent Diffusion Model (LDM) framework—where diffusion models are trained in a VAE's latent space—the paper successfully replaces the U-Net backbone with a homogeneous stack of Transformer blocks. It leaves the latent-diffusion process and DDPM training objective largely conventional. Its main empirical claim is a strong correlation between network complexity, measured in Gflops, and sample quality, measured by FID.
-- **What is—and is not—new**:
-  - DiT is primarily an **architecture paper**, not a new diffusion objective or sampler.
-  - The original DiT is a DDPM-style model that predicts Gaussian noise and a reverse-process covariance. It is not a flow-matching model, even though the same backbone can later be trained to predict velocity or other targets.
-  - It is a **latent diffusion model**: the Transformer denoises a learned, spatially compressed representation of the image rather than the image's raw pixels.
-  - It is not an end-to-end pure Transformer. A frozen convolutional VAE encodes and decodes images; the Transformer implements the learned diffusion backbone between those two operations.
-- **Historical context: why U-Nets came first**:
-  - DDPM inherited its denoising backbone from the convolutional architectures used by earlier image models. Later systems improved the residual blocks, attention layers, normalization, and channel allocation without changing the basic U-Net shape.
-  - In particular, Dhariwal and Nichol's ADM ablated two separate kinds of U-Net choice: **how to condition a block**, including adaptive normalization, and **how wide to make it**, including the number of convolutional channels at each resolution. Channel count controls capacity and compute; it is not information injected by adaptive normalization. DiT inherits the conditioning lesson while questioning whether the surrounding convolutional U-Net is necessary.
-  - The U-Net is a natural fit for image denoising: convolutions supply locality and translation-equivariance, its resolution hierarchy cheaply builds global context, and skip connections preserve fine spatial detail while the bottleneck reasons at coarser scales.
-  - Full self-attention over high-resolution pixels was historically expensive. Performing diffusion in a VAE latent reduces the spatial grid enough that a Transformer with global attention becomes practical.
-  - The paper shows that the U-Net inductive bias is not crucial to diffusion-model performance and can be readily replaced by a standard design such as a Transformer. This positions diffusion to benefit from architecture unification: it can inherit training practices from other domains while retaining favorable properties such as scalability, robustness, and efficiency, and a standardized architecture opens possibilities for cross-domain research.
-  - This does not establish that U-Nets are intrinsically bad. It shows that their hand-designed multiscale inductive bias is not necessary for strong image diffusion when sufficient compute, data, and a compressed latent representation are available.
-- **Latent-diffusion pipeline**:
-  - A pretrained VAE encoder maps an image $x$ to a spatial latent $z_0=E(x)$. For a $256\times256\times3$ image, the Stable Diffusion VAE used here produces a $32\times32\times4$ latent—an $8\times$ reduction along each spatial axis.
-  - Diffusion corrupts and denoises $z$, not $x$:
-    $$
-    x \xrightarrow{E} z_0
-    \xrightarrow{q(z_t\mid z_0)} z_t
-    \xrightarrow{\mathrm{DiT}} (\hat\epsilon,\hat\Sigma)
-    \xrightarrow{\text{reverse sampler}} \hat z_0
-    \xrightarrow{D} \hat x.
-    $$
-  - "Latent" here means the learned compressed variable $z$ produced by the VAE. Merely projecting raw inputs to Transformer embeddings would not make a model a latent diffusion model; the state being diffused must itself be encoded and later decoded.
-  - The VAE saves substantial diffusion compute, but it also imposes a reconstruction bottleneck: the generated image cannot contain information that the decoder cannot reconstruct from its latent representation.
-- **DDPM formulation retained by DiT**:
-  - Given a clean latent $z_0$, the forward process samples
-    $$
-    q(z_t\mid z_0)
-    =\mathcal N\!\left(
-      z_t;
-      \sqrt{\bar\alpha_t}\,z_0,
-      (1-\bar\alpha_t)I
-    \right),
-    $$
-    or equivalently
-    $$
-    z_t
-    =\sqrt{\bar\alpha_t}\,z_0
-    +\sqrt{1-\bar\alpha_t}\,\epsilon,
-    \qquad \epsilon\sim\mathcal N(0,I).
-    $$
-  - The reverse transition is parameterized as
-    $$
-    p_\theta(z_{t-1}\mid z_t)
-    =\mathcal N\!\left(
-      z_{t-1};
-      \mu_\theta(z_t,t,c),
-      \Sigma_\theta(z_t,t,c)
-    \right),
-    $$
-    where $c$ is the ImageNet class condition.
-  - As in DDPM/ADM, the principal regression target is the exact noise used to construct $z_t$:
-    $$
-    \mathcal L_{\mathrm{simple}}
-    =\mathbb E_{z_0,t,\epsilon}
-      \left[
-        \left\|\epsilon-\epsilon_\theta(z_t,t,c)\right\|_2^2
-      \right].
-    $$
-  - The model also learns the reverse covariance using the full variational objective. This is why the final layer emits $2C$ channels: $C$ for $\hat\epsilon$ and $C$ for the diagonal covariance parameterization.
-- **The DiT architecture (Figures 3 and 4)**:
-  1. **Patchify the noisy latent.** For $z_t\in\mathbb R^{I\times I\times C}$, split it into non-overlapping $p\times p$ patches and linearly project each flattened patch to width $d$. This gives
-     $$
-     T=\left(\frac{I}{p}\right)^2
-     $$
-     tokens, each in $\mathbb R^d$.
-  2. **Add position information.** Fixed sine-cosine positional embeddings retain each patch's location on the latent grid.
-  3. **Run ordinary Transformer blocks.** DiTs adhere to Vision Transformer (ViT) best practices, which had been shown to scale more effectively for visual recognition than traditional convolutional networks such as ResNets. Each block consists of multi-head self-attention and a GELU feed-forward network, with residual connections and layer normalization. The original DiT does not use SwiGLU.
-  4. **Condition every block.** Embeddings of the diffusion timestep $t$ and class label $c$ modulate the computation. The paper's preferred mechanism is adaLN-Zero.
-  5. **Decode and unpatchify.** A final adaptive layer normalization and linear projection turn each token into $p^2(2C)$ values; rearranging the patches recovers two $I\times I\times C$ spatial outputs for noise and covariance.
-- **Patch size controls token count and compute (Figure 4)**:
-  - At $256\times256$ image resolution, the VAE latent has $I=32$. Thus $p\in\{2,4,8\}$ produces respectively $256$, $64$, or $16$ tokens.
-  - Halving $p$ quadruples the sequence length. It barely changes the parameter count but substantially increases Gflops, because the same Transformer parameters are evaluated over more tokens and attention also couples more token pairs.
-  - Model names expose this choice: **DiT-XL/2** means the extra-large Transformer with $2\times2$ latent patches. The `/2` is not a diffusion-step count or image downsampling factor.
-- **Four conditioning mechanisms (Figure 3)**:
-  - **In-context conditioning** appends the timestep and class embeddings as two additional tokens. It is simple and has negligible extra compute.
-  - **Cross-attention conditioning** treats timestep and class as a length-two conditioning sequence and inserts a cross-attention layer after self-attention. It adds roughly $15\%$ compute in the paper's comparison.
-  - **Adaptive layer normalization (adaLN)** turns the summed timestep and class embeddings into feature-wise scale and shift parameters for layer normalization. The same global condition modulates every spatial token without adding attention layers; the modulation is feature-wise rather than spatially varying.
-  - **adaLN-Zero** additionally predicts feature-wise gates for the attention and MLP residual branches, then initializes the conditioning projection to zero. It gave the best FID throughout the conditioning ablation in Figure 5 while adding negligible compute.
-- **From GroupNorm to adaLN-Zero**:
-  - **GroupNorm** is the normalization used inside the ADM U-Net. It normalizes groups of channels and then applies learned scale and shift parameters. Those parameters are normally fixed after training: they do not change with the diffusion timestep or class.
-  - **Adaptive GroupNorm** makes the scale and shift depend on the condition $c$, which combines the timestep and class embeddings:
-    $$
-    \operatorname{AdaGN}(h,c)
-    =(1+s(c))\odot\operatorname{GN}(h)+b(c).
-    $$
-    Thus different timesteps and classes can emphasize, suppress, or shift different channels. The same adjustment is broadcast across all spatial positions. ADM retains GroupNorm's ordinary learned affine parameters as well; the conditional scale and shift are additional modifications.
-  - The U-Net's channel count $C$ only determines how many scale and shift values are needed. Choosing $C$ is a separate decision about model width and compute; it is not itself a way of injecting the condition.
-  - **Adaptive LayerNorm (adaLN)** applies the same idea to Transformer features. DiT uses LayerNorm without its own affine parameters, then obtains the scale and shift from the timestep and class condition:
-    $$
-    \operatorname{AdaLN}(x,c)
-    =(1+s(c))\odot\operatorname{LN}(x)+b(c).
-    $$
-    The $1+s$ form means that $s=b=0$ gives ordinary LayerNorm. Without the $1$, zero initialization would multiply the normalized features by zero.
-  - **adaLN-Zero** additionally predicts a gate $g(c)$ for each residual branch:
-    $$
-    x'
-    =x+g(c)\odot
-      F\!\left(
-        (1+s(c))\odot\operatorname{LN}(x)+b(c)
-      \right),
-    $$
-    where $F$ is either attention or the MLP. Each branch has its own scale, shift, and gate.
-  - DiT initializes the conditioning projection so that $s=b=g=0$. Because $g=0$, the attention and MLP updates initially contribute nothing, and each block starts as the identity $x'=x$. The gate can then learn to open and admit the branch's output. Only this conditioning projection is zero-initialized; the attention and MLP weights are initialized normally.
-- **Classifier-free guidance**:
-  - During training, some class labels are replaced with a learned null label so that one model learns both conditional and unconditional denoising.
-  - At sampling time their noise estimates are combined as
-    $$
-    \hat\epsilon_{\mathrm{CFG}}
-    =\epsilon_\theta(z_t,t,\varnothing)
-    +s\left(
-      \epsilon_\theta(z_t,t,c)
-      -\epsilon_\theta(z_t,t,\varnothing)
-    \right).
-    $$
-    Increasing $s$ generally improves condition adherence and perceptual fidelity at the cost of sample diversity and recall.
-- **Model family (Table 1)**:
-
-  | Model | Blocks $N$ | Width $d$ | Heads |
-  | --- | ---: | ---: | ---: |
-  | DiT-S | 12 | 384 | 6 |
-  | DiT-B | 12 | 768 | 12 |
-  | DiT-L | 24 | 1024 | 16 |
-  | DiT-XL | 28 | 1152 | 16 |
-
-  - Each size is trained with patch sizes $p\in\{2,4,8\}$. This independently varies network capacity and token count, allowing the paper to ask whether compute predicts quality better than parameter count alone.
-- **Training recipe**:
-  - Class-conditional ImageNet at $256\times256$ and $512\times512$, using the frozen Stable Diffusion VAE with an $8\times$ spatial downsampling factor.
-  - The diffusion process follows ADM: $1000$ steps, a linear variance schedule from $10^{-4}$ to $2\times10^{-2}$, noise prediction, and learned reverse covariance.
-  - AdamW, learning rate $10^{-4}$, no weight decay, batch size $256$, horizontal flips as the only data augmentation, and an exponential moving average of model weights with decay $0.9999$.
-  - The paper deliberately avoids elaborate Transformer regularization and optimization recipes—no learning-rate warmup—so that model size, token count, and compute remain the central variables.
-- **Main empirical findings**:
-  - **Conditioning matters (Figure 5):** adaLN-Zero is substantially better than in-context, cross-attention, and ordinary adaLN conditioning; the paper attributes the gap chiefly to its zero initialization.
-  - **All three routes to more compute help (Figure 6):** increasing depth, increasing width, or decreasing patch size improves FID over the course of training.
-  - **Forward-pass compute predicts quality (Figure 8):** model Gflops has a strong negative correlation with FID, reported as $-0.93$. Parameter count alone misses the patch-size effect because more tokens increase compute without materially increasing parameters. Simply scaling the LDM to the high-capacity, $118.6$-Gflop DiT-XL/2 backbone yields the paper's headline FID of $2.27$ on class-conditional ImageNet $256\times256$.
-  - **Large models are more training-compute-efficient (Figure 9):** extending the training of a small DiT eventually costs more total compute than reaching the same or better FID with a larger model sooner.
-  - **Extra sampler steps do not rescue a small backbone (Figure 10):** spending inference compute on more denoising steps for DiT-L/2 does not close the quality gap to DiT-XL/2. Model compute and sampling compute are not interchangeable.
-  - **Visual quality scales consistently (Figure 7):** holding the initial noise and class label fixed makes the effects of model/patch scaling directly visible rather than confounding them with different samples.
-- **Headline results, read historically**:
-  - On class-conditional ImageNet $256\times256$, guided DiT-XL/2 reported FID $2.27$ at classifier-free guidance scale $1.5$, compared with the prior latent-diffusion result of $3.60$ in Table 2. The unguided DiT-XL/2 result was FID $9.62$.
-  - On ImageNet $512\times512$, guided DiT-XL/2 reported FID $3.04$ in Table 3.
-  - These are claims relative to the models and evaluations available in 2022–2023, not current state-of-the-art claims. The more durable contribution is the architecture and scaling evidence, not the absolute benchmark ranking.
-- **How to read the figures and tables**:
-  - **Figure 3:** the full latent-DiT pipeline and the four ways of injecting timestep/class conditioning.
-  - **Figure 4:** patchification and why the patch-size suffix controls sequence length and compute.
-  - **Figure 5:** the case for adaLN-Zero.
-  - **Figure 6:** separate scaling effects of depth, width, and token count.
-  - **Figure 7:** qualitative comparison with noise and class held fixed.
-  - **Figure 8:** the paper's central Gflops-versus-FID result.
-  - **Figure 9:** why larger models can be more efficient for a fixed training-compute budget.
-  - **Figure 10:** why more sampling steps are not a substitute for a more capable denoiser.
-  - **Table 1:** the S/B/L/XL configurations and patch-size compute.
-  - **Tables 2 and 3:** headline ImageNet benchmarks and the fidelity/diversity effect of guidance.
-  - **Appendix A and Table 4:** implementation details, including the timestep embedding, adaLN projections, initialization, optimizer, and diffusion hyperparameters.
-- **Connections to later DiT-style implementations**:
-  - The reusable idea is the conditional Transformer backbone, not a commitment to $\epsilon$-prediction. Later systems retain patch/token processing and adaLN-Zero while changing the generated modality, attention pattern, MLP, positional encoding, corruption path, or regression target.
-  - A trajectory model can therefore be recognizably DiT-derived while using rotary embeddings, SwiGLU, packed observation/action/reward tokens, structured attention, and a flow/velocity target. Those are architectural descendants, not the exact ImageNet DiT described in this paper.
-  - When reading code, separate three choices that are often bundled together: **representation** (pixels, VAE latents, or trajectory tokens), **backbone** (U-Net or Transformer), and **training target** ($x$, $\epsilon$, $v$, score, or flow velocity). DiT's central intervention is only the backbone choice.
-- **Core takeaway**: DiT made diffusion architecture look more like modern language-model architecture: a uniform Transformer whose quality improves as model and token compute increase. Its latent VAE, DDPM corruption process, noise target, covariance learning, and sampler remain conventional; the decisive replacement is U-Net $\rightarrow$ conditioned Transformer.
 
 ## [2026] [Nando] [Diffusion and Flow Matching Tutorial](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.pdf)
 
