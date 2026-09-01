@@ -16,6 +16,8 @@
 - [ ] [2020] [Dreamer2] Mastering Atari with Discrete World Models - [paper](https://arxiv.org/abs/2010.02193)
 - [ ] [2023] [Dreamer3] Mastering Diverse Domains through World Models - [paper](https://arxiv.org/abs/2301.04104)
 - [ ] [2025] [Dreamer4] Training Agents Inside of Scalable World Models - [paper](https://arxiv.org/abs/2509.24527)
+- [ ] [2026] [ChelseaFinn,DorsaSadigh] QWM: Q-Learning With World Models - [paper](https://arxiv.org/abs/2608.17163)
+  - Train the policy and Q-function only from real transitions, but use a world model for test-time search over imagined trajectories when selecting actions. This gains predictive-search benefits while reducing the compounding model bias caused by training directly on imagined rollouts.
 
 ---
 

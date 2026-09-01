@@ -8,7 +8,7 @@
   - [[papers-rl]]
   - [[aixi]] — The universal limit of prediction-based decision-making.
   - [[compression]] — A compressor's density model can be used for control.
-  - [[papers-diffusion]] — Diffusion supplies conditional action and trajectory generators.
+  - [[diffusion]] — Diffusion supplies conditional action and trajectory generators.
   - [[papers-generalist-agents]] — A single sequence model can serve as a policy across diverse tasks and embodiments.
 
 ---

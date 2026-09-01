@@ -1,7 +1,7 @@
 # LLM Serving
 
 - **Created**: 2026-07-26
-- **Last Updated**: 2026-08-17
+- **Last Updated**: 2026-08-31
 - **Status**: `In Progress`
 - **Description**: Systems and inference-time techniques for efficiently and reliably generating outputs from deployed language models.
 - **Related**:
@@ -16,6 +16,7 @@
 
 - [x] [2023] Speculative Decoding: Fast Inference from Transformers via Speculative Decoding - [paper](https://arxiv.org/abs/2211.17192)
 - [x] [2026] Speculative Speculative Decoding - [paper](https://arxiv.org/abs/2603.03251), [code](https://github.com/tanishqkumar/ssd)
+- [ ] [2026] DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation - [paper](https://arxiv.org/abs/2607.05147)
 - [ ] [2023] Constrained Decoding: Efficient Guided Generation for Large Language Models - [paper](https://arxiv.org/abs/2307.09702), [code](https://github.com/dottxt-ai/outlines)
 
 ## Kernels & Model Execution

@@ -5,7 +5,7 @@
 - **Status**: `In Progress`
 - **Description**: Models that reason through recurrent or iterative computation in latent space, including adaptive-depth and looped architectures.
 - **Related**:
-  - [[papers-diffusion]] — Both use iterative refinement as computation.
+  - [[diffusion]] — Both use iterative refinement as computation.
   - [[papers-post-training]] — Post-training can elicit and shape recursive reasoning.
 
 ---
@@ -34,6 +34,8 @@
 - [ ] [2025] Reasoning with Latent Thoughts: On the Power of Looped Transformers - [paper](https://arxiv.org/abs/2502.17416)
 - [ ] [2025] Scaling Latent Reasoning via Looped Language Models - [paper](https://arxiv.org/abs/2510.25741), [site](http://ouro-llm.github.io/)
 - [ ] [2026] LoopFormer: Elastic-Depth Looped Transformers for Latent Reasoning via Shortcut Modulation - [paper](https://arxiv.org/abs/2602.11451), [site](https://loopformer.github.io/)
+- [ ] [2026] Recirculation - [paper](https://arxiv.org/abs/2608.17981)
+  - Training-free inference-time recurrence for pretrained Transformers: feed a small amount of a deep-layer activation from the preceding input step back into a shallower layer at the next step, improving sequential state tracking while serializing prefill.
 
 ## Latent-CoT / Recurrent-Depth LMs
 

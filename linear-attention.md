@@ -24,5 +24,7 @@
 - [ ] [2024] DeltaNet Explained, Part III: The Neural Architecture — [blog](https://sustcsonglin.github.io/blog/2024/deltanet-3/)
 - [ ] [2024] DeltaNet: Parallelizing Linear Transformers with the Delta Rule over Sequence Length — [paper](https://arxiv.org/abs/2406.06484)
 - [ ] [2024] Gated DeltaNet: Improving Mamba2 with Delta Rule — [paper](https://arxiv.org/abs/2412.06464)
-- [ ] [2025] Fast Weight Programming and Linear Transformers: From Machine Learning to Neurobiology — [paper](https://arxiv.org/abs/2508.08435)
+- [ ] [2025] [SamGershman] Fast Weight Programming and Linear Transformers: From Machine Learning to Neurobiology — [paper](https://arxiv.org/abs/2508.08435)
 - [ ] [2025] Kimi Linear: An Expressive, Efficient Attention Architecture — [paper](https://arxiv.org/abs/2510.26692)
+- [ ] [2026] Sliding-Window Beats Linear Attention — [paper](https://arxiv.org/abs/2608.28444)
+  - Finds that sliding-window attention with attention sinks matches or outperforms post-trained linear-attention replacements, especially on long-context retrieval, without requiring post-training.

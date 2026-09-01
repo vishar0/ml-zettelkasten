@@ -1,10 +1,10 @@
-# [Introduction to Flow Matching and Diffusion Models, MIT](https://diffusion.csail.mit.edu/2026/index.html)
+# [Introduction to Flow Matching and Diffusion Models 2026, MIT](https://diffusion.csail.mit.edu/2026/index.html)
 
 - **Created**: 2026-08-04
 - **Last Updated**: 2026-08-25
 - **Status**: `In Progress`
 - **Related**:
-  - [[papers-diffusion]] — Broader reading list covering the foundations, objectives, architectures, and applications of diffusion models.
+  - [[diffusion]] — Broader reading list covering the foundations, objectives, architectures, and applications of diffusion models.
 
 ---
 
