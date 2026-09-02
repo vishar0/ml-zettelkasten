@@ -22,6 +22,7 @@ TODO:
 
 - [ ] [[course-mit-diffusion-2026]]
 - [ ] [2022] [HuggingFace] [The Annotated Diffusion Model](#2022-the-annotated-diffusion-model) - [blog](https://huggingface.co/blog/annotated-diffusion)
+- [ ] [2021] [YangSong] Generative Modeling by Estimating Gradients of the Data Distribution - [blog](https://yang-song.net/blog/2021/score/)
 - [ ] [2025] [3blue1brown] <https://www.3blue1brown.com/lessons/diffusion-models/>
 - [x] [2026] [Nando] [Diffusion and Flow Matching Tutorial](#2026-nando-diffusion-and-flow-matching-tutorial) - [blog](https://love4all.ai/blog/diffusion-and-flow-matching-tutorial/), [pdf](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.pdf), [notebook](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.ipynb)
 - [ ] [2026] [book] <https://the-principles-of-diffusion-models.github.io/>

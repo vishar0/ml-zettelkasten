@@ -6,7 +6,7 @@
 
 ---
 
-- [ ] TODO
+- [ ] [2013] [DiederikKingma,MaxWelling] Auto-Encoding Variational Bayes - [paper](https://arxiv.org/abs/1312.6114)
 - [ ] [2016] Tutorial on Variational Autoencoders — [paper](https://arxiv.org/abs/1606.05908)
 - [ ] TODO VQ-VAE
 - [ ] TODO VQ-VAE 2
