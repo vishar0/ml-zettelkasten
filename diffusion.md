@@ -21,10 +21,9 @@ TODO:
 ## 0. Tutorials
 
 - [ ] [[course-mit-diffusion-2026]]
-- [ ] [2022] [HuggingFace] The Annotated Diffusion Model — [blog](https://huggingface.co/blog/annotated-diffusion)
+- [ ] [2022] [HuggingFace] [The Annotated Diffusion Model](#2022-the-annotated-diffusion-model) - [blog](https://huggingface.co/blog/annotated-diffusion)
 - [ ] [2025] [3blue1brown] <https://www.3blue1brown.com/lessons/diffusion-models/>
-- [ ] [2026] [Nando] Diffusion and Flow Matching Tutorial - [blog](https://love4all.ai/blog/diffusion-and-flow-matching-tutorial/), [pdf](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.pdf), [notebook](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.ipynb)
-  - First technical treatment: derive the losses and sampling procedures while staying close to implementable code.
+- [x] [2026] [Nando] [Diffusion and Flow Matching Tutorial](#2026-nando-diffusion-and-flow-matching-tutorial) - [blog](https://love4all.ai/blog/diffusion-and-flow-matching-tutorial/), [pdf](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.pdf), [notebook](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.ipynb)
 - [ ] [2026] [book] <https://the-principles-of-diffusion-models.github.io/>
 - [ ] [2025] Demystifying Variational Diffusion Models - [paper](https://arxiv.org/abs/2401.06281)
   - Optional prerequisite if ELBOs, directed graphical models, or latent-variable models are rusty.
@@ -72,7 +71,7 @@ TODO:
 
 ## 3. Representation, Architecture, and Fast Sampling
 
-- [x] [2022] [BillPeebles,SainingXie] DiT: Scalable Diffusion Models with Transformers - [paper](https://arxiv.org/abs/2212.09748)
+- [x] [2022] [BillPeebles,SainingXie] [DiT: Scalable Diffusion Models with Transformers](#2022-billpeeblessainingxie-dit-scalable-diffusion-models-with-transformers) - [paper](https://arxiv.org/abs/2212.09748)
   - Standard DiT architecture and timestep / conditioning machinery.
 - [ ] [2021] [JonathanHo,ChitwanSaharia,TimSalimans] CDM: Cascaded Diffusion Models for High Fidelity Image Generation - [paper](https://arxiv.org/abs/2106.15282)
   - Generate images through a low-resolution base model followed by diffusion super-resolution models; conditioning augmentation makes later stages robust to errors from earlier generated stages.
@@ -174,7 +173,7 @@ Start this section only after the core generative-modeling path.
 - [ ] [2026] Improved Large Language Diffusion Models - [paper](https://arxiv.org/abs/2606.25331), [code](https://github.com/ML-GSAI/LLaDA)
 - [ ] [2026] [FloorEijkelboom] An Intuitive Introduction to Flow-Based Language Generation - [blog](https://flow-based-llms.github.io/)
   - Bridge from continuous flow matching to language: categorical endpoint distributions, cross-entropy-based Variational Flow Matching, simplex-valued denoisers, and flow-map distillation. Read before ELF.
-- [ ] [2026] [Greg-rec] [KaimingHe] ELF: Embedded Language Flows - [paper](https://arxiv.org/abs/2605.10938)
+- [ ] [2026] [Greg-rec] [KaimingHe] [ELF: Embedded Language Flows](#2026-greg-rec-kaiminghe-elf-embedded-language-flows) - [paper](https://arxiv.org/abs/2605.10938)
   - Continuous-time flow matching in token-embedding space, remaining continuous until a final shared-weight projection to discrete tokens. Use as the continuous-language foil to masked discrete diffusion models.
 - [ ] [2026] RePlaid: Continuous Diffusion Scales Competitively with Discrete Diffusion for Language - [paper](https://arxiv.org/abs/2605.18530), [project](https://research.nvidia.com/labs/genair/replaid/)
   - Likelihood-based continuous diffusion over learned token embeddings; compare its scaling laws, learned noise schedule, and embedding geometry with MDLM, Duo, and ELF.
@@ -2328,7 +2327,7 @@ The sampling algorithm is:
 4. Sample the next cleaner latent. At the final step, use the mean so fresh noise is not added to the output.
 5. Repeat until $x_0\approx D_\theta$.
 
-**Relation to the MIT ODE and SDE samplers**
+**Relation to the [MIT ODE and SDE samplers](course-mit-diffusion-2026.md#sampling-with-sdes)**
 
 Nando's ancestral transition is a finite-step Gaussian update:
 
