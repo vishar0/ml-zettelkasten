@@ -1,7 +1,7 @@
 # Diffusion
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-08-25
+- **Last Updated**: 2026-09-06
 - **Status**: `In Progress`
 - **Related**:
   - [[course-mit-diffusion-2026]] — Structured MIT course with lecture notes, slides, recordings, and labs on flow matching and diffusion models.
@@ -10,19 +10,35 @@
 
 TODO:
 
-- TODO cvpr diffusion workshop
 - TODO kaiming he diffusion stuff (papers, but also cvpr 2025 slides on meanflow)
 - TODO berkeley diffusion workshop simons
 - TODO ben poole
 - TODO arash vahdat
+- TODO stefano ermon <https://x.com/therealgabeguo/status/2094343807689019626?s=46&t=Ew8eS1seDjHua2vB1f40Tw>
+- TODO personal / research questions:
+  - 1. why did diffusion work better than gans and vqvae/vqgan style methods? mathematical reasoning and empirical reasoning
+  - 1. what are the major unsolved problems in diffusion broadly?
+  - 1. Training efficiency of diffusion: AR models update all steps of the iterative refinement process in a single forward backward, diffusion does one forward/backward per noise level. For AR models training is trivially parallellizable across all refinement steps. "Can denoising pretraining become as gradient-efficient as autoregressive teacher forcing while retaining bidirectional generation and parallel refinement?"
 
 ---
 
-## 0. Tutorials
+## 0. Overview and Tutorials
 
 - [ ] [[course-mit-diffusion-2026]]
-- [ ] [2022] [HuggingFace] [The Annotated Diffusion Model](#2022-the-annotated-diffusion-model) - [blog](https://huggingface.co/blog/annotated-diffusion)
 - [ ] [2021] [YangSong] Generative Modeling by Estimating Gradients of the Data Distribution - [blog](https://yang-song.net/blog/2021/score/)
+- [ ] Sander Dieleman Diffusion Blog Posts - [posts](https://sander.ai/posts/)
+  - [ ] [2020] [Generative Models](#2020-sanderdieleman-generative-models) - [post](https://sander.ai/2020/03/24/audio-generation.html#generative-models)
+  - [ ] [2022] Diffusion Models Are Autoencoders - [post](https://sander.ai/2022/01/31/diffusion.html)
+  - [ ] [2022] Guidance: A Cheat Code for Diffusion Models - [post](https://sander.ai/2022/05/26/guidance.html)
+  - [ ] [2023] [Diffusion Language Models](#2023-sanderdieleman-diffusion-language-models) - [post](https://sander.ai/2023/01/09/diffusion-language.html)
+  - [ ] [2023] Perspectives on Diffusion - [post](https://sander.ai/2023/07/20/perspectives.html)
+  - [ ] [2023] The Geometry of Diffusion Guidance - [post](https://sander.ai/2023/08/28/geometry.html)
+  - [ ] [2024] The Paradox of Diffusion Distillation - [post](https://sander.ai/2024/02/28/paradox.html)
+  - [ ] [2024] Noise Schedules Considered Harmful - [post](https://sander.ai/2024/06/14/noise-schedules.html)
+  - [ ] [2024] Diffusion Is Spectral Autoregression - [post](https://sander.ai/2024/09/02/spectral-autoregression.html)
+  - [ ] [2025] Generative Modelling in Latent Space - [post](https://sander.ai/2025/04/15/latents.html)
+  - [ ] [2026] Learning the Integral of a Diffusion Model - [post](https://sander.ai/2026/05/06/flow-maps.html)
+  - [ ] [2026] [Greg-rec] Continuous Diffusion Language Models - [post](https://sander.ai/2026/08/24/continuous-dlms.html)
 - [ ] [2025] [3blue1brown] <https://www.3blue1brown.com/lessons/diffusion-models/>
 - [x] [2026] [Nando] [Diffusion and Flow Matching Tutorial](#2026-nando-diffusion-and-flow-matching-tutorial) - [blog](https://love4all.ai/blog/diffusion-and-flow-matching-tutorial/), [pdf](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.pdf), [notebook](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.ipynb)
 - [ ] [2026] [book] <https://the-principles-of-diffusion-models.github.io/>
@@ -31,9 +47,14 @@ TODO:
 - [ ] TODO something on twitter i bookmarked, jacob shared on slack as well (about diffusion tutorial)
 - [ ] TODO Alan's stuff
   - [ ] [Flourish] Alan's diffusion tutorial slides - [slides](../../flourish/presentations/2026-05-21-diffusion/README.md)
-  - [ ] Alan's paper list <https://docs.google.com/document/d/1dgvsHthnVjYMl0nqfFWeP0GITSMz6lopmQUNP3gDQ9M/edit?usp=sharing>
+- [ ] Alan's paper list <https://docs.google.com/document/d/1dgvsHthnVjYMl0nqfFWeP0GITSMz6lopmQUNP3gDQ9M/edit?usp=sharing>
   - [x] Alan's diffusion loss notebook <https://github.com/inductivebias/flourish/pull/1400>
   - [ ] Alan's diffusion ELBO notebook <https://github.com/inductivebias/flourish/pull/1597>
+
+## Talks, Workshops, etc
+
+- [x] [2025CVPR] [BillFreeman] After Diffusion Models - [workshop](https://vgm-cvpr.github.io/), [slides](https://drive.google.com/file/d/1kY4EW93nqBIhn90JT3dcCGzu1d5Y0HKJ/view?usp=sharing), [video](https://www.youtube.com/watch?v=0vnpvWqXd9M)
+- [ ] [2025CVPR] [KaimingHe] Towards End-to-End Generative Modeling - [workshop](https://vgm-cvpr.github.io/), [slides](https://drive.google.com/file/d/1T88z00PeSXvzoQKZbdpi3RG9c7A_LpGb/view?usp=sharing), [video](https://www.youtube.com/watch?v=4VwXBrMoC0E)
 
 ## 1. Classical Diffusion and Likelihood
 
@@ -50,6 +71,8 @@ TODO:
   - Read after DDPM rather than before it. Focus on the fixed forward process and learned reversal; skim older implementation details.
 - [ ] [2021] [Greg-rec] [Kingma] Variational Diffusion Models - [paper](https://arxiv.org/abs/2107.00630), [code](https://github.com/google-research/vdm)
   - Essential bridge among SNR, the variational bound, estimator variance, likelihood, and bits-back compression.
+- [ ] [2021] [YangSong,ConorDurkan,IainMurray,StefanoErmon] Maximum Likelihood Training of Score-Based Diffusion Models - [paper](https://arxiv.org/abs/2101.09258)
+  - Derive the likelihood weighting for denoising score matching and understand why the commonly used unweighted noise-prediction loss optimizes a different allocation across noise levels.
 
 ## 2. Score, SDE, ODE, and Flow Views
 
@@ -77,9 +100,11 @@ TODO:
 - [ ] [2021] [JonathanHo,ChitwanSaharia,TimSalimans] CDM: Cascaded Diffusion Models for High Fidelity Image Generation - [paper](https://arxiv.org/abs/2106.15282)
   - Generate images through a low-resolution base model followed by diffusion super-resolution models; conditioning augmentation makes later stages robust to errors from earlier generated stages.
 - [ ] [2021] LDM: High-Resolution Image Synthesis with Latent Diffusion Models - [paper](https://arxiv.org/abs/2112.10752)
+- [ ] [2021] [AlexNichol,PrafullaDhariwal] GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models - [paper](https://arxiv.org/abs/2112.10741)
+  - Scale text-conditional diffusion and compare CLIP guidance with classifier-free guidance; an important bridge from guided image diffusion to modern text-to-image systems.
 - [ ] [2022] [AdityaRamesh] Hierarchical Text-Conditional Image Generation with CLIP Latents - [paper](https://arxiv.org/abs/2204.06125)
   - DALL·E 2 / unCLIP: generate a CLIP image embedding from text, then condition a diffusion decoder on that semantic representation.
-- [ ] [2022] [ChitwanSaharia,JonathanHo] Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding - [paper](https://arxiv.org/abs/2205.11487)
+- [ ] [2022] [JonathanHo] Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding - [paper](https://arxiv.org/abs/2205.11487)
   - Imagen: frozen T5 text conditioning, cascaded pixel-space diffusion, and the finding that scaling the language encoder mattered more than scaling the image denoiser.
 - [ ] [2023] [TimSalimans] Simple Diffusion: End-to-End Diffusion for High Resolution Images - [paper](https://arxiv.org/abs/2301.11093)
   - Pixel-space alternative to latent diffusion and cascades. Focus on the resolution-dependent log-SNR shift, selective low-resolution scaling and dropout, early downsampling, and the multiscale loss; the shifted cosine schedule is the part used in Nando §2.3.
@@ -127,14 +152,24 @@ TODO:
 
 ## 6. Scaling Laws and Compute Allocation
 
-- [ ] [2025] Scaling Inference Time Compute for Diffusion Models - [paper](https://openaccess.thecvf.com/content/CVPR2025/html/Ma_Scaling_Inference_Time_Compute_for_Diffusion_Models_CVPR_2025_paper.html)
-  - Scale test-time compute through verifier-guided search over initial-noise candidates rather than merely increasing denoising steps.
-- [ ] [2025] [DeepakPathak] Diffusion Beats Autoregressive in Data-Constrained Settings - [paper](https://arxiv.org/abs/2507.15857), [project](https://diffusion-scaling.github.io/)
-  - Derive when masked diffusion overtakes autoregression as fixed data is reused with increasing compute; randomized masking acts as implicit augmentation over token orderings.
-- [ ] [2026] Scaling Beyond Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2602.15014)
-  - Compare scaling across masked, uniform-state, and interpolating discrete diffusion; distinguish likelihood scaling from the practical speed-quality frontier.
-- [ ] [2026] [JiamingSong] Abra: Scaling Diffusion Image Training - [paper](https://arxiv.org/abs/2608.17286)
+- [ ] [2024] [Image] Scaling Laws for Diffusion Transformers - [paper](https://arxiv.org/abs/2410.08184)
+  - Early IsoFLOP study showing power-law loss scaling for text-to-image DiTs and estimating compute-optimal model/data allocation. Read as the direct precursor and methodological foil to Abra's larger controlled study.
+- [ ] [2026] [Image] [JiamingSong] Abra: Scaling Diffusion Image Training - [paper](https://arxiv.org/abs/2608.17286)
   - Compute-optimal scaling laws for text-to-image flow-matching Transformers, including model/data allocation, overtraining robustness, generative quality, CFG, and representation quality.
+- [ ] [2023] [Text] Plaid: Likelihood-Based Diffusion Language Models - [paper](https://arxiv.org/abs/2305.18619)
+  - First compute-optimal scaling study for likelihood-trained continuous diffusion language models: similar loss-scaling slope to autoregression, but an approximately $64\times$ compute gap and substantially smaller compute-optimal models.
+- [ ] [2025] [Text] Scaling Behavior of Discrete Diffusion Language Models - [paper](https://arxiv.org/abs/2512.10858)
+  - Show that the corruption process changes compute-optimal allocation: uniform diffusion prefers more parameters and less data than masked diffusion in data-limited regimes, with uniform models scaled to 10B parameters.
+- [ ] [2026] [Text] [ArashVahdat] RePlaid: Continuous Diffusion Scales Competitively with Discrete Diffusion for Language - [paper](https://arxiv.org/abs/2605.18530), [project](https://research.nvidia.com/labs/genair/replaid/)
+  - Likelihood-based continuous diffusion over learned token embeddings; narrows Plaid's gap to roughly $20\times$ AR compute and scales with a slope comparable to modern discrete diffusion.
+- [ ] [2026] [Text] Scaling Beyond Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2602.15014)
+  - Compare scaling across masked, uniform-state, and interpolating discrete diffusion; distinguish likelihood scaling from the practical speed-quality frontier.
+- [ ] [2025] [Text] [DeepakPathak] Diffusion Beats Autoregressive in Data-Constrained Settings - [paper](https://arxiv.org/abs/2507.15857), [project](https://diffusion-scaling.github.io/)
+  - Derive when masked diffusion overtakes autoregression as fixed data is reused with increasing compute; randomized masking acts as implicit augmentation over token orderings.
+- [ ] [2026] [Audio] [NavdeepJaitly] Scaling Properties of Continuous Diffusion Spoken Language Models - [paper](https://arxiv.org/abs/2604.24416), [project](https://machinelearning.apple.com/research/scaling-properties-continuous-diffusion), [code](https://github.com/apple/ml-diffuslm)
+  - Establish scaling laws for continuous speech diffusion through validation loss and phoneme JSD, scaling to 16B parameters. Finds increasingly flat compute-optimal model/data allocations—opening an inference-efficiency frontier—but persistent difficulty with long-form linguistic coherence.
+- [ ] [2025] [Test-Time] [SainingXie] Scaling Inference Time Compute for Diffusion Models - [paper](https://openaccess.thecvf.com/content/CVPR2025/html/Ma_Scaling_Inference_Time_Compute_for_Diffusion_Models_CVPR_2025_paper.html)
+  - Scale test-time compute through verifier-guided search over initial-noise candidates rather than merely increasing denoising steps.
 
 ## 7. Compression and Evaluation
 
@@ -172,14 +207,10 @@ Start this section only after the core generative-modeling path.
 
 - [ ] [2025] Large Language Diffusion Models - [paper](https://arxiv.org/abs/2502.09992), [project](https://ml-gsai.github.io/LLaDA-demo/)
 - [ ] [2026] Improved Large Language Diffusion Models - [paper](https://arxiv.org/abs/2606.25331), [code](https://github.com/ML-GSAI/LLaDA)
-- [ ] [2026] [FloorEijkelboom] An Intuitive Introduction to Flow-Based Language Generation - [blog](https://flow-based-llms.github.io/)
+- [ ] [2026] An Intuitive Introduction to Flow-Based Language Generation - [blog](https://flow-based-llms.github.io/)
   - Bridge from continuous flow matching to language: categorical endpoint distributions, cross-entropy-based Variational Flow Matching, simplex-valued denoisers, and flow-map distillation. Read before ELF.
 - [ ] [2026] [Greg-rec] [KaimingHe] [ELF: Embedded Language Flows](#2026-greg-rec-kaiminghe-elf-embedded-language-flows) - [paper](https://arxiv.org/abs/2605.10938)
   - Continuous-time flow matching in token-embedding space, remaining continuous until a final shared-weight projection to discrete tokens. Use as the continuous-language foil to masked discrete diffusion models.
-- [ ] [2026] RePlaid: Continuous Diffusion Scales Competitively with Discrete Diffusion for Language - [paper](https://arxiv.org/abs/2605.18530), [project](https://research.nvidia.com/labs/genair/replaid/)
-  - Likelihood-based continuous diffusion over learned token embeddings; compare its scaling laws, learned noise schedule, and embedding geometry with MDLM, Duo, and ELF.
-- [ ] [2026] [Greg-rec] [SanderDieleman] Continuous Diffusion Language Models - [blog](https://sander.ai/2026/08/24/continuous-dlms.html)
-  - Historical and technical synthesis of continuous language diffusion: embedding and unembedding strategies, objectives, noise schedules, self-conditioning, the shift toward discrete DLMs, and the 2026 revival represented by LangFlow, ELF, and RePlaid. Read after ELF and RePlaid.
 - [ ] [2026] DiffusionGemma - [model card](https://ai.google.dev/gemma/docs/diffusiongemma/model_card), [project](https://deepmind.google/models/gemma/diffusiongemma/)
   - Read these as system-level capstones for masked / block diffusion, bidirectional attention, and parallel text decoding.
 - [ ] [2026] [JunboZhao] Some Theoretical and Practical Thoughts on Diffusion Language Models - [blog](https://jzhao2024.github.io/notes/2026/08/08/diffusion-language-models.html)
@@ -188,6 +219,281 @@ Start this section only after the core generative-modeling path.
   - Explore diffusion as an iterative refinement process over solutions rather than only as a data generator.
 
 ---
+
+## [2020] [SanderDieleman] [Generative Models](https://sander.ai/2020/03/24/audio-generation.html#generative-models)
+
+- **Date**: 2026-09-04
+
+---
+
+**Generative-model taxonomy**
+
+- A generative model approximates the data distribution $p_X(x)$. An **implicit model** can generate $x\sim p_X$ but does not provide a tractable likelihood $p_X(x)$; an **explicit model** does provide a likelihood, sometimes only up to an unknown normalizing constant.
+- A conditional generative model incorporates side information $c$ and models $p_X(x\mid c)$. Richer conditioning reduces uncertainty about $x$; the post distinguishes sparse conditioning from dense conditioning.
+- **Likelihood-based models** directly or indirectly parameterize $p_X(x)$ and maximize dataset log-likelihood:
+  $$
+  \mathcal L(\theta)=\sum_{x\in X}\log p_X(x\mid\theta),
+  \qquad
+  \theta^*=\arg\max_\theta\mathcal L(\theta).
+  $$
+  - **Autoregressive models** use the probability chain rule:
+    $$
+    p_X(x)=\prod_i p(x_i\mid x_{<i}).
+    $$
+    They permit tractable likelihood evaluation, but sampling is sequential. Examples from the post are [PixelRNN](https://arxiv.org/abs/1601.06759) and [PixelCNN](https://arxiv.org/abs/1606.05328).
+  - **Normalizing flows**—the meaning of “flow-based models” in this 2020 post, rather than modern [Flow Matching](https://arxiv.org/abs/2210.02747)—transform a simple latent $z\sim p_Z$ through an invertible map $x=g(z)$. A standard Gaussian, $p_Z=\mathcal N(0,I)$, is a popular choice for the base distribution. The change-of-variables formula is
+    $$
+    p_X(x)=p_Z(z)\left|\det J\right|^{-1},
+    \qquad
+    J=\frac{\mathrm d g(z)}{\mathrm d z}.
+    $$
+    Likelihood and sampling are tractable, but invertibility restricts the architecture. Start with [NICE](https://arxiv.org/abs/1410.8516) and [Real NVP](https://arxiv.org/abs/1605.08803); Eric Jang's tutorial covers [distributions and determinants](https://blog.evjang.com/2018/01/nf1.html) followed by [modern normalizing flows](https://blog.evjang.com/2018/01/nf2.html), while [Normalizing Flows for Probabilistic Modeling and Inference](https://arxiv.org/abs/1912.02762) is the broader review.
+  - **Variational autoencoders** learn an inference model $q(z\mid x)$ and a generative model $p(x\mid z)$, maximizing an evidence lower bound when exact evaluation of $p_X(x)$ is intractable. See [Stochastic Backpropagation and Approximate Inference in Deep Generative Models](https://arxiv.org/abs/1401.4082), [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114), and [Jaan Altosaar's VAE tutorial](https://jaan.io/what-is-variational-autoencoder-vae-tutorial/).
+- **Adversarial models** train a generator $G$ against a discriminator $D$ through a two-player objective:
+  $$
+  \min_G\max_D
+  \left(
+  \mathbb E_{x\sim p_X}[\log D(x)]
+  +
+  \mathbb E_{z\sim p_Z}[\log(1-D(G(z)))]
+  \right).
+  $$
+  GANs are implicit models: they provide samples through $G(z)$ without a tractable likelihood for an observed $x$. The foundational reference is [Generative Adversarial Nets](https://arxiv.org/abs/1406.2661).
+- **Other approaches** in the post include:
+  - **Energy-based models**, which learn an unnormalized density. See [Implicit Generation and Generalization in Energy-Based Models](https://arxiv.org/abs/1903.08689) and the accompanying [OpenAI post](https://openai.com/index/energy-based-models/).
+  - **Optimal transport**, which compares distributions through a transport cost and motivates models such as [Wasserstein GAN](https://arxiv.org/abs/1701.07875) and the [Sliced-Wasserstein Autoencoder](https://arxiv.org/abs/1804.02733).
+  - **Autoregressive implicit quantile networks**, which replace maximum likelihood with quantile regression; see [Autoregressive Quantile Networks for Generative Modeling](https://arxiv.org/abs/1806.05575).
+  - **Score matching**, which matches log-density gradients:
+    $$
+    \mathcal L
+    =
+    \mathbb E
+    \left[
+    \left\|
+    \nabla_x\log p_X(x)-\nabla_y\log p_Y(y)
+    \right\|^2
+    \right].
+    $$
+    The path from classical score matching to score-based generation runs through [Estimation of Non-Normalized Statistical Models by Score Matching](https://jmlr.org/papers/v6/hyvarinen05a.html), [Sliced Score Matching](https://arxiv.org/abs/1905.07088), and [Generative Modeling by Estimating Gradients of the Data Distribution](https://arxiv.org/abs/1907.05600).
+- **Mode covering versus mode seeking.** When a limited-capacity model cannot represent every mode of a multimodal data distribution, it must choose what kind of error to make:
+  - A **mode-covering** model tries to assign probability to every data mode, but may also place probability in unrealistic low-density regions between them. Maximum likelihood minimizes the forward KL, up to a constant,
+    $$
+    D_{\mathrm{KL}}(p_{\mathrm{data}}\|p_\theta)
+    =
+    \mathbb E_{x\sim p_{\mathrm{data}}}
+    \left[
+    \log\frac{p_{\mathrm{data}}(x)}{p_\theta(x)}
+    \right],
+    $$
+    which strongly penalizes assigning low model probability to a region containing real data.
+  - A **mode-seeking** model concentrates on one or a few realistic modes and may omit the others. The reverse KL,
+    $$
+    D_{\mathrm{KL}}(p_\theta\|p_{\mathrm{data}})
+    =
+    \mathbb E_{x\sim p_\theta}
+    \left[
+    \log\frac{p_\theta(x)}{p_{\mathrm{data}}(x)}
+    \right],
+    $$
+    strongly penalizes generating samples where the data density is low, but does not directly penalize a mode that the model never visits. GANs do not literally minimize reverse KL in their ideal original formulation, but adversarial training often exhibits this mode-seeking behavior and can suffer mode collapse.
+
+| Approach | Defining formula / objective | Likelihood / density evaluation | Sampling | Typical mode behavior under limited capacity |
+| --- | --- | --- | --- | --- |
+| Autoregressive | $p_X(x)=\prod_i p(x_i\mid x_{<i})$; maximize $\sum_{x\in X}\log p_\theta(x)$ | **Tractable and exact**; all observed conditionals can be trained in parallel | Tractable but sequential and therefore often slow | **Mode-covering:** maximum likelihood minimizes forward KL |
+| Normalizing flow | $x=g_\theta(z)$ and $p_X(x)=p_Z(z)\lvert\det J_g(z)\rvert^{-1}$ | **Tractable and exact** when $g_\theta^{-1}$ and the Jacobian determinant are tractable; train by maximum likelihood | Tractable and generally fast, although autoregressive flow variants can trade fast likelihood evaluation for fast sampling | **Mode-covering** when trained by maximum likelihood |
+| Variational autoencoder | $\log p_\theta(x)\geq\mathbb E_{q_\phi(z\mid x)}[\log p_\theta(x\mid z)]-D_{\mathrm{KL}}(q_\phi(z\mid x)\mathbin{\Vert}p(z))$ | The exact marginal $p_\theta(x)=\int p_\theta(x\mid z)p(z)\,dz$ is **generally intractable**; train using the tractable stochastic ELBO | Tractable: sample $z\sim p(z)$ and then $x\sim p_\theta(x\mid z)$ | Generally **mode-covering**, although the variational approximation and decoder can introduce their own failures |
+| GAN | $\min_G\max_D\;\mathbb E_{x\sim p_{\mathrm{data}}}[\log D(x)]+\mathbb E_{z\sim p_Z}[\log(1-D(G(z)))]$ | **Intractable / unavailable:** $G$ does not assign a density to an observed $x$; train through a tractable but potentially unstable minimax loss | Tractable and usually fast: sample $z$ and evaluate $G(z)$ | Often **mode-seeking** in practice; mode collapse can omit parts of the data distribution |
+| Energy-based model | $p_\theta(x)=e^{-E_\theta(x)}/Z_\theta$, where $Z_\theta=\int e^{-E_\theta(x)}\,dx$ | The unnormalized density is available, but $Z_\theta$ is **usually intractable**; training generally uses approximate negative samples or avoids the partition function | Usually approximate and iterative, commonly using MCMC | Depends on the objective and quality of negative sampling; maximum likelihood is mode-covering in principle |
+| Optimal-transport method | $W_c(p,q)=\inf_{\gamma\in\Pi(p,q)}\mathbb E_{(x,y)\sim\gamma}[c(x,y)]$ | No generic likelihood; exact high-dimensional optimal transport is generally expensive, so practical objectives use approximations | Depends on whether the method learns an explicit transport map or only a distributional objective | Depends on the transport cost, regularization, and model family |
+| Autoregressive implicit quantile network | $\tau_i\sim\operatorname{Uniform}(0,1)$, $x_i=F_\theta^{-1}(\tau_i\mid x_{<i})$; minimize $\rho_\tau(r)=r(\tau-\mathbf 1[r<0])$ | **Intractable / implicit:** quantile regression trains a sampler without producing an explicit likelihood | Tractable but autoregressive and therefore sequential | Intended to represent the conditional distribution across quantiles; not inherently classified by a forward- versus reverse-KL objective |
+| Score matching | $s_\theta(x)\approx\nabla_x\log p_{\mathrm{data}}(x)$; minimize a tractable form of $\mathbb E[\lVert s_\theta(x)-\nabla_x\log p_{\mathrm{data}}(x)\rVert^2]$ | The score is available, but normalized likelihood is **not directly available**; score-matching identities avoid the normalizing constant | Approximate and iterative, using procedures such as Langevin dynamics or reverse diffusion | **Mode-covering in principle** when the score is learned over the full perturbed data distribution; finite training and sampling can still miss modes |
+
+## [2023] [SanderDieleman] [Diffusion Language Models](https://sander.ai/2023/01/09/diffusion-language.html)
+
+- **Date**: 2026-09-02
+
+---
+
+- **TL;DR**:
+  - BigGAN and StyleGAN significantly expanded the capabilities of image generators, but the mode-seeking nature of GANs made them favor realism over diversity and made strong domain-specific results difficult to reproduce on broader datasets.
+  - VQ-VAE-2 and especially VQGAN made the case for a two-stage approach: first turn images into highly compressed discrete sequences, then predict those sequences step by step with a powerful autoregressive model.
+  - NCSN began as a proof of concept for score-based generation; NCSNv2 and DDPM made iterative denoising competitive, and the two approaches were soon understood as two sides of the same coin.
+  - The real triumph over competing image generators came with *Diffusion Models Beat GANs on Image Synthesis*; powerful text-to-image systems such as GLIDE followed by the end of 2021.
+  - Different noise levels let a diffusion model focus on different spatial-frequency components. During sampling, it effectively builds an image from low to high frequencies—large-scale structure first, then progressively finer details.
+  - During training, the relative weights assigned to different noise levels determine how much the model focuses on large-scale versus fine-grained structure. The commonly used uniform weighting gives a very different objective from likelihood training.
+  - For Gaussian corruption, $s_\theta(X_t,t)=-\epsilon_\theta(X_t,t)/\beta_t$: a noise-prediction error is divided by $\beta_t$ when expressed as score error, and its squared error is therefore scaled by $1/\beta_t^2$. Likelihood-derived score matching strongly emphasizes this low-noise accuracy; the simplified unweighted $\epsilon$-prediction loss removes that relative emphasis, giving noisier examples more influence and often aligning better with human visual perception.
+  - Relative to likelihood, uniform noise-level weighting is much more closely aligned with the human visual system. This fortunate objective choice and classifier-free guidance are presented as the two main reasons diffusion took over image generation so quickly.
+  - This does not necessarily bode well beyond perceptual domains: it is unclear what “high frequency” means for language, and the relatively lower weight placed on low-noise examples could become a liability when exact token choices matter.
+  - Autoregressive teacher forcing obtains a gradient from every sequence position in one pass, whereas diffusion usually samples one noise level per example. Diffusion Forcing partially closes this gap by assigning independent noise levels to different tokens, but still observes each token at only one noise level per pass.
+  - Simply comparing sampling-step counts is misleading: an autoregressive model can reuse its KV cache, while a standard diffusion model changes the whole noisy sequence and recomputes it at every step. Diffusion therefore needs substantially fewer denoising steps than the sequence length—not merely fewer—to become faster.
+
+**2. Diffusion for Images: A Match Made in Heaven**
+
+> During training, we sample a noise level for each training example, add noise to it, and then try to predict the noise. The relative weights with which we sample the different noise levels therefore determine the degree to which the model focuses on large-scale and fine-grained structure. The most commonly used formulation, with uniform weighting of the noise levels, yields a very different objective than the likelihood loss which e.g. autoregressive models are trained with.
+
+For a Gaussian probability path,
+$$
+X_t=\alpha_tZ+\beta_t\epsilon,
+\qquad \epsilon\sim\mathcal N(0,I),
+$$
+where $Z$ is the clean image and $\beta_t$ is the noise standard deviation. A general noise-prediction objective can be written as
+$$
+\mathcal L
+=
+\mathbb E_{t\sim q(t),Z,\epsilon}
+\left[
+w(t)\left\|\epsilon_\theta(X_t,t)-\epsilon\right\|^2
+\right].
+$$
+The effective emphasis on a noise level is determined jointly by how often it is sampled, $q(t)$, and its explicit loss weight, $w(t)$. The common simplified objective uses $t\sim\operatorname{Uniform}(0,1)$ and $w(t)=1$, so every timestep contributes equally on average. This does not necessarily mean uniform noise variance or uniform log-SNR, because the schedule from $t$ to $(\alpha_t,\beta_t)$ may be nonlinear.
+
+At high noise, small details of $Z$ are overwhelmed and the model must infer robust global structure. At low noise, $X_t\approx Z$, so the remaining prediction problem is mostly local correction and fine detail. In the Fourier domain,
+$$
+\widehat X_t(k)=\alpha_t\widehat Z(k)+\beta_t\widehat\epsilon(k).
+$$
+Gaussian noise has roughly equal power at every frequency, whereas natural-image power generally decreases at higher frequencies. High-frequency components therefore reach low signal-to-noise ratio sooner than low-frequency components: strong noise erases fine texture while coarse structure remains detectable.
+
+> It turns out that there is a particular weighting which corresponds directly to the likelihood loss, but this puts significantly more weight on very low noise levels. Since low noise levels correspond to high spatial frequencies, this also indirectly explains why likelihood-based autoregressive models in pixel space never really took off: they end up spending way too much of their capacity on perceptually meaningless detail, and never get around to modelling larger-scale structure.
+
+A likelihood-derived diffusion objective uses schedule-dependent weights rather than the uniform simplified loss. To see the connection, define the log-SNR
+$$
+\lambda_t
+=
+\log\frac{\alpha_t^2}{\beta_t^2}.
+$$
+For Gaussian corruption, noise prediction and conditional score prediction are related by
+$$
+s_\theta(X_t,t)=-\frac{\epsilon_\theta(X_t,t)}{\beta_t},
+\qquad
+\nabla_x\log p_t(X_t\mid Z)=-\frac{\epsilon}{\beta_t}.
+$$
+Consequently,
+$$
+\left\|s_\theta-\nabla_x\log p_t(X_t\mid Z)\right\|^2
+=
+\frac{1}{\beta_t^2}
+\left\|\epsilon_\theta-\epsilon\right\|^2.
+$$
+For the continuous-time diffusion SDE, likelihood-weighted score matching weights the score error by the squared diffusion coefficient $g(t)^2$. Since $g(t)^2/\beta_t^2=-\lambda_t'$, this becomes
+$$
+\mathcal L_{\mathrm{ML}}
+=
+-\frac12
+\mathbb E_{t,Z,\epsilon}
+\left[
+\lambda_t'
+\left\|\epsilon_\theta(X_t,t)-\epsilon\right\|^2
+\right]
++\text{endpoint terms}.
+$$
+Here $t$ runs from data toward noise, so $\lambda_t'<0$ and the weight $-\lambda_t'/2$ is positive. For common schedules it is much larger near the low-noise endpoint than the constant weight in the simplified objective. This is the likelihood connection developed in [Maximum Likelihood Training of Score-Based Diffusion Models](https://arxiv.org/abs/2101.09258); more precisely, the weighted objective gives an upper bound on negative log-likelihood.
+
+Pixel-autoregressive models have no noise levels and are not explicitly timestep-weighted. They directly minimize
+$$
+-\log p_\theta(Z)
+=
+-\sum_i\log p_\theta(Z_i\mid Z_{<i}).
+$$
+The connection is that exact pixel likelihood rewards accurately modeling every pixel-level fluctuation. Rewriting likelihood through diffusion exposes the analogous pressure as strong weighting near clean data, where the unresolved information is predominantly high-frequency detail. With finite capacity, such details can consume modeling effort without proportionally improving perceptual quality. This is an optimization and inductive-bias argument—not a claim that ideal maximum likelihood ignores global structure.
+
+> Relative to the likelihood loss, uniform weighting across noise levels in diffusion models yields an objective that is much more closely aligned with the human visual system. I don’t believe this was actually known when people first started training diffusion models on images – it was just a lucky coincidence! But we understand this pretty well now, and I think it is one of the two main reasons why this modelling approach completely took over in a matter of two years. (The other reason is of course classifier-free guidance, which you can read more about in [my previous blog post on the topic](https://benanne.github.io/2022/05/26/guidance.html).)
+
+Uniform weighting acts as a perceptual reweighting of likelihood: it devotes relatively more training effort to noise levels where global, visually salient structure must be recovered and less to nearly clean pixel detail. Classifier-free guidance supplies the other ingredient by strengthening conditioning during sampling, improving fidelity and alignment at the cost of some diversity.
+
+> The reason I bring all this up here, is that it doesn’t bode particularly well for applications of diffusion models beyond the perceptual domain. Our ears have a similar disdain for high frequencies as our eyes (though to a lesser extent, I believe), but in the language domain, what does “high frequency” even mean[12](https://sander.ai/2023/01/09/diffusion-language.html#fn:prism)? Given the success of likelihood-based language models, could the relatively lower weight of low noise levels actually prove to be a liability in this setting?
+
+Images admit a useful coarse-to-fine interpretation because small high-frequency errors are often perceptually unimportant. Language has no equally canonical notion of spatial frequency: the closest analogy is global meaning versus exact lexical and syntactic choices, but one changed token can alter the meaning completely. For continuous embedding diffusion, low-noise denoising must distinguish nearby token embeddings before discretization; for masked discrete diffusion, it must correctly resolve the last few uncertain tokens. Underweighting this regime could therefore damage exact token recovery and fluency rather than merely discard imperceptible detail. This was a warning and open question in 2023, not a conclusion that diffusion cannot work for language.
+
+**3. Autoregression for Language: A Tough Baseline to Beat**
+
+**3.1. Training Efficiency**
+
+> If we compare autoregression and diffusion side-by-side as different forms of iterative refinement, the former has the distinct advantage that training can be parallelised trivially across all refinement steps. During autoregressive model training, we obtain a useful gradient signal from all steps in the sampling process. This is not true for diffusion models, where we have to sample a particular noise level for each training example. It is not practical to train on many different noise levels for each example, because that would require multiple forward and backward passes through the model. For autoregression, we get gradients for all sequence steps with just a single forward-backward pass.
+
+For an autoregressive sequence $Z=(Z_1,\ldots,Z_n)$, teacher forcing computes
+$$
+\mathcal L_{\mathrm{AR}}(Z)
+=
+-\sum_{i=1}^n\log p_\theta(Z_i\mid Z_{<i})
+$$
+in one causally masked Transformer pass. Generation is sequential, but training produces a loss and gradient at every token position simultaneously.
+
+Diffusion instead optimizes an expectation over noise time and sampled noise:
+$$
+\mathcal L_{\mathrm{diff}}(Z)
+=
+\mathbb E_{t,\epsilon}
+\left[\ell_\theta(Z,t,\epsilon)\right],
+\qquad
+X_t=\alpha_tZ+\beta_t\epsilon.
+$$
+Training usually estimates this expectation using one sampled $(t,\epsilon)$ per example. The estimate is unbiased,
+$$
+\mathbb E_{t,\epsilon}
+\left[\widehat{\mathcal L}_{\mathrm{diff}}(Z)\right]
+=
+\mathcal L_{\mathrm{diff}}(Z),
+$$
+but one pass supervises only one point on the noise-time axis. Evaluating the same example at $k$ noise levels ordinarily requires $k$ different noisy inputs and roughly $k$ model evaluations. Diffusion still receives losses at every pixel or token; the missing parallelism is across denoising times, not across positions.
+
+> As a result, diffusion model training is almost certainly significantly less statistically efficient than autoregressive model training, and slower convergence implies higher computational requirements.
+
+Here **statistical efficiency** means how many examples or gradient updates are required to reach a given model quality. Sampling $t$ and $\epsilon$ adds variance to the diffusion gradient estimator, so covering the full family of denoising problems may require more updates. This is a plausible efficiency argument rather than a theorem: parameters are shared across noise levels and can generalize between nearby values of $t$, while autoregressive token losses can themselves be redundant.
+
+[Diffusion Forcing](https://arxiv.org/abs/2407.01392) partially addresses the open question by sampling an independent noise level for every sequence position:
+$$
+t_i\sim q(t),
+\qquad
+X_i^{t_i}=\alpha_{t_i}Z_i+\beta_{t_i}\epsilon_i,
+$$
+and training with
+$$
+\mathcal L_{\mathrm{DF}}
+=
+\sum_{i=1}^n
+\left\|
+\epsilon_\theta(X_i^{t_i},t_i,\text{noisy history})-\epsilon_i
+\right\|^2.
+$$
+One pass can therefore contain many noise levels across its tokens. However, token $i$ is still seen at only one sampled $t_i$, rather than at every possible noise level. Diffusion Forcing learns a richer family of conditionals over mixed-noise sequences; it does not compute the complete noise-time integral for each token in one pass.
+
+**3.2. Sampling Efficiency**
+
+> Simply comparing the number of sampling steps across different methods relies on the implicit assumption that all sampling steps have the same cost, and this is not the case. Leaving aside the fact that a single diffusion sampling step can sometimes require multiple forward passes through the model, the cost of an individual forward pass also differs. Autoregressive models can benefit substantially from caching, i.e. re-use of activations computed during previous sampling steps, which significantly reduces the cost of each step. This is not the case for diffusion models, because the level of noise present in the input changes throughout sampling, so each sampling step requires a full forward pass across the entire input.
+
+For a sequence of length $n$, autoregressive generation takes $n$ sequential steps, but a KV cache stores the keys and values of earlier tokens. At step $i$, the model computes new activations only for the new token and attends to cached history:
+$$
+T_{\mathrm{AR}}
+\approx
+\sum_{i=1}^n C_{\mathrm{cached}}(i).
+$$
+The number of steps is large, but each step is much cheaper than recomputing the entire prefix.
+
+A standard diffusion model updates every noisy token at each denoising step. Since
+$$
+X_{t-\Delta t}\neq X_t
+$$
+at every position, the previous step's keys, values, and deeper activations are no longer exact for the new input. With $K$ solver steps and $r_k$ model evaluations at step $k$,
+$$
+T_{\mathrm{diff}}
+\approx
+\sum_{k=1}^K r_k C_{\mathrm{full}}(n)
+=
+\operatorname{NFE}\,C_{\mathrm{full}}(n),
+\qquad
+\operatorname{NFE}=\sum_{k=1}^K r_k.
+$$
+Classifier-free guidance commonly requires conditional and unconditional predictions, and some numerical solvers evaluate the model more than once per step, so the number of function evaluations can exceed the displayed number of denoising steps.
+
+> Therefore, the break-even point at which diffusion sampling becomes more efficient than autoregressive sampling is probably at a number of steps significantly below the length of the sequence.
+
+The relevant comparison is therefore
+$$
+\operatorname{NFE}\,C_{\mathrm{full}}(n)
+<
+\sum_{i=1}^n C_{\mathrm{cached}}(i),
+$$
+not merely $K<n$. For example, a 1,024-token autoregressive sample uses 1,024 sequential but cached single-token evaluations; a 32-step diffusion sampler uses far fewer sequential steps, but each step processes all 1,024 tokens. Diffusion benefits from parallel computation across positions, while autoregression benefits from exact reuse across steps. The actual break-even point depends on sequence length, architecture, solver, guidance, batch size, and hardware.
 
 ## [2022] [BillPeebles,SainingXie] [DiT: Scalable Diffusion Models with Transformers](https://arxiv.org/abs/2212.09748)
 
@@ -785,7 +1091,7 @@ Start this section only after the core generative-modeling path.
 
 ### Section 1: Introduction
 
-_**TL;DR:** Diffusion turns generation into a supervised denoising problem: use a fixed process to corrupt real samples, learn to reverse that corruption, then generate by starting from Gaussian noise and repeatedly applying the learned reverse process. The tutorial takes score matching as its route to the training objective and previews flow matching as an ODE-based alternative view._
+***TL;DR:** Diffusion turns generation into a supervised denoising problem: use a fixed process to corrupt real samples, learn to reverse that corruption, then generate by starting from Gaussian noise and repeatedly applying the learned reverse process. The tutorial takes score matching as its route to the training objective and previews flow matching as an ODE-based alternative view.*
 
 **Notation used in these notes**
 
@@ -821,7 +1127,7 @@ The network can be conditioned on either $t$ or the equivalent log-SNR $\lambda_
   - > Figure 1: The two halves of a diffusion model. The forward process $q$ (top, blue) takes a clean datapoint $z=x_0$ and gradually corrupts it into pure Gaussian noise $x_T\sim\mathcal{N}(0,I)$ by adding a small amount of noise at each step. This direction is typically hand-designed: each transition is a Gaussian whose mean and variance are fixed by a schedule, with no learned parameters. The backward process $p_\theta$ (bottom, red, dashed) goes the other way and is what the neural network learns: starting from pure noise it denoises step-by-step until it produces a sample. Sampling at inference time is just running the bottom row from right to left to produce new images, speech, videos or molecules.
 - **Training and inference plan**:
   - First derive a loss, then minimize it with ordinary gradient-based optimization such as Adam.
-  - At inference time, sample from a Gaussian and use the trained neural network to reverse the noising process. Here _inference_ means generative sampling, not posterior inference over a latent variable.
+  - At inference time, sample from a Gaussian and use the trained neural network to reverse the noising process. Here *inference* means generative sampling, not posterior inference over a latent variable.
   - Conditioning information—text, previous video frames, pose, camera view, or a quality score—can steer the same reverse process without changing the basic construction.
   - > To understand diffusion from first principles, we first need to derive a loss function, which will then be used to train the generative model. The loss function is often reparameterised to make it numerically stable. The data for the loss function will consist of the original image and noisy samples generated by a forward diffusion process, as shown in Figure 1. Using these data, we will train a neural network to undo the process of adding noise. Finally, such a network will enable us to start with any random sample and reverse it until we get an image. We will refer to this reverse process as inference.
   - > Once we have the loss function, we can minimize it with standard gradient descent approaches, such as Adam. For inference, we will derive a Gaussian distribution for sampling (generating) any type of data using the trained neural network. The generation can be unconditional or conditioned on signals such as past video frames, text, pose, camera view, quality score, and so on.
@@ -834,7 +1140,7 @@ The network can be conditioned on either $t$ or the equivalent log-SNR $\lambda_
 
 #### 2.1 Matching imagination to reality
 
-_**TL;DR:** The ideal target is $p_\theta=p_{\mathrm{data}}$, but neither the real density $p_{\mathrm{data}}(z)$ nor the normalized model density $p_\theta(z)$ is generally available pointwise. The probability-space squared error is therefore a statement of intent rather than the loss that will actually be optimized._
+***TL;DR:** The ideal target is $p_\theta=p_{\mathrm{data}}$, but neither the real density $p_{\mathrm{data}}(z)$ nor the normalized model density $p_\theta(z)$ is generally available pointwise. The probability-space squared error is therefore a statement of intent rather than the loss that will actually be optimized.*
 
 - The data distribution $p_{\mathrm{data}}(z)$ denotes the unknown mechanism that produced the training examples. A generative model $p_\theta(z)$ approximates it and supports sampling:
 
@@ -862,12 +1168,12 @@ $$
 - This loss would attain its ideal value when the model assigns the same density as the world to real-data configurations. It is not directly computable:
   - We have samples from $p_{\mathrm{data}}$, not numerical values of $p_{\mathrm{data}}(z)$.
   - A flexible model may provide an unnormalized energy for $z$ while leaving its global normalizing constant intractable.
-  - The next section changes _what is matched_: instead of matching density values, it matches their log-density gradients.
+  - The next section changes *what is matched*: instead of matching density values, it matches their log-density gradients.
   - > Matching what the model imagines (generates) to the data generated by the world seems like a natural goal for learning. However, this is hard because we cannot calculate probabilities for models directly (so we’ll have to use autoregression or, as we explain here, diffusion score matching). The reason we cannot calculate the probabilities has to do with the normalizing constant,
 
 #### 2.2 Score matching
 
-_**TL;DR:** Write the model as a normalized energy model. Its partition function depends on $\theta$ but not on $z$, so taking $\nabla_z\log p_\theta(z)$ removes it. Score matching then compares the model and data log-density gradients, although the unknown data score remains to be handled by denoising score matching in §2.3._
+***TL;DR:** Write the model as a normalized energy model. Its partition function depends on $\theta$ but not on $z$, so taking $\nabla_z\log p_\theta(z)$ removes it. Score matching then compares the model and data log-density gradients, although the unknown data score remains to be handled by denoising score matching in §2.3.*
 
 **Energy-based representation**
 
@@ -1011,7 +1317,7 @@ $$
 
 #### 2.3 Denoising Score Matching
 
-_**TL;DR:** Replace the singular, unknown data distribution with a family of smooth noisy distributions. At a randomly selected noise level $t$, mix a clean sample $z$ with known Gaussian noise $\epsilon$ to obtain $x_t$. Because the corruption kernel is known and the injected noise is recorded, the next section can turn score learning into supervised regression._
+***TL;DR:** Replace the singular, unknown data distribution with a family of smooth noisy distributions. At a randomly selected noise level $t$, mix a clean sample $z$ with known Gaussian noise $\epsilon$ to obtain $x_t$. Because the corruption kernel is known and the injected noise is recorded, the next section can turn score learning into supervised regression.*
 
 **Gaussian corruption at one noise level**
 
@@ -1396,7 +1702,7 @@ class CosineNoiseSchedule:
 
 #### 2.4 The Score-Matching Objective
 
-_**TL;DR:** At each noise level, the network should predict the score of the noisy marginal $p_t(x_t)$. That marginal score is an intractable posterior average, but denoising score matching lets us regress against the tractable Gaussian conditional score $\nabla_{x_t}\log p_t(x_t\mid z)$. The two squared-error objectives differ only by a term independent of the network parameters._
+***TL;DR:** At each noise level, the network should predict the score of the noisy marginal $p_t(x_t)$. That marginal score is an intractable posterior average, but denoising score matching lets us regress against the tractable Gaussian conditional score $\nabla_{x_t}\log p_t(x_t\mid z)$. The two squared-error objectives differ only by a term independent of the network parameters.*
 
 **The time-conditioned score**
 
@@ -1638,7 +1944,7 @@ The weights decide how much different SNR regions matter numerically. In code, t
 
 #### 2.5 Reparameterizations of the Loss
 
-_**TL;DR:** Score prediction, noise prediction, clean-data prediction, and $v$-prediction encode the same Gaussian-path information but scale errors differently. The common $\epsilon$ objective turns score matching into ordinary supervised MSE. The $v$-parameterization retains that target while avoiding the unstable division by $\alpha_t$ that appears when reconstructing clean data from a high-noise $\epsilon$-prediction._
+***TL;DR:** Score prediction, noise prediction, clean-data prediction, and $v$-prediction encode the same Gaussian-path information but scale errors differently. The common $\epsilon$ objective turns score matching into ordinary supervised MSE. The $v$-parameterization retains that target while avoiding the unstable division by $\alpha_t$ that appears when reconstructing clean data from a high-noise $\epsilon$-prediction.*
 
 **From score prediction to noise prediction**
 
@@ -1886,7 +2192,7 @@ Each training example draws its own $t$, so the network sees scattered supervise
 
 ### Section 3: Inference
 
-_**TL;DR:** Ancestral sampling starts at $x_T\sim\mathcal N(0,I)$ and draws successively cleaner states. To obtain those reverse conditionals, choose a Gaussian Markov forward process whose marginals match $p_t(x_t\mid z)=\mathcal N(\alpha_t z,\sigma_t^2I)$. Bayes' rule gives the exact reverse posterior when clean $z$ is known; generation replaces $z$ with the denoiser $D_\theta$ and samples backward to $x_0$._
+***TL;DR:** Ancestral sampling starts at $x_T\sim\mathcal N(0,I)$ and draws successively cleaner states. To obtain those reverse conditionals, choose a Gaussian Markov forward process whose marginals match $p_t(x_t\mid z)=\mathcal N(\alpha_t z,\sigma_t^2I)$. Bayes' rule gives the exact reverse posterior when clean $z$ is known; generation replaces $z$ with the denoiser $D_\theta$ and samples backward to $x_0$.*
 
 **What ancestral sampling means**
 
@@ -2386,7 +2692,7 @@ The analogy is not exact, but it is instructive. In diffusion, the recurrence in
 
 ### Section 4: The Important Details
 
-_**TL;DR:** Sections 2 and 3 contain the essential training and sampling mechanics, but a useful diffusion system also needs a representation, a neural-network architecture, sufficient scale and data, and a way to condition generation. This section focuses on the last item through classifier-free and classifier guidance._
+***TL;DR:** Sections 2 and 3 contain the essential training and sampling mechanics, but a useful diffusion system also needs a representation, a neural-network architecture, sufficient scale and data, and a way to condition generation. This section focuses on the last item through classifier-free and classifier guidance.*
 
 The tutorial has so far hidden several choices behind the score network:
 
@@ -2496,7 +2802,7 @@ Classifier-free guidance avoids the separate noisy classifier and derives both t
 
 ### Section 5: Connection with the DDPM Parameterization
 
-_**TL;DR:** Nando's $(\alpha_t,\sigma_t)$ notation and the standard DDPM $(\beta_t,\bar\alpha_t)$ notation describe the same variance-preserving Gaussian corruption. Nando specifies the total amount of signal and noise present at time $t$; DDPM specifies the amount of new noise added by each adjacent step._
+***TL;DR:** Nando's $(\alpha_t,\sigma_t)$ notation and the standard DDPM $(\beta_t,\bar\alpha_t)$ notation describe the same variance-preserving Gaussian corruption. Nando specifies the total amount of signal and noise present at time $t$; DDPM specifies the amount of new noise added by each adjacent step.*
 
 The tutorial writes a noisy sample at any time directly as
 
@@ -2580,7 +2886,7 @@ This section introduces $\beta_t$, $\bar\alpha_t$, and $\rho_t$ only to translat
 
 ### Section 6: The Conditional-Expectation Trick
 
-_**TL;DR:** Under squared-error loss, the best prediction from an input is the conditional mean of the target given that input. Diffusion exploits this by regressing on easy, sample-specific targets such as injected noise or conditional scores. Although each target depends on the particular clean example and noise draw, the optimal network output is their posterior average—the marginal score, denoiser, or vector field needed for generation._
+***TL;DR:** Under squared-error loss, the best prediction from an input is the conditional mean of the target given that input. Diffusion exploits this by regressing on easy, sample-specific targets such as injected noise or conditional scores. Although each target depends on the particular clean example and noise draw, the optimal network output is their posterior average—the marginal score, denoiser, or vector field needed for generation.*
 
 The notation in the tutorial obscures a standard regression result. Let $Y$ be any vector-valued target and let $U$ be the information given to the predictor. Under squared error, the optimal predictor is
 
@@ -2692,7 +2998,7 @@ Regressing a network on this easy conditional velocity makes it learn its condit
 
 ### Section 7: Flow Matching
 
-_**TL;DR:** The Gaussian corruption formula defines a probability distribution at every time. Flow matching learns a deterministic velocity field whose ODE transports samples through those same marginal distributions. Training remains ordinary regression: sample a clean point and noise, construct an intermediate point, and predict the analytically known velocity of that conditional path._
+***TL;DR:** The Gaussian corruption formula defines a probability distribution at every time. Flow matching learns a deterministic velocity field whose ODE transports samples through those same marginal distributions. Training remains ordinary regression: sample a clean point and noise, construct an intermediate point, and predict the analytically known velocity of that conditional path.*
 
 #### 7.1 The Key Insight
 
@@ -2988,7 +3294,7 @@ These conversions are specific to the Gaussian affine path, not to arbitrary pro
 
 ### Section 8: Training LLMs Jointly with Diffusion Losses over Text and Images
 
-_**TL;DR:** Continuous image patches can be incorporated into an autoregressive Transformer without quantizing them into vocabulary tokens. MAR keeps noisy patches outside the Transformer and uses a separate diffusion head for each next patch. Transfusion inserts a whole noisy image block into the Transformer, which denoises its patches jointly while also learning next-token prediction for text._
+***TL;DR:** Continuous image patches can be incorporated into an autoregressive Transformer without quantizing them into vocabulary tokens. MAR keeps noisy patches outside the Transformer and uses a separate diffusion head for each next patch. Transfusion inserts a whole noisy image block into the Transformer, which denoises its patches jointly while also learning next-token prediction for text.*
 
 There are two separate time indices in this section:
 
@@ -3196,7 +3502,7 @@ Generation substitutes the denoiser $D_\theta(x_{t+1},t+1)$ for the unknown clea
 
 ### Appendix B: Why Conditional Flow Matching Produces the Correct Probability Path
 
-_**Claim:** Let $X_t=\alpha_tZ+\sigma_t\epsilon$ define the desired marginal density $p_t(x)$, and let_
+***Claim:** Let $X_t=\alpha_tZ+\sigma_t\epsilon$ define the desired marginal density $p_t(x)$, and let*
 
 $$
 u_t(x)
@@ -3207,7 +3513,7 @@ u_t(x)
 \right].
 $$
 
-_Then the ODE $dX_t/dt=u_t(X_t)$ has marginal density $p_t$ at every time._
+*Then the ODE $dX_t/dt=u_t(X_t)$ has marginal density $p_t$ at every time.*
 
 The proof has two parts:
 
@@ -3356,21 +3662,3 @@ X_t=\alpha_tZ+\sigma_t\epsilon
 $$
 
 Again, this is equality of **marginal distributions**, not equality of sample-wise trajectories. That is exactly enough for generation: integrating the learned ODE from the simple Gaussian endpoint transports the whole population to the data distribution.
-
-## [2022] The Annotated Diffusion Model
-
-- **Date**: 2026-04-23
-- **Blog**: <https://huggingface.co/blog/annotated-diffusion>
-
----
-
-- Two processes
-  - Forward diffusion process: sample an image from the true distribution and gradually add gausian noise for $T$ steps until it's eventually pure noise / isotropic gaussian.
-  - Reverse denoising diffusion process: neural net trained to gradually denoise an image starting from pure noise to an eventual image in the distribution.
-- Forward diffusion process: $q(x_t | x_{t - 1})$. $x_0$ is the actual image and $x_T$ is pure noise.
-  - At each step $t$, sample from a conditional gaussian distrubution with mean $\sqrt{1 - \beta_t}x_{t-1}$ and variance $\beta_tI$.
-  - This can be done by sampling $\epsilon$ noise from the standard gaussian (0 mean, unit variance) and setting $x_t = \sqrt{1 - \beta_t}x_{t - 1} + \beta_t\epsilon$.
-  - $\beta_t$ values change aross time steps following a "variance schedule" (can be linear, quadratic, cosine, etc), kinda like learning rate schedule.
-- Backward denoising diffusion process:
-  - In the forward diffusion process, starting with an actual sample $x_0$, if we set the schedule appropriately, we end up with pure gaussian noise at $x_T$.
-- TODO

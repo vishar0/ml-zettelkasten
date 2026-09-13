@@ -10,6 +10,8 @@
 - [ ] [2022] OpenCLIP: Reproducible scaling laws for contrastive language-image learning — [paper](https://arxiv.org/abs/2212.07143)
   - [ ] OpenCLIP code: <https://github.com/mlfoundations/open_clip>
 - [X] [2023] MetaCLIP: Demystifying CLIP Data — [paper](https://arxiv.org/abs/2309.16671)
+- [ ] [2018] [AndrewBrock,JeffDonahue,KarenSimonyan] BigGAN: Large Scale GAN Training for High Fidelity Natural Image Synthesis - [paper](https://arxiv.org/abs/1809.11096)
+- [ ] [2019] [TeroKarras] StyleGAN2: Analyzing and Improving the Image Quality of StyleGAN - [paper](https://arxiv.org/abs/1912.04958)
 - [x] [2020] ImageGPT: Generative Pretraining from Pixels — [paper](https://cdn.openai.com/papers/Generative_Pretraining_from_Pixels_V2.pdf)
 - [ ] [2020] VQGAN: Taming Transformers for High-Resolution Image Synthesis - [paper](https://arxiv.org/abs/2012.09841)
 - [X] [2022] RQ-VAE & RQ-Transformer: Autoregressive Image Generation using Residual Quantization — [paper](https://arxiv.org/abs/2203.01941)

@@ -1,7 +1,7 @@
 # [Course: Introduction to Flow Matching and Diffusion Models 2026, MIT](https://diffusion.csail.mit.edu/2026/index.html)
 
 - **Created**: 2026-08-04
-- **Last Updated**: 2026-08-25
+- **Last Updated**: 2026-09-12
 - **Status**: `In Progress`
 - **Related**:
   - [[diffusion]] — Broader reading list covering the foundations, objectives, architectures, and applications of diffusion models.
@@ -19,7 +19,7 @@
 | ☑ | 2 | **[Flow Matching](#lecture2-flow-matching)**<br>• Conditional and marginal probability path<br>• Conditional and marginal vector field<br>• Flow matching training objective | [slides](assets/course-mit-diffusion-2026/lecture-02-flow-matching.pdf) | [recording](https://www.youtube.com/watch?v=PNkMKWW8Khw) | [§3](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix B: A Proof of the Fokker-Planck Equation](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=72) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | • [Mario Gemoll: Flow Matching](https://mariogemoll.com/flow-matching)<br>• [Khan Academy: Divergence](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/divergence)<br>• [Khan Academy: Intuition for the Divergence Formula](https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/divergence-and-curl-articles/a/intuition-for-divergence-formula)<br>• [Greg Wayne: Flow Matching Notes](../flourish/assets/2026-greg-wayne-sessions/Notes_Flow_Matching.pdf) |
 | ☑ | 3-A | **[Score Functions and Score Matching](#lecture3-a-score-functions-and-score-matching)**<br>• Score functions<br>• Denoising score matching<br>• SDE sampling | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=ngC3QnYSVNM) | [§4](assets/course-mit-diffusion-2026/lecture-notes.pdf) | [Lab 2: Flow and Score Matching](https://colab.research.google.com/drive/1Rb9pjn-lEH2r9F0UvIos7W0IWsBUs_kX?usp=sharing) | • [Mario Gemoll: Diffusion](https://mariogemoll.com/diffusion) |
 | ☑ | 3-B | **[Classifier-free Guidance](#lecture3-b-classifier-free-guidance)**<br>• Guided generation<br>• Classifier guidance<br>• Classifier-free guidance | [slides](assets/course-mit-diffusion-2026/lecture-03-score-matching-and-guidance.pdf) | [recording](https://www.youtube.com/watch?v=8oWZ1bHwyRI) | [§5](assets/course-mit-diffusion-2026/lecture-notes.pdf) | — | — |
-| ☐ | 4 | **Latent Spaces and Neural Network Architectures**<br>• Variational autoencoders and latent spaces<br>• Diffusion Transformer and U-Nets<br>• Case studies: Large-scale models | [slides](assets/course-mit-diffusion-2026/lecture-04-latent-spaces-and-neural-network-architectures.pdf) | [recording](https://www.youtube.com/watch?v=g0MB1CCBmsI) | [§6](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix D: Additional Perspectives on VAEs](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=77) | [Lab 3: Diffusion Transformer and VAEs](https://github.com/eje24/iap-diffusion-labs/blob/2026/labs/lab_three.ipynb) | • [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114) |
+| ☐ | 4 | **[Latent Spaces and Neural Network Architectures](#lecture4-latent-spaces-and-neural-network-architectures)**<br>• Variational autoencoders and latent spaces<br>• Diffusion Transformer and U-Nets<br>• Case studies: Large-scale models | [slides](assets/course-mit-diffusion-2026/lecture-04-latent-spaces-and-neural-network-architectures.pdf) | [recording](https://www.youtube.com/watch?v=g0MB1CCBmsI) | [§6](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix D: Additional Perspectives on VAEs](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=77) | [Lab 3: Diffusion Transformer and VAEs](https://colab.research.google.com/github/eje24/iap-diffusion-labs/blob/2026/labs/lab_three.ipynb) | • [[papers-vae]], [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114) |
 | ☐ | 5 | **Discrete Diffusion Models**<br>• Continuous-time Markov chains (CTMCs)<br>• Sampling from CTMC models<br>• Training CTMC models | [slides](assets/course-mit-diffusion-2026/lecture-05-discrete-diffusion-models.pdf) | [recording](https://www.youtube.com/watch?v=d0kmyEJN2hI) | [§7](assets/course-mit-diffusion-2026/lecture-notes.pdf)<br>[Appendix C: Existence and Uniqueness of Continuous-time Markov Chains](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=74) | — | — |
 | ☐ | — | **A Guide to the Diffusion Model Literature** | — | — | [Appendix E](assets/course-mit-diffusion-2026/lecture-notes.pdf#page=81) | — | — |
 
@@ -3215,3 +3215,438 @@ dX_t=\widetilde u_t^\theta(X_t\mid y)\,dt.
 $$
 
 For a diffusion model, use the same CFG-combined prediction in the corresponding [SDE sampler](#sampling-with-sdes). CFG changes the drift, score, or noise prediction used during sampling; the numerical ODE or SDE machinery remains the same.
+
+## [Lecture4] Latent Spaces and Neural Network Architectures
+
+Chapter 6 turns the mathematical models from the previous lectures into practical image and video generators. It separates three design questions:
+
+1. How should the time and conditioning information be represented?
+2. What neural network should predict the vector field?
+3. Can generation happen in a smaller latent space instead of the original data space?
+
+This section addresses the first two. Latent spaces and variational autoencoders begin in §6.2.
+
+### The Neural Network's Interface
+
+The conditional flow model learned earlier has the form
+
+$$
+u_t^\theta(x\mid y)\in\mathbb R^d,
+$$
+
+so the network receives the current state $x$, time $t$, and condition $y$, and returns a vector of the same shape as $x$. For the low-dimensional examples from earlier lectures, one could concatenate these inputs and use an MLP. Images and videos need architectures that exploit their spatial structure.
+
+The lecture describes the output as a vector field because it uses the flow-matching formulation. The same backbone can instead predict noise, a score, a denoised sample, or another diffusion parameterization.
+
+### Embedding the Conditioning Inputs
+
+The current image $x$ is already high-dimensional, while raw time and conditioning inputs may not be. They are therefore embedded before entering the main network.
+
+- **Time.** A scalar $t$ is mapped to sinusoidal Fourier features:
+
+  $$
+  \operatorname{TimeEmb}(t)
+  =\sqrt{\frac{2}{d}}
+  \begin{bmatrix}
+  \cos(2\pi w_1t)&\cdots&\cos(2\pi w_{d/2}t)&
+  \sin(2\pi w_1t)&\cdots&\sin(2\pi w_{d/2}t)
+  \end{bmatrix}^{\!T}.
+  $$
+
+  The frequencies $w_i$ are spaced between a minimum and maximum frequency. This lets the network represent both slow and rapid changes as the noise level varies. The exact embedding formula is a design choice; the important point is to give the scalar time a useful high-dimensional representation.
+
+- **Class labels.** For a finite set of classes, the model learns one embedding vector per class. These vectors are trained with the rest of the model.
+
+- **Text prompts.** A pretrained text or vision-language encoder converts the raw prompt $y_{\mathrm{raw}}$ into continuous vectors. CLIP can provide a global prompt representation, while a pretrained Transformer can retain a sequence of token representations:
+
+  $$
+  \operatorname{PromptEmbed}(y_{\mathrm{raw}})\in\mathbb R^{S\times k}.
+  $$
+
+  Keeping a sequence allows the image representation to attend to individual parts of the prompt. Large systems may combine embeddings from several pretrained encoders.
+
+### Diffusion Transformers
+
+A Diffusion Transformer (DiT) adapts a vision transformer to predict the diffusion or flow-model output:
+
+1. Split the current image or latent image into non-overlapping patches.
+2. Project each flattened patch into a Transformer token.
+3. Process the patch tokens with Transformer blocks, conditioned on time and any class or text input.
+4. Project the output tokens back to patches and reassemble the image-shaped output.
+
+For $x\in\mathbb R^{C\times H\times W}$ and patch size $P$, patchification produces
+
+$$
+N=\frac{H}{P}\frac{W}{P}
+\quad\text{tokens, each containing}\quad
+C'=CP^2
+\quad\text{values}.
+$$
+
+At a high level, self-attention processes relationships among image patches, cross-attention can connect image patches to text embeddings, and adaptive normalization can inject the time embedding. The detailed block structure, conditioning mechanisms, and adaLN-Zero formulation are covered in the [DiT paper notes](diffusion.md#2022-billpeeblessainingxie-dit-scalable-diffusion-models-with-transformers).
+
+### U-Nets
+
+U-Nets were the standard diffusion backbone before DiTs. An encoder progressively lowers the spatial resolution while increasing the channel count; a middle block processes the coarsest representation; and a decoder restores the original resolution. Skip connections pass fine spatial details directly from corresponding encoder stages to decoder stages.
+
+This architecture fits denoising naturally because its input and output have the same image shape, while its multiscale structure combines local detail with broad spatial context. Time and conditioning information can be injected into its intermediate blocks. The U-Net's internal bottleneck should not be confused with the separate compressed data representation used by a latent diffusion model, which is introduced next in §6.2.
+
+### Working in Latent Space: (Variational) Autoencoders
+
+Directly modeling high-resolution data is expensive. An RGB image of size $1024\times1024$ already lies in a space of dimension
+
+$$
+d=3\cdot1024\cdot1024\approx3\times10^6,
+$$
+
+and video adds another temporal dimension. Unlike a classifier, a flow or diffusion model must repeatedly produce an output with the same large dimension as its current state. The idea of latent generation is therefore to compress the data first, learn the generative model in the smaller space, and decode only after sampling.
+
+#### Standard Autoencoders
+
+Let
+
+$$
+\mu_\phi:\mathbb R^d\to\mathbb R^k,
+\qquad
+\mu_\theta:\mathbb R^k\to\mathbb R^d,
+\qquad k\ll d,
+$$
+
+be a deterministic encoder and decoder. The encoder maps an image $x$ to a latent $z=\mu_\phi(x)$, and the decoder reconstructs it as $\hat x=\mu_\theta(z)$. They can be trained with
+
+$$
+\mathcal L_{\mathrm{Recon}}(\phi,\theta)
+=
+\mathbb E_{x\sim p_{\mathrm{data}}}
+\left[\left\|\mu_\theta(\mu_\phi(x))-x\right\|^2\right].
+$$
+
+This objective asks the latent to preserve enough information to reconstruct the input. It does not control how the encoded examples are arranged in latent space.
+
+#### Amenability to Generative Modeling
+
+Encoding the data distribution induces a latent distribution:
+
+$$
+X\sim p_{\mathrm{data}},
+\qquad
+Z=\mu_\phi(X)
+\quad\Longrightarrow\quad
+Z\sim p_{\mathrm{latent}}.
+$$
+
+To generate through the autoencoder, we would need to draw a new $z\sim p_{\mathrm{latent}}$ and decode it. A standard autoencoder tells us how to encode and reconstruct known examples, but it does not give us a simple distribution from which to draw new latent samples.
+
+The reconstruction loss permits $p_{\mathrm{latent}}$ to have separated clusters, empty regions, extreme scales, or a thin and twisted shape. This freedom can be seen by taking any invertible transformation $h$ of the latent space and defining
+
+$$
+\mu_\phi'=h\circ\mu_\phi,
+\qquad
+\mu_\theta'=\mu_\theta\circ h^{-1}.
+$$
+
+The reconstruction remains unchanged,
+
+$$
+\mu_\theta'(\mu_\phi'(x))
+=\mu_\theta(\mu_\phi(x)),
+$$
+
+even though $h$ may make the latent distribution much harder to model. Compression alone therefore does not guarantee an easy latent generative problem.
+
+#### Variational Autoencoders
+
+A variational autoencoder replaces the deterministic encoder and decoder with conditional distributions:
+
+$$
+q_\phi(z\mid x)
+=\mathcal N\!\left(z;\mu_\phi(x),\operatorname{diag}(\sigma_\phi^2(x))\right),
+\qquad
+p_\theta(x\mid z)
+=\mathcal N\!\left(x;\mu_\theta(z),\sigma_\theta^2(z)I_d\right).
+$$
+
+Encoding and decoding now mean sampling:
+
+$$
+z\sim q_\phi(\cdot\mid x),
+\qquad
+\hat x\sim p_\theta(\cdot\mid z).
+$$
+
+The encoder outputs a distribution over possible latents rather than one point, and the decoder assigns a likelihood to possible reconstructions.
+
+#### Reconstruction Term
+
+The probabilistic reconstruction objective is the expected negative log-likelihood
+
+$$
+\mathcal L_{\mathrm{VAE\text{-}Recon}}(\phi,\theta)
+=
+-\mathbb E_{\substack{x\sim p_{\mathrm{data}}\\z\sim q_\phi(\cdot\mid x)}}
+\left[\log p_\theta(x\mid z)\right].
+$$
+
+For the Gaussian decoder above, this becomes
+
+$$
+\mathcal L_{\mathrm{VAE\text{-}Recon}}
+=
+\mathbb E_{x,z}
+\left[
+\frac{\|x-\mu_\theta(z)\|^2}{2\sigma_\theta^2(z)}
++\frac d2\log\sigma_\theta^2(z)
+\right]
++\mathrm{const}.
+$$
+
+The first term measures reconstruction error. The second prevents the decoder from avoiding that error merely by claiming arbitrarily high uncertainty. If the decoder variance is fixed to a constant $\widetilde\sigma^2$, the objective reduces, up to scaling and constants, to the usual mean-squared reconstruction error:
+
+$$
+\mathcal L_{\mathrm{VAE\text{-}Recon}}
+=
+\mathbb E_{x,z}
+\left[
+\frac{1}{2\widetilde\sigma^2}\|x-\mu_\theta(z)\|^2
+\right]
++\mathrm{const}.
+$$
+
+#### Prior-Regularization Term
+
+To make the latent space easier to model, choose a simple prior
+
+$$
+p_{\mathrm{prior}}(z)=\mathcal N(0,I_k)
+$$
+
+and penalize each encoding distribution for moving too far away from it:
+
+$$
+\mathcal L_{\mathrm{VAE\text{-}Prior}}(\phi)
+=
+\mathbb E_{x\sim p_{\mathrm{data}}}
+\left[
+D_{\mathrm{KL}}\!\left(q_\phi(\cdot\mid x)\,\|\,p_{\mathrm{prior}}\right)
+\right].
+$$
+
+For a diagonal Gaussian encoder and standard-normal prior,
+
+$$
+D_{\mathrm{KL}}\!\left(q_\phi(z\mid x)\,\|\,\mathcal N(0,I_k)\right)
+=
+\frac12\sum_{j=1}^k
+\left[
+\mu_{\phi,j}(x)^2
++\sigma_{\phi,j}(x)^2
+-\log\sigma_{\phi,j}(x)^2
+-1
+\right].
+$$
+
+It is minimized when the encoding mean is zero and its variance is one. This discourages arbitrary latent scales and isolated codes, although it does not force the aggregate latent distribution to equal a Gaussian exactly.
+
+#### The Combined VAE Objective
+
+The lecture combines the two terms as
+
+$$
+\boxed{
+\mathcal L_{\mathrm{VAE}}(\phi,\theta)
+=
+\mathcal L_{\mathrm{VAE\text{-}Recon}}(\phi,\theta)
++\beta\mathcal L_{\mathrm{VAE\text{-}Prior}}(\phi)
+}
+$$
+
+or equivalently
+
+$$
+\mathcal L_{\mathrm{VAE}}
+=
+-\mathbb E_{\substack{x\sim p_{\mathrm{data}}\\z\sim q_\phi(\cdot\mid x)}}
+\left[\log p_\theta(x\mid z)\right]
++\beta\,
+\mathbb E_{x\sim p_{\mathrm{data}}}
+\left[
+D_{\mathrm{KL}}\!\left(q_\phi(\cdot\mid x)\,\|\,p_{\mathrm{prior}}\right)
+\right].
+$$
+
+The coefficient $\beta$ controls a real tradeoff:
+
+- A smaller $\beta$ preserves more information and usually improves reconstruction, but leaves a less regular latent distribution.
+- A larger $\beta$ pushes encodings closer to the prior, but may discard information needed by the decoder.
+
+For $\beta=1$, this is the negative evidence lower bound under the stated probabilistic model. Appendix D derives that variational interpretation. Allowing other values of $\beta$ makes the reconstruction-versus-regularization tradeoff explicit.
+
+#### Reparameterization Trick
+
+The reconstruction expectation samples from $q_\phi(z\mid x)$, which itself depends on the encoder parameters. Rewrite the sample as
+
+$$
+\epsilon\sim\mathcal N(0,I_k),
+\qquad
+z=\mu_\phi(x)+\sigma_\phi(x)\odot\epsilon.
+$$
+
+Now the random variable $\epsilon$ is independent of $\phi$, while $z$ is a differentiable function of the encoder outputs. Gradients can therefore propagate through the sampled latent into both $\mu_\phi(x)$ and $\sigma_\phi(x)$.
+
+One training iteration is:
+
+1. Encode each $x$ into $\mu_\phi(x)$ and $\log\sigma_\phi^2(x)$.
+2. Sample $\epsilon\sim\mathcal N(0,I_k)$ and form $z=\mu_\phi(x)+\sigma_\phi(x)\odot\epsilon$.
+3. Decode $z$ to obtain $\mu_\theta(z)$.
+4. Compute the reconstruction and Gaussian KL terms.
+5. Update the encoder and decoder together using their weighted sum.
+
+#### Practical Considerations
+
+1. **Choosing $\beta$.** Strong prior regularization can cause posterior collapse: $q_\phi(z\mid x)$ becomes almost independent of $x$, so the decoder receives little useful information through $z$. KL warm-up starts near $\beta=0$ and gradually increases it. Autoencoders used for modern latent generation commonly keep $\beta$ small because reconstruction quality is especially important.
+2. **Decoder variance.** Learning $\sigma_\theta^2(z)$ can be unstable. Fixing it makes the reconstruction term proportional to mean-squared error.
+3. **Perceptual reconstruction.** Pixelwise squared error often produces smooth images. Feature-space perceptual losses can better preserve visually meaningful structure.
+4. **Adversarial objectives.** A discriminator can sharpen reconstructions, at the cost of the instability and extra choices introduced by adversarial training.
+
+#### From a VAE to Latent Diffusion
+
+The distribution of encoded training data is the aggregate posterior
+
+$$
+q_\phi(z)
+=
+\int q_\phi(z\mid x)p_{\mathrm{data}}(x)\,dx.
+$$
+
+Prior regularization encourages this distribution to be well behaved, but generally
+
+$$
+q_\phi(z)\neq p_{\mathrm{prior}}(z).
+$$
+
+This is why merely sampling $z\sim\mathcal N(0,I_k)$ and decoding it may not produce the best images. Making $\beta$ large enough to force a close match can instead damage reconstruction or cause posterior collapse.
+
+Latent diffusion divides the work differently:
+
+$$
+x\sim p_{\mathrm{data}}
+\xrightarrow{q_\phi(z\mid x)}
+z\sim q_\phi(z)
+\xrightarrow{\text{train latent flow or diffusion model}}
+r_\psi(z)\approx q_\phi(z),
+$$
+
+and generation uses
+
+$$
+\hat z\sim r_\psi,
+\qquad
+\hat x=\mu_\theta(\hat z).
+$$
+
+The autoencoder removes expensive pixel-level redundancy, the latent flow or diffusion model learns the remaining distribution over compressed representations, and the decoder maps generated latents back to data space. The decoder mean is commonly used instead of sampling from $p_\theta(x\mid\hat z)$ to avoid adding visible noise artifacts.
+
+**Why retain the prior term if another model learns $q_\phi(z)$ anyway?** It is not theoretically required: a deterministic autoencoder followed by a latent diffusion model is possible. A small prior term nevertheless helps control latent scale and discourages pathological gaps and isolated codes. Together with the stochastic encoder, it also trains the decoder on neighborhoods around each encoding. These properties make isotropic Gaussian corruption and a shared noise schedule better conditioned, and make the decoder more tolerant of small sampling errors. The goal is therefore not to make diffusion unnecessary; it is to give diffusion a compact, smooth, numerically manageable distribution to learn.
+
+### Case Studies: Stable Diffusion 3 and Meta Movie Gen
+
+The chapter closes with two large-scale systems. Both compress perceptual data with a pretrained autoencoder, learn a conditional flow in latent space with a Transformer, guide it using text, and decode the generated latent.
+
+#### Stable Diffusion 3
+
+[Stable Diffusion 3](https://arxiv.org/abs/2403.03206) uses rectified flow, the straight-line conditional flow-matching construction from Lecture 2. In the time convention of these notes,
+
+$$
+X_t=tZ+(1-t)\epsilon,
+\qquad
+u_t^{\mathrm{target}}(X_t\mid Z)=Z-\epsilon.
+$$
+
+The paper reverses the time convention, but this does not change the path or training problem. Although the product is called Stable *Diffusion*, this version trains its generator with flow matching rather than the original DDPM objective.
+
+The generation pipeline is
+
+$$
+\text{image}
+\xrightarrow{\text{pretrained VAE encoder}}
+\text{image latent}
+\xrightarrow{\text{rectified-flow MM-DiT}}
+\text{generated latent}
+\xrightarrow{\text{VAE decoder}}
+\text{generated image}.
+$$
+
+Its main architectural change is the **multi-modal diffusion transformer (MM-DiT)**. Image and text tokens have modality-specific parameters but interact through joint attention. This extends the original class-conditioned DiT to rich text conditioning.
+
+Stable Diffusion 3 combines three pretrained text encoders:
+
+- CLIP-G/14 and CLIP-L/14 provide broad image-text representations.
+- T5-XXL retains a sequence of token embeddings, allowing the image representation to attend to particular words and relationships in the prompt.
+
+<img src="assets/course-mit-diffusion-2026/media/lecture-04/stable-diffusion-3-mmdit.png" alt="Stable Diffusion 3 multi-modal diffusion transformer with image and text streams interacting through joint attention" width="850">
+
+_Stable Diffusion 3's MM-DiT processes noised image latents and several text representations. Its image and text streams use separate parameters while interacting inside attention. Source: Figure 16 of the [lecture notes](assets/course-mit-diffusion-2026/lecture-notes.pdf), adapted from the [Stable Diffusion 3 paper](https://arxiv.org/abs/2403.03206)._
+
+The largest model discussed in the lecture has approximately 8 billion parameters. Sampling evaluates the learned vector field about 50 times using Euler's method and applies classifier-free guidance with a weight between $2$ and $5$.
+
+The components retain the roles developed in the preceding lectures:
+
+- The pretrained VAE reduces the spatial dimension.
+- Conditional flow matching learns the latent vector field.
+- MM-DiT supplies a scalable neural architecture for that field.
+- Classifier-free guidance strengthens prompt adherence during sampling.
+- Euler's method integrates the learned field to obtain a generated latent.
+
+#### Meta Movie Gen Video
+
+[Movie Gen](https://arxiv.org/abs/2410.13720) adapts essentially the same latent flow-matching recipe to video. A raw video has an additional temporal dimension,
+
+$$
+x'\in\mathbb R^{T'\times3\times H'\times W'},
+$$
+
+so directly modeling every pixel in every frame is substantially more expensive than image generation. Movie Gen uses a frozen **temporal autoencoder (TAE)** to map the video into a smaller spatiotemporal latent:
+
+$$
+x'\in\mathbb R^{T'\times3\times H'\times W'}
+\longmapsto
+z\in\mathbb R^{T\times C\times H\times W},
+\qquad
+\frac{T'}{T}=\frac{H'}{H}=\frac{W'}{W}=8.
+$$
+
+The temporal autoencoder compresses across frames as well as spatial dimensions. To process long videos, temporal tiling divides a video into chunks, encodes them separately, and stitches their latent representations together.
+
+Movie Gen trains a conditional flow model with the same straight-line schedule,
+
+$$
+\alpha_t=t,
+\qquad
+\beta_t=1-t.
+$$
+
+Its DiT-like backbone patchifies the latent along both space and time. Self-attention models relationships among the resulting video tokens, while text conditioning enters through three pretrained representations:
+
+- UL2 embeddings provide sequence-level semantic information.
+- ByT5 embeddings preserve character-level details, including requested written text.
+- MetaCLIP embeddings connect visual and textual concepts.
+
+The largest video-generation model described in the lecture has approximately 30 billion parameters. The additional scale reflects both the difficulty of video and its much longer spatiotemporal token sequence.
+
+#### Shared Recipe
+
+Stable Diffusion 3 and Movie Gen differ in modality and scale, but share the same conceptual pipeline:
+
+$$
+\boxed{
+\text{data}
+\xrightarrow{\text{autoencoder}}
+\text{compressed latent}
+\xrightarrow{\text{conditional flow matching + DiT}}
+\text{generated latent}
+\xrightarrow{\text{decoder}}
+\text{generated data}
+}
+$$
+
+The autoencoder determines what information survives compression. The flow model learns the distribution of those compressed representations. The Transformer supplies the scalable function approximator, and guidance steers sampling toward the requested condition.
