@@ -10,19 +10,21 @@
 
 ---
 
+## Datalogy
+
 - [ ] Beyond neural scaling laws: beating power law scaling via data pruning — [paper](https://arxiv.org/abs/2206.14486)
 - [ ] T-MARS: Improving Visual Representations by Circumventing Text Feature Learning — [paper](https://arxiv.org/abs/2307.03132)
 - [X] Datology premise — [blog](https://blog.datologyai.com/introducing-datologyai-making-models-better-through-better-data-automatically)
 - [X] CLIP improvement 1 (image-text) — [blog](https://blog.datologyai.com/productionized-multimodal-data-curation-at-the-billion-sample-scale)
 - [X] CLIP improvement 2 (image-text, Ricardo) — [blog](https://blog.datologyai.com/multimodal-plus-blogpost)
 
-Pretraining corpora and offline mixture search:
+## LLM Pretraining Corpus - Offline Data Mixture Search
 
 - [ ] [2024] [HF] The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale — [paper](https://arxiv.org/abs/2406.17557)
 - [ ] [2024] DCLM: DataComp-LM: In search of the next generation of training sets for language models — [paper](https://arxiv.org/abs/2406.11794)
 - [ ] [2025] [NVIDIA] [CLIMB: CLustering-based Iterative Data Mixture Bootstrapping for Language Model Pre-training](#2025-nvidia-climb-clustering-based-iterative-data-mixture-bootstrapping-for-language-model-pre-training) — [paper](https://arxiv.org/abs/2504.13161)
 
-Online / adaptive mixing (learner-driven, updated during training):
+## Online / Adaptive Data Selection
 
 - [ ] [2017] [Graves,deepmind] Automated Curriculum Learning for Neural Networks — [paper](https://arxiv.org/abs/1704.03003)
 - [ ] [2023] DoReMi: Optimizing Data Mixtures Speeds Up Language Model Pretraining — [paper](https://arxiv.org/abs/2305.10429)
@@ -84,7 +86,7 @@ Online / adaptive mixing (learner-driven, updated during training):
   - Proxy training is still non-negligible compute; they suggest distillation or zero-shot evaluation to cut it further.
   - Domain evaluation uses MMLU's coarse categories only, so no evidence yet for real-world domains like finance or healthcare.
 - **Our opinion: downsides for true active / continual learning** ([[papers-continual-learning]], [[papers-open-ended-learning]]):
-  - **Static mixture, moving optimum.** One $\alpha$ for the whole run, yet the paper's own Sec 6 shows the optimum shifts with model state (balanced from scratch, concentrated when continuing). A continual learner needs $\alpha(t \mid \text{state})$, as in Graves 2017 or ADO/ODM above.
+  - **Static mixture, moving optimum.** One $\alpha$ for the whole run, yet the paper's own Sec 6 shows the optimum shifts with model state (balanced from scratch, concentrated when continuing). A continual learner needs $\alpha(t \mid \text{state})$, as in [Automated Curriculum Learning for Neural Networks](https://arxiv.org/abs/1704.03003) (Graves et al., 2017) or ADO/ODM above.
   - **External target, not the learner's signal.** Optimizes proxy accuracy on three fixed benchmarks known in advance; active learning selects by the current model's uncertainty or progress, and open-ended agents have no such eval to point at.
   - **Too costly to re-run.** About 5k H100-hours of proxy search vs. 6.4k for the target run: fine once offline, not a loop the learner can close as it changes.
   - **Coarse, learner-agnostic control.** ~20 weights, uniform sampling within a cluster, clusters from a frozen external embedder. No per-example novelty or redundancy.
