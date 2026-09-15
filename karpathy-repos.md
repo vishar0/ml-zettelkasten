@@ -92,7 +92,7 @@ Reading checklist — file tree from the README (comments verbatim), checked off
   - [ ] `scaling_laws.sh` — Scaling laws experiments
   - [ ] `runcpu.sh` — Small example of how to run on CPU/MPS
 - [ ] `dev/`
-  - [ ] `repackage_data_reference.py` — Pretraining data shard generation
+  - [x] `repackage_data_reference.py` — Pretraining data shard generation (FineWebEdu-100B, ClimbMix-400B)
   - [ ] `LOG.md` — dev log
   - [ ] `LEADERBOARD.md` — speedrun leaderboard
   - [ ] `scaling_analysis.ipynb`, `estimate_gpt3_core.ipynb`, `scaling_laws_jan26.png` — scaling-laws analysis
