@@ -15,9 +15,20 @@
 - [X] Datology premise — [blog](https://blog.datologyai.com/introducing-datologyai-making-models-better-through-better-data-automatically)
 - [X] CLIP improvement 1 (image-text) — [blog](https://blog.datologyai.com/productionized-multimodal-data-curation-at-the-billion-sample-scale)
 - [X] CLIP improvement 2 (image-text, Ricardo) — [blog](https://blog.datologyai.com/multimodal-plus-blogpost)
+Pretraining corpora and offline mixture search:
+
 - [ ] [2024] [HF] The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale — [paper](https://arxiv.org/abs/2406.17557)
 - [ ] [2024] DCLM: DataComp-LM: In search of the next generation of training sets for language models — [paper](https://arxiv.org/abs/2406.11794)
 - [ ] [2025] [NVIDIA] [CLIMB: CLustering-based Iterative Data Mixture Bootstrapping for Language Model Pre-training](#2025-nvidia-climb-clustering-based-iterative-data-mixture-bootstrapping-for-language-model-pre-training) — [paper](https://arxiv.org/abs/2504.13161)
+
+Online / adaptive mixing (learner-driven, updated during training):
+
+- [ ] [2017] [Graves,deepmind] Automated Curriculum Learning for Neural Networks — [paper](https://arxiv.org/abs/1704.03003)
+- [ ] [2023] DoReMi: Optimizing Data Mixtures Speeds Up Language Model Pretraining — [paper](https://arxiv.org/abs/2305.10429)
+- [ ] [2023] ODM: Efficient Online Data Mixing For Language Model Pre-Training — [paper](https://arxiv.org/abs/2312.02406)
+- [ ] [2023] Skill-it! A Data-Driven Skills Framework for Understanding and Training Language Models — [paper](https://arxiv.org/abs/2307.14430)
+- [ ] [2024] Data Mixing Laws: Optimizing Data Mixtures by Predicting Language Modeling Performance — [paper](https://arxiv.org/abs/2403.16952)
+- [ ] [2024] ADO: Adaptive Data Optimization: Dynamic Sample Selection with Scaling Laws — [paper](https://arxiv.org/abs/2410.11820)
 
 ---
 
