@@ -39,7 +39,7 @@
 
 - **Date**: 2026-09-15
 - **Arxiv**: <https://arxiv.org/abs/2504.13161>
-- **Data**: <https://research.nvidia.com/labs/lpr/climb/>, [nvidia/Nemotron-ClimbMix](https://huggingface.co/datasets/nvidia/Nemotron-ClimbMix), [nvidia/ClimbLab](https://huggingface.co/datasets/nvidia/ClimbLab)
+- **Data**: <https://research.nvidia.com/labs/lpr/climb/>, [hf/nvidia/Nemotron-ClimbMix](https://huggingface.co/datasets/nvidia/Nemotron-ClimbMix), [hf/nvidia/ClimbLab](https://huggingface.co/datasets/nvidia/ClimbLab)
 
 ---
 
