@@ -16,6 +16,7 @@
 - [ ] [2020] Scaling Laws for Neural Language Models — [paper](https://arxiv.org/abs/2001.08361)
 - [ ] [2022] Chincilla: Training Compute-Optimal Large Language Models — [paper](https://arxiv.org/abs/2203.15556)
 - [ ] [2021] Scaling Laws for Transfer — [paper](https://arxiv.org/abs/2102.01293)
+- [ ] [2025] nanochat scaling analysis - <https://github.com/karpathy/nanochat/blob/master/dev/LEADERBOARD.md>
 
 ---
 
