@@ -1,7 +1,7 @@
 # Karpathy Curriculum
 
 - **Created**: 2025-10-14
-- **Last Updated**: 2026-07-03
+- **Last Updated**: 2026-09-15
 - **Status**: `In Progress`
 
 ---
@@ -55,6 +55,8 @@ Reading checklist — file tree from the README (comments verbatim), checked off
   - [x] `pyproject.toml` — deps; `cpu`/`gpu` conflicting extras, `default-groups = []`
   - [x] `uv.lock`
   - [x] `LICENSE`
+  - [ ] `.gitignore`
+  - [ ] `.python-version`
 - [ ] `nanochat/` (the core library)
   - [x] `__init__.py` — empty
   - [ ] `checkpoint_manager.py` — Save/Load model checkpoints
@@ -79,6 +81,7 @@ Reading checklist — file tree from the README (comments verbatim), checked off
   - [ ] `chat_rl.py` — Chat model: reinforcement learning
   - [ ] `chat_eval.py` — Chat model: eval tasks
   - [ ] `chat_cli.py` — Chat model: talk to over CLI
+  - [ ] `infer_bench.py` — Inference: latency/throughput/VRAM bench
 - [ ] `tasks/` (evals)
   - [ ] `common.py` — TaskMixture | TaskSequence
   - [ ] `arc.py` — Multiple choice science questions
@@ -93,9 +96,14 @@ Reading checklist — file tree from the README (comments verbatim), checked off
   - [ ] `runcpu.sh` — Small example of how to run on CPU/MPS
 - [ ] `dev/`
   - [x] `repackage_data_reference.py` — Pretraining data shard generation (FineWebEdu-100B, ClimbMix-400B)
+  - [ ] `nanochat.png` — logo
   - [ ] `LOG.md` — dev log
   - [ ] `LEADERBOARD.md` — speedrun leaderboard
   - [ ] `scaling_analysis.ipynb`, `estimate_gpt3_core.ipynb`, `scaling_laws_jan26.png` — scaling-laws analysis
 - [ ] `tests/`
-  - [ ] `test_engine.py`
-  - [ ] `test_attention_fallback.py` — attention fallback (FA3 vs SDPA)
+  - [ ] `test_engine.py` — Inference engine, KV cache
+  - [ ] `test_attention_fallback.py` — FA3/SDPA attention fallback
+  - [ ] `test_execution.py` — Sandboxed code execution
+  - [ ] `test_optim.py` — MuonAdamW optimizer (needs GPU)
+  - [ ] `test_tasks.py` — Task slicing, mixtures, HubDataset
+  - [ ] `test_tokenizer.py` — BPE round-trips, chat rendering
