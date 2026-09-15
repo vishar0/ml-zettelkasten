@@ -22,7 +22,7 @@
 
 - [ ] [2024] [HF] The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale — [paper](https://arxiv.org/abs/2406.17557)
 - [ ] [2024] DCLM: DataComp-LM: In search of the next generation of training sets for language models — [paper](https://arxiv.org/abs/2406.11794)
-- [ ] [2025] [NVIDIA] [CLIMB: CLustering-based Iterative Data Mixture Bootstrapping for Language Model Pre-training](#2025-nvidia-climb-clustering-based-iterative-data-mixture-bootstrapping-for-language-model-pre-training) — [paper](https://arxiv.org/abs/2504.13161)
+- [x] [2025] [NVIDIA] [CLIMB: CLustering-based Iterative Data Mixture Bootstrapping for Language Model Pre-training](#2025-nvidia-climb-clustering-based-iterative-data-mixture-bootstrapping-for-language-model-pre-training) — [paper](https://arxiv.org/abs/2504.13161)
 
 ## Online / Adaptive Data Selection
 
