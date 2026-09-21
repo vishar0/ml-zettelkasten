@@ -1,7 +1,7 @@
 # Optimization Algorithms
 
 - **Created**: 2022-04
-- **Last Updated**: 2022-04
+- **Last Updated**: 2026-09-20
 - **Status**: `Paused`
 
 ## Fundamentals
@@ -35,3 +35,4 @@
   - Coupled together with cosine annealing LR scheduler, things become even better empirically.
   - Section 3 of the paper has a Bayesian filtering based theoritical justification for why decoupled weight decay performs better for adaptive gradient methods.
 - [ ] Paper: [Three mechanisms of weight decay regularization](https://arxiv.org/abs/1810.12281)
+- [ ] [2024] How to set AdamW's weight decay as you scale model and dataset size — [paper](https://arxiv.org/abs/2405.13698) — the EMA-timescale view: keep $T_{\text{epoch}} = B/(\eta\lambda D)$ constant as batch, LR and data change; nanochat's base_train.py derives its weight-decay scaling $\lambda = \lambda_{\text{ref}}\sqrt{B/B_{\text{ref}}}\,(D_{\text{ref}}/D)$ from it. See [[papers-scaling-laws]] for the companion batch-size rule (Power Lines).

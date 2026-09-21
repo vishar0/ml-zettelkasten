@@ -1,7 +1,7 @@
 # Scaling Laws
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-09-03
+- **Last Updated**: 2026-09-20
 - **Status**: `In Progress`
 - **Description**: The empirical science of how loss scales with compute, data, and parameters, including transfer across distributions.
 - **Related**:
@@ -15,6 +15,8 @@
 - [x] [2017] [Deep Learning Scaling is Predictable, Empirically](#2017-deep-learning-scaling-is-predictable-empirically) — [paper](https://arxiv.org/abs/1712.00409)
 - [ ] [2020] Scaling Laws for Neural Language Models — [paper](https://arxiv.org/abs/2001.08361)
 - [ ] [2022] Chincilla: Training Compute-Optimal Large Language Models — [paper](https://arxiv.org/abs/2203.15556)
+- [ ] [2022] [Bahdanau] The FLOPs Calculus of Language Model Training — [blog](https://medium.com/@dzmitrybahdanau/the-flops-calculus-of-language-model-training-3b19c1f025e4) — derives $C\approx 6ND$: 2 FLOPs per parameter per token forward, 4 backward; attention FLOPs dropped as second order
+- [ ] [2025] [Cerebras] Power Lines: Scaling Laws for Weight Decay and Batch Size in LLM Pre-training — [paper](https://arxiv.org/abs/2505.13738) — $B_{\mathrm{opt}} \propto D^{0.383}$ and the constant-$B/(\eta\lambda D)$ weight-decay rule; nanochat uses both to scale batch size and weight decay from its d12 reference (dev/LOG.md 2026-02-05); the weight-decay side rests on the $T_{\text{epoch}}$ paper filed under [[papers-optimizers#Weight Decay]]
 - [ ] [2021] Scaling Laws for Transfer — [paper](https://arxiv.org/abs/2102.01293)
 - [ ] [2025] nanochat scaling analysis - <https://github.com/karpathy/nanochat/blob/master/dev/LEADERBOARD.md>
 
