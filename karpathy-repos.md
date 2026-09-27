@@ -57,7 +57,7 @@ Reading checklist — file tree of the local checkout at commit `4b40774` (Run 4
   - [x] `checkpoint_manager.py` — Save/Load model checkpoints
   - [x] `common.py` — Misc small utilities, quality of life
   - [ ] `core_eval.py` — Evaluates base model CORE score (DCLM paper)
-  - [ ] `dataloader.py` — Tokenizing Distributed Data Loader
+  - [x] `dataloader.py` — Tokenizing Distributed Data Loader
   - [x] `dataset.py` — Download/read utils for pretraining data
   - [ ] `engine.py` — Efficient model inference with KV Cache
   - [x] `execution.py` — Allows the LLM to execute Python code as tool
@@ -72,7 +72,7 @@ Reading checklist — file tree of the local checkout at commit `4b40774` (Run 4
   - [x] `tok_train.py` — Tokenizer: train it
   - [x] `tok_eval.py` — Tokenizer: evaluate compression rate
   - [ ] `base_train.py` — Base model: train
-  - [ ] `base_eval.py` — Base model: CORE score, bits per byte, samples
+  - [x] `base_eval.py` — Base model: CORE score, bits per byte, samples
   - [ ] `chat_sft.py` — Chat model: train SFT
   - [ ] `chat_rl.py` — Chat model: reinforcement learning
   - [ ] `chat_eval.py` — Chat model: eval tasks
@@ -88,7 +88,7 @@ Reading checklist — file tree of the local checkout at commit `4b40774` (Run 4
   - [ ] `smoltalk.py` — Conglomerate dataset of SmolTalk from HF
   - [ ] `spellingbee.py` — Task teaching model to spell/count letters
 - [ ] `runs/`
-  - [ ] `speedrun.sh` — Train the ~$100 nanochat d20
+  - [x] `speedrun.sh` — Train the ~$100 nanochat d20
   - [ ] `miniseries.sh` — Miniseries training script
   - [ ] `scaling_laws.sh` — Scaling laws experiments
   - [ ] `runcpu.sh` — Small example of how to run on CPU/MPS

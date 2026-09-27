@@ -1,7 +1,7 @@
 # Diffusion
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-09-06
+- **Last Updated**: 2026-09-24
 - **Status**: `In Progress`
 - **Related**:
   - [[course-mit-diffusion-2026]] — Structured MIT course with lecture notes, slides, recordings, and labs on flow matching and diffusion models.
@@ -50,6 +50,7 @@ TODO:
 - [ ] Alan's paper list <https://docs.google.com/document/d/1dgvsHthnVjYMl0nqfFWeP0GITSMz6lopmQUNP3gDQ9M/edit?usp=sharing>
   - [x] Alan's diffusion loss notebook <https://github.com/inductivebias/flourish/pull/1400>
   - [ ] Alan's diffusion ELBO notebook <https://github.com/inductivebias/flourish/pull/1597>
+  - [ ] TODO Alan's variable-length diffusion PR <https://github.com/inductivebias/flourish/pull/1950>
 
 ## Talks, Workshops, etc
 
