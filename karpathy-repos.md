@@ -56,7 +56,7 @@ Reading checklist — file tree of the local checkout at commit `4b40774` (Run 4
 - [x] `nanochat/` (the core library)
   - [x] `checkpoint_manager.py` — Save/Load model checkpoints
   - [x] `common.py` — Misc small utilities, quality of life
-  - [ ] `core_eval.py` — Evaluates base model CORE score (DCLM paper)
+  - [x] `core_eval.py` — Evaluates base model CORE score (DCLM paper)
   - [x] `dataloader.py` — Tokenizing Distributed Data Loader
   - [x] `dataset.py` — Download/read utils for pretraining data
   - [ ] `engine.py` — Efficient model inference with KV Cache
