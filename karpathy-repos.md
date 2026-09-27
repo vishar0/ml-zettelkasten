@@ -66,7 +66,7 @@ Reading checklist — file tree of the local checkout at commit `4b40774` (Run 4
   - [ ] TODO (estimate_flops and optimizers stuff) `gpt.py` — The GPT nn.Module Transformer
   - [x] `loss_eval.py` — Evaluate bits per byte (instead of loss)
   - [ ] `optim.py` — AdamW + Muon optimizer, 1GPU and distributed
-  - [ ] `report.py` — Utilities for writing the nanochat Report
+  - [x] `report.py` — Utilities for writing the nanochat Report
   - [x] `tokenizer.py` — BPE Tokenizer wrapper in style of GPT-4
 - [ ] `scripts/` (the pipeline stages)
   - [x] `tok_train.py` — Tokenizer: train it
