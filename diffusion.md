@@ -129,8 +129,14 @@ TODO:
 
 - [ ] [2021] Structured Denoising Diffusion Models in Discrete State-Spaces - [paper](https://arxiv.org/abs/2107.03006)
   - Learn transition matrices, absorbing-mask corruption, and the discrete ELBO.
+- [ ] [2023] [StefanoErmon] SEDD: Discrete Diffusion Modeling by Estimating the Ratios of the Data Distribution - [paper](https://arxiv.org/abs/2310.16834), [code](https://github.com/louaaron/Score-Entropy-Discrete-Diffusion)
+  - Score entropy: learn ratios between the data distribution at neighbouring sequences (the discrete analogue of a score); first discrete diffusion LM to rival GPT-2 perplexity. ICML 2024 best paper.
 - [ ] [2024] Simple and Effective Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2406.07524)
   - Bridge from D3PM theory to masked-token diffusion in practice.
+- [ ] [2024] RADD: Your Absorbing Discrete Diffusion Secretly Models the Conditional Distributions of Clean Data - [paper](https://arxiv.org/abs/2406.03736)
+  - Masked (absorbing) diffusion's objective equals an any-order autoregressive loss, and the optimal model needs no time input. Justifies the "chain" likelihood reading used to score diffusion LMs on CORE, and dropping time conditioning.
+- [ ] [2024] SMDM: Scaling up Masked Diffusion Models on Text - [paper](https://arxiv.org/abs/2410.18514)
+  - First scaling law for masked diffusion on text (about 16x AR compute for matched loss); reports both the NELBO and chain likelihood readings; unsupervised classifier-free guidance.
 - [ ] [2024] [YaronLipman] Discrete Flow Matching - [paper](https://arxiv.org/abs/2407.15595)
   - Connect conditional flow matching to continuous-time Markov chains and discrete rate matrices.
 - [ ] [2025] Edit Flows: Variable Length Discrete Flow Matching with Sequence-Level Edit Operations - [paper](https://proceedings.neurips.cc/paper_files/paper/2025/file/cb43f46154e750746602faaffd65fbbb-Paper-Conference.pdf)
@@ -206,7 +212,9 @@ Start this section only after the core generative-modeling path.
 
 ## 9. Language Diffusion and Iterative Reasoning
 
-- [ ] [2025] Large Language Diffusion Models - [paper](https://arxiv.org/abs/2502.09992), [project](https://ml-gsai.github.io/LLaDA-demo/)
+- [ ] [2025] Large Language Diffusion Models - [paper](https://arxiv.org/abs/2502.09992), [project](https://ml-gsai.github.io/LLaDA-demo/), [code](https://github.com/ML-GSAI/LLaDA)
+- [ ] [2025] Dream 7B: Diffusion Large Language Models - [paper](https://arxiv.org/abs/2508.15487), [code](https://github.com/HKUNLP/Dream)
+  - 7B diffusion LM initialized from an AR model (Qwen2.5); scores benchmarks with the NELBO like LLaDA. Relevant to AR-to-diffusion weight transfer.
 - [ ] [2026] Improved Large Language Diffusion Models - [paper](https://arxiv.org/abs/2606.25331), [code](https://github.com/ML-GSAI/LLaDA)
 - [ ] [2026] An Intuitive Introduction to Flow-Based Language Generation - [blog](https://flow-based-llms.github.io/)
   - Bridge from continuous flow matching to language: categorical endpoint distributions, cross-entropy-based Variational Flow Matching, simplex-valued denoisers, and flow-map distillation. Read before ELF.
