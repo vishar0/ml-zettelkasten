@@ -1,7 +1,7 @@
 # Scaling Laws
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-09-20
+- **Last Updated**: 2026-10-08
 - **Status**: `In Progress`
 - **Description**: The empirical science of how loss scales with compute, data, and parameters, including transfer across distributions.
 - **Related**:
@@ -12,6 +12,7 @@
 ---
 
 - [ ] [2026] [LilianWeng] Scaling Laws, Carefully — [blog](https://lilianweng.github.io/posts/2026-06-24-scaling-laws/)
+- [ ] [2026] [Zou] How to Build a Scientific Scaling Ladder — [blog](https://jiaxuanzou0714.github.io/en/blog/2026/how-to-build-scientific-scaling-ladder/) — a checklist for a scaling ladder: fix the decision and acceptance criteria first, then the measurement spec, baseline recipe and scaling rules, the ladder's budget and hyperparameter search, loss-law fitting and downstream prediction, and validate the extrapolation before the large run
 - [x] [2017] [Deep Learning Scaling is Predictable, Empirically](#2017-deep-learning-scaling-is-predictable-empirically) — [paper](https://arxiv.org/abs/1712.00409)
 - [ ] [2020] Scaling Laws for Neural Language Models — [paper](https://arxiv.org/abs/2001.08361)
 - [ ] [2022] Chincilla: Training Compute-Optimal Large Language Models — [paper](https://arxiv.org/abs/2203.15556)
