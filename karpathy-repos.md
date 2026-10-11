@@ -13,7 +13,7 @@
 - [ ] [nanochat](https://github.com/karpathy/nanochat)
   - [ ] ClimbMix, the pretraining data — [[papers-data-centric-ml#[2025] [NVIDIA] Nemotron-CLIMB: CLustering-based Iterative Data Mixture Bootstrapping for Language Model Pre-training]]
   - [ ] Scaling ladder and the 9.5 tokens per param rule — [[papers-scaling-laws]]
-  - [ ] Muon, the optimizer — [blog](https://kellerjordan.github.io/posts/muon/), [paper](https://arxiv.org/abs/2502.16982), [derivation](https://jeremybernste.in/writing/deriving-muon), [code](https://github.com/karpathy/nanochat/blob/4b40774/nanochat/optim.py)
+  - [ ] Muon, the optimizer — [[papers-optimizers#Muon]]
 
 ---
 
