@@ -11,9 +11,9 @@
 - [ ] [llama2.c](https://github.com/karpathy/llama2.c)
 - [ ] [llm.c](https://github.com/karpathy/llm.c)
 - [ ] [nanochat](https://github.com/karpathy/nanochat)
-  - [ ] ClimbMix, the pretraining data — [[papers-data-centric-ml#[2025] [NVIDIA] Nemotron-CLIMB: CLustering-based Iterative Data Mixture Bootstrapping for Language Model Pre-training]]
-  - [ ] Scaling ladder and the 9.5 tokens per param rule — [[papers-scaling-laws]]
-  - [ ] Muon, the optimizer — [[papers-optimizers#Muon]]
+  - [ ] [[papers-data-centric-ml#[2025] [NVIDIA] Nemotron-CLIMB: CLustering-based Iterative Data Mixture Bootstrapping for Language Model Pre-training]] ClimbMix pretraining dataset
+  - [ ] [[papers-scaling-laws]] scaling ladder and the 9.5 tokens per param rule
+  - [ ] [[papers-optimizers#Muon]] Muon optimizer
 
 ---
 
