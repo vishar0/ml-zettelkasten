@@ -15,6 +15,7 @@
 - [ ] [2022] [blog] [Bahdanau] The FLOPs Calculus of Language Model Training — [blog](https://medium.com/@dzmitrybahdanau/the-flops-calculus-of-language-model-training-3b19c1f025e4) — derives $C\approx 6ND$: 2 FLOPs per parameter per token forward, 4 backward; attention FLOPs dropped as second order
 - [ ] [2026] [blog] How to Build a Scientific Scaling Ladder — [blog](https://jiaxuanzou0714.github.io/en/blog/2026/how-to-build-scientific-scaling-ladder/) — a checklist for a scaling ladder: fix the decision and acceptance criteria first, then the measurement spec, baseline recipe and scaling rules, the ladder's budget and hyperparameter search, loss-law fitting and downstream prediction, and validate the extrapolation before the large run
 - [x] [2017] [Deep Learning Scaling is Predictable, Empirically](#2017-deep-learning-scaling-is-predictable-empirically) — [paper](https://arxiv.org/abs/1712.00409)
+- [ ] [2019] [Rosenfeld] A Constructive Prediction of the Generalization Error Across Scales — [paper](https://arxiv.org/abs/1909.12673) — first joint fit of generalization error as a function of both model size and data size, $L(N,D)\approx E+A/N^{\alpha}+B/D^{\beta}$, across ResNet, WRN, LSTM and Transformer on ImageNet, CIFAR and WikiText-103; fits on small $(N,D)$ configurations extrapolate to larger ones, which is the premise behind scaling ladders; Chinchilla's Method 3 fits this same form
 - [ ] [2020] [Kaplan] Scaling Laws for Neural Language Models — [paper](https://arxiv.org/abs/2001.08361)
 - [ ] [2022] Chincilla: Training Compute-Optimal Large Language Models — [paper](https://arxiv.org/abs/2203.15556)
 - [ ] [2025] [Cerebras] Power Lines: Scaling Laws for Weight Decay and Batch Size in LLM Pre-training — [paper](https://arxiv.org/abs/2505.13738) — $B_{\mathrm{opt}} \propto D^{0.383}$ and the constant-$B/(\eta\lambda D)$ weight-decay rule; nanochat uses both to scale batch size and weight decay from its d12 reference (dev/LOG.md 2026-02-05); the weight-decay side rests on the $T_{\text{epoch}}$ paper filed under [[papers-optimizers#Weight Decay]]
@@ -101,7 +102,7 @@
   \arg\min_{N,D:\,6ND=C} L(N,D).
   $$
   In words, given a fixed compute budget, should it be spent on a larger model or on processing more tokens? Hestness does not directly answer this because its runs are not compared under a fixed compute constraint.
-- **What Chinchilla changes**: Chinchilla fits the joint loss model
+- **What Chinchilla changes**: Chinchilla fits the joint loss model first proposed by Rosenfeld et al. 2019 ([paper](https://arxiv.org/abs/1909.12673)),
   $$
   L(N,D)\approx E+\frac{A}{N^\alpha}+\frac{B}{D^\beta},
   $$
