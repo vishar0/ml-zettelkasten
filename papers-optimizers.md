@@ -5,7 +5,7 @@
 - **Status**: `In Progress`
 - **Description**: First-order optimizers for deep nets, from SGD with momentum and the adaptive family through decoupled weight decay to Muon's orthogonalized updates.
 - **Related**:
-  - [[papers-scaling-laws]] — batch-size and weight-decay scaling rules.
+  - [[scaling-laws]] — batch-size and weight-decay scaling rules.
   - [[karpathy-repos]] — nanochat's Muon + AdamW.
   - [[papers-distributed-optimization]]
 
@@ -42,7 +42,7 @@
   - Coupled together with cosine annealing LR scheduler, things become even better empirically.
   - Section 3 of the paper has a Bayesian filtering based theoritical justification for why decoupled weight decay performs better for adaptive gradient methods.
 - [ ] [2018] [Zhang] Three Mechanisms of Weight Decay Regularization — [paper](https://arxiv.org/abs/1810.12281)
-- [ ] [2024] How to set AdamW's weight decay as you scale model and dataset size — [paper](https://arxiv.org/abs/2405.13698) — the EMA-timescale view: keep $T_{\text{epoch}} = B/(\eta\lambda D)$ constant as batch, LR and data change; nanochat's base_train.py derives its weight-decay scaling $\lambda = \lambda_{\text{ref}}\sqrt{B/B_{\text{ref}}}\,(D_{\text{ref}}/D)$ from it. See [[papers-scaling-laws]] for the companion batch-size rule (Power Lines).
+- [ ] [2024] How to set AdamW's weight decay as you scale model and dataset size — [paper](https://arxiv.org/abs/2405.13698) — the EMA-timescale view: keep $T_{\text{epoch}} = B/(\eta\lambda D)$ constant as batch, LR and data change; nanochat's base_train.py derives its weight-decay scaling $\lambda = \lambda_{\text{ref}}\sqrt{B/B_{\text{ref}}}\,(D_{\text{ref}}/D)$ from it. See [[scaling-laws]] for the companion batch-size rule (Power Lines).
 
 ## Muon
 

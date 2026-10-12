@@ -11,17 +11,29 @@
 
 ---
 
-- [ ] [2026] [blog] [LilianWeng] Scaling Laws, Carefully — [blog](https://lilianweng.github.io/posts/2026-06-24-scaling-laws/)
+- [ ] [2026] [blog] [LilianWeng] [Scaling Laws, Carefully](#2026-scaling-laws-carefully) — [blog](https://lilianweng.github.io/posts/2026-06-24-scaling-laws/)
+- [ ] [2022] [blog] [Bahdanau] The FLOPs Calculus of Language Model Training — [blog](https://medium.com/@dzmitrybahdanau/the-flops-calculus-of-language-model-training-3b19c1f025e4) — derives $C\approx 6ND$: 2 FLOPs per parameter per token forward, 4 backward; attention FLOPs dropped as second order
 - [ ] [2026] [blog] How to Build a Scientific Scaling Ladder — [blog](https://jiaxuanzou0714.github.io/en/blog/2026/how-to-build-scientific-scaling-ladder/) — a checklist for a scaling ladder: fix the decision and acceptance criteria first, then the measurement spec, baseline recipe and scaling rules, the ladder's budget and hyperparameter search, loss-law fitting and downstream prediction, and validate the extrapolation before the large run
 - [x] [2017] [Deep Learning Scaling is Predictable, Empirically](#2017-deep-learning-scaling-is-predictable-empirically) — [paper](https://arxiv.org/abs/1712.00409)
 - [ ] [2020] [Kaplan] Scaling Laws for Neural Language Models — [paper](https://arxiv.org/abs/2001.08361)
 - [ ] [2022] Chincilla: Training Compute-Optimal Large Language Models — [paper](https://arxiv.org/abs/2203.15556)
-- [ ] [2022] [Bahdanau] The FLOPs Calculus of Language Model Training — [blog](https://medium.com/@dzmitrybahdanau/the-flops-calculus-of-language-model-training-3b19c1f025e4) — derives $C\approx 6ND$: 2 FLOPs per parameter per token forward, 4 backward; attention FLOPs dropped as second order
 - [ ] [2025] [Cerebras] Power Lines: Scaling Laws for Weight Decay and Batch Size in LLM Pre-training — [paper](https://arxiv.org/abs/2505.13738) — $B_{\mathrm{opt}} \propto D^{0.383}$ and the constant-$B/(\eta\lambda D)$ weight-decay rule; nanochat uses both to scale batch size and weight decay from its d12 reference (dev/LOG.md 2026-02-05); the weight-decay side rests on the $T_{\text{epoch}}$ paper filed under [[papers-optimizers#Weight Decay]]
 - [ ] [2022] [Yang] Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer (muP) — [paper](https://arxiv.org/abs/2203.03466) — the maximal-update parametrization makes optimal hyperparameters stable across width, so they can be tuned on a small proxy and transferred zero-shot; nanochat's base_train.py tunes LR, batch size and weight decay at the d12 reference and transfers them to deeper models "muP style", then layers the Power Lines and $T_{\text{epoch}}$ scaling rules on top
 - [ ] [2021] Scaling Laws for Transfer — [paper](https://arxiv.org/abs/2102.01293)
 
 ---
+
+## [2026] [Scaling Laws, Carefully](https://lilianweng.github.io/posts/2026-06-24-scaling-laws/)
+
+- **Date**: 2026-10-12
+
+---
+
+- On Hestness et al. 2017:
+  - > Interestingly, architecture changes the offset ($E$) of the power-law fit but does not change the exponent ($\alpha$). The slope of the power law appears to be a property of the problem domain rather than the model architecture.
+- On Kaplan et al. 2020:
+  - > Given a fixed compute budget, it is more efficient to train a very large model and stop before convergence than to train a smaller model all the way to convergence. This finding is where the Chinchilla scaling laws (the next section) disagree: Kaplan et al. overestimated the optimal model size as their fitted exponent was larger.
+  - > The most influential and, in hindsight, most contested conclusion was the compute-optimal allocation. Kaplan et al. found $N_\text{opt} \propto C^{0.73}$ and concluded that model size should grow faster than dataset size. Concretely, for a 10x increase in compute they suggested scaling the model size by ~5.5x but the training tokens by only ~1.8x. The Chinchilla paper would later overturn this recommendation, arguing that it leaves large models badly undertrained.
 
 ## [2017] [Deep Learning Scaling is Predictable, Empirically](https://arxiv.org/abs/1712.00409)
 

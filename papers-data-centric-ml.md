@@ -5,7 +5,7 @@
 - **Status**: `In Progress`
 - **Description**: Data selection, filtering, pruning, and mixture optimization for pretraining, and the curated web corpora that result from it.
 - **Related**:
-  - [[papers-scaling-laws]] — Data selection can change or beat standard scaling curves.
+  - [[scaling-laws]] — Data selection can change or beat standard scaling curves.
   - [[karpathy-repos]] — nanochat pretrains on ClimbMix.
 
 ---

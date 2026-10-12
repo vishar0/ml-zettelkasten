@@ -5,7 +5,7 @@
 - **Status**: `Paused`
 - **Description**: Catalog of foundation-model families and their technical reports.
 - **Related**:
-  - [[papers-scaling-laws]] — The empirical science of how loss scales with compute, data, and parameters.
+  - [[scaling-laws]] — The empirical science of how loss scales with compute, data, and parameters.
   - [[papers-post-training]]
 
 ---

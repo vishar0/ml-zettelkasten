@@ -12,9 +12,9 @@
 - [ ] [llm.c](https://github.com/karpathy/llm.c)
 - [ ] [nanochat](https://github.com/karpathy/nanochat)
   - [x] [[papers-data-centric-ml]] ClimbMix pretraining dataset
-  - [ ] [[papers-scaling-laws]] Scaling ladder, Chinchilla optimality, IsoFLOP curves, 9.5 tokens per param
+  - [ ] [[scaling-laws]] Scaling ladder, Chinchilla optimality, IsoFLOP curves, 9.5 tokens per param
   - [ ] [[papers-optimizers#Muon]] Muon optimizer
-  - [ ] [[papers-scaling-laws]] muP-style hyperparameter transfer from the d12 reference; Power Lines batch-size rule and [[papers-optimizers#Weight Decay]] $T_{\text{epoch}}$ weight-decay rule in base_train.py
+  - [ ] [[scaling-laws]] muP-style hyperparameter transfer from the d12 reference; Power Lines batch-size rule and [[papers-optimizers#Weight Decay]] $T_{\text{epoch}}$ weight-decay rule in base_train.py
 
 ---
 
