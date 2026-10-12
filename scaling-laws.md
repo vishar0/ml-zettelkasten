@@ -35,6 +35,12 @@
 - On Kaplan et al. 2020:
   - > Given a fixed compute budget, it is more efficient to train a very large model and stop before convergence than to train a smaller model all the way to convergence. This finding is where the Chinchilla scaling laws (the next section) disagree: Kaplan et al. overestimated the optimal model size as their fitted exponent was larger.
   - > The most influential and, in hindsight, most contested conclusion was the compute-optimal allocation. Kaplan et al. found $N_\text{opt} \propto C^{0.73}$ and concluded that model size should grow faster than dataset size. Concretely, for a 10x increase in compute they suggested scaling the model size by ~5.5x but the training tokens by only ~1.8x. The Chinchilla paper would later overturn this recommendation, arguing that it leaves large models badly undertrained.
+- On our ladder, against the post's sections ([text diffusion scaling notebook](https://github.com/inductivebias/flourish/pull/2346)):
+  - Section 1, offset vs exponent: the nanochat GPT and MDLM block diffusion ladders (d12 to d24, 9.5 tokens per param) fit val bpb against training FLOPs with the same exponent, -0.049, and different coefficients. Hestness's claim holds across an AR vs diffusion change. Fitting CORE instead gives different exponents (0.16 vs 0.20), so fit the loss, not a downstream metric.
+  - Section 2.1 vs 2.3, which $N$: nanochat's ladder sets tokens from non-embedding "scaling params" and excludes its value embedding tables, which are 43% to 53% of total params. Removing them ([#2404](https://github.com/inductivebias/flourish/pull/2404)) moves val bpb by about 0.01 and CORE within noise, so the choice of $N$ changes the coefficient more than the curve.
+  - Section 2.2, fit form: the ladder fixes $D=9.5N$, so the fit is Kaplan's single-variable $L(C)$, not a Chinchilla joint $L(N,D)$. The ratio is AR-tuned; the compute-optimal ratio for diffusion needs IsoFLOP curves.
+  - Section 3, repetition: at 2, 4 and 8 passes over the same tokens the nanochat GPT loses about half its CORE at 8 passes while MDLM block diffusion neither overfits nor improves, as in [arXiv 2507.15857](https://arxiv.org/abs/2507.15857).
+  - Section 4, noise: reruns of d12 and d14 at one seed move CORE by up to 0.011 and val bpb by 0.001. Over seven rungs the val bpb exponent's standard error is 0.001. MDLM's val bpb is the NELBO, an upper bound, so only exponents compare across trainers.
 
 ## [2017] [Deep Learning Scaling is Predictable, Empirically](https://arxiv.org/abs/1712.00409)
 
