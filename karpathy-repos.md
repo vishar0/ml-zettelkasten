@@ -1,7 +1,7 @@
 # Karpathy Curriculum
 
 - **Created**: 2025-10-14
-- **Last Updated**: 2026-10-11
+- **Last Updated**: 2026-10-12
 - **Status**: `In Progress`
 
 ---
@@ -11,9 +11,10 @@
 - [ ] [llama2.c](https://github.com/karpathy/llama2.c)
 - [ ] [llm.c](https://github.com/karpathy/llm.c)
 - [ ] [nanochat](https://github.com/karpathy/nanochat)
-  - [ ] [[papers-data-centric-ml#[2025] [NVIDIA] Nemotron-CLIMB: CLustering-based Iterative Data Mixture Bootstrapping for Language Model Pre-training]] ClimbMix pretraining dataset
-  - [ ] [[papers-scaling-laws]] scaling ladder and the 9.5 tokens per param rule
+  - [x] [[papers-data-centric-ml]] ClimbMix pretraining dataset
+  - [ ] [[papers-scaling-laws]] Scaling ladder, Chinchilla optimality, IsoFLOP curves, 9.5 tokens per param
   - [ ] [[papers-optimizers#Muon]] Muon optimizer
+  - [ ] [[papers-scaling-laws]] muP-style hyperparameter transfer from the d12 reference; Power Lines batch-size rule and [[papers-optimizers#Weight Decay]] $T_{\text{epoch}}$ weight-decay rule in base_train.py
 
 ---
 
