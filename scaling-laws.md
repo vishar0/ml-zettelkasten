@@ -1,7 +1,7 @@
 # Scaling Laws
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-10-12
+- **Last Updated**: 2026-10-13
 - **Status**: `In Progress`
 - **Description**: The empirical science of how loss scales with compute, data, and parameters, including transfer across distributions.
 - **Related**:
@@ -18,11 +18,15 @@
 - [ ] [2019] [Rosenfeld] A Constructive Prediction of the Generalization Error Across Scales — [paper](https://arxiv.org/abs/1909.12673) — first joint fit of generalization error as a function of both model size and data size, $L(N,D)\approx E+A/N^{\alpha}+B/D^{\beta}$, across ResNet, WRN, LSTM and Transformer on ImageNet, CIFAR and WikiText-103; fits on small $(N,D)$ configurations extrapolate to larger ones, which is the premise behind scaling ladders; Chinchilla's Method 3 fits this same form
 - [ ] [2020] [Kaplan] Scaling Laws for Neural Language Models — [paper](https://arxiv.org/abs/2001.08361)
 - [ ] [2022] Chincilla: Training Compute-Optimal Large Language Models — [paper](https://arxiv.org/abs/2203.15556)
-- [ ] [2022] [Hernandez] Scaling Laws and Interpretability of Learning from Repeated Data — [paper](https://arxiv.org/abs/2205.10487) — a small repeated fraction inside mostly unique data hurts far more than its share: 0.1% of tokens repeated 100 times drops an 800M model to 400M performance; the damage is a double descent in repetition count, peaking where the model memorizes the repeated subset, and it knocks out induction heads; Weng's section 3 cites it for the data-limited regime; our multi-pass sweep repeats the whole dataset uniformly instead, the setting of Muennighoff 2023
-- [ ] [2023] [Muennighoff] Scaling Data-Constrained Language Models — [paper](https://arxiv.org/abs/2305.16264) — the whole dataset repeated uniformly, 400 runs up to 9B params and 1500 epochs; Chinchilla's fit with exponentially discounted effective data and params, decay constants about 15 epochs for data and 5 for excess params; up to four epochs are nearly free, then returns diminish; our 2, 4, 8 pass sweep is this setting at 9.5 tokens per param
 - [ ] [2025] [Cerebras] Power Lines: Scaling Laws for Weight Decay and Batch Size in LLM Pre-training — [paper](https://arxiv.org/abs/2505.13738) — $B_{\mathrm{opt}} \propto D^{0.383}$ and the constant-$B/(\eta\lambda D)$ weight-decay rule; nanochat uses both to scale batch size and weight decay from its d12 reference (dev/LOG.md 2026-02-05); the weight-decay side rests on the $T_{\text{epoch}}$ paper filed under [[papers-optimizers#Weight Decay]]
 - [ ] [2022] [Yang] Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer (muP) — [paper](https://arxiv.org/abs/2203.03466) — the maximal-update parametrization makes optimal hyperparameters stable across width, so they can be tuned on a small proxy and transferred zero-shot; nanochat's base_train.py tunes LR, batch size and weight decay at the d12 reference and transfers them to deeper models "muP style", then layers the Power Lines and $T_{\text{epoch}}$ scaling rules on top
 - [ ] [2021] Scaling Laws for Transfer — [paper](https://arxiv.org/abs/2102.01293)
+
+## Data-constrained scaling
+
+- [ ] [2022] [Hernandez] Scaling Laws and Interpretability of Learning from Repeated Data — [paper](https://arxiv.org/abs/2205.10487) — a small repeated fraction inside mostly unique data hurts far more than its share: 0.1% of tokens repeated 100 times drops an 800M model to 400M performance; the damage is a double descent in repetition count, peaking where the model memorizes the repeated subset, and it knocks out induction heads; Weng's section 3 cites it for the data-limited regime; our multi-pass sweep repeats the whole dataset uniformly instead, the setting of Muennighoff 2023
+- [ ] [2023] [Muennighoff] Scaling Data-Constrained Language Models — [paper](https://arxiv.org/abs/2305.16264) — the whole dataset repeated uniformly, 400 runs up to 9B params and 1500 epochs; Chinchilla's fit with exponentially discounted effective data and params, decay constants about 15 epochs for data and 5 for excess params; up to four epochs are nearly free, then returns diminish; our 2, 4, 8 pass sweep is this setting at 9.5 tokens per param
+- [ ] [2026] [Lovelace] Prescriptive Scaling Laws for Data Constrained Training — [paper](https://arxiv.org/abs/2605.01640) — adds one additive overfitting penalty to the Chinchilla form, $P\,R_D^\delta\,(N/U_D)^\kappa$ in repeats and the capacity ratio; repetition helps up to a point and past it compute is better spent on model capacity; larger models are more sensitive to repetition; strong weight decay ($\lambda=1$) cuts the penalty coefficient by about 70%, a scaling-law reason the optimal weight decay in data-constrained training is an order of magnitude above standard practice; the prescribed allocation beats Chinchilla's in the data-constrained regime
 
 ---
 
