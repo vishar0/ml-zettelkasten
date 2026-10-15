@@ -12,7 +12,7 @@
 ---
 
 - [x] [2026] [blog] [LilianWeng] [Scaling Laws, Carefully](#2026-scaling-laws-carefully) — [blog](https://lilianweng.github.io/posts/2026-06-24-scaling-laws/)
-- [ ] [2022] [blog] [Bahdanau] The FLOPs Calculus of Language Model Training — [blog](https://medium.com/@dzmitrybahdanau/the-flops-calculus-of-language-model-training-3b19c1f025e4)
+- [x] [2022] [blog] [Bahdanau] The FLOPs Calculus of Language Model Training — [blog](https://medium.com/@dzmitrybahdanau/the-flops-calculus-of-language-model-training-3b19c1f025e4)
 - [ ] [2026] [blog] How to Build a Scientific Scaling Ladder — [blog](https://jiaxuanzou0714.github.io/en/blog/2026/how-to-build-scientific-scaling-ladder/)
 - [x] [2017] [Deep Learning Scaling is Predictable, Empirically](#2017-deep-learning-scaling-is-predictable-empirically) — [paper](https://arxiv.org/abs/1712.00409)
 - [ ] [2019] A Constructive Prediction of the Generalization Error Across Scales — [paper](https://arxiv.org/abs/1909.12673)
