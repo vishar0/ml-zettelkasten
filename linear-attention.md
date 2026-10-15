@@ -26,6 +26,5 @@
 - [ ] [2024] Gated DeltaNet: Improving Mamba2 with Delta Rule — [paper](https://arxiv.org/abs/2412.06464)
 - [ ] [2025] [SamGershman] Fast Weight Programming and Linear Transformers: From Machine Learning to Neurobiology — [paper](https://arxiv.org/abs/2508.08435)
 - [ ] [2025] Kimi Linear: An Expressive, Efficient Attention Architecture — [paper](https://arxiv.org/abs/2510.26692)
-- [ ] [2023] StreamingLLM: Efficient Streaming Language Models with Attention Sinks — [paper](https://arxiv.org/abs/2309.17453)
-- [ ] [2026] Sliding-Window Beats Linear Attention — [paper](https://arxiv.org/abs/2608.28444)
+- [ ] [2026] [[papers-ml-fundamentals]] Sliding-Window Beats Linear Attention — [paper](https://arxiv.org/abs/2608.28444)
   - Finds that sliding-window attention with attention sinks matches or outperforms post-trained linear-attention replacements, especially on long-context retrieval, without requiring post-training.

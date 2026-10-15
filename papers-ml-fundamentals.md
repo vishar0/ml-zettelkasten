@@ -1,7 +1,7 @@
 # ML Fundamentals
 
 - **Created**: 2025-01-04
-- **Last Updated**: 2026-06-10
+- **Last Updated**: 2026-10-15
 - **Status**: `In Progress`
 
 ---
@@ -17,6 +17,7 @@
 - [ ] Attention is all you need
 - [ ] [2018] The Annotated Transformer — [blog](https://nlp.seas.harvard.edu/annotated-transformer/)
 - [x] [2019] Transformer-XL: Attentive Language Models Beyond a Fixed-Length Context — [paper](https://arxiv.org/abs/1901.02860)
+- [ ] [2023] [[linear-attention]] StreamingLLM: Efficient Streaming Language Models with Attention Sinks — [paper](https://arxiv.org/abs/2309.17453)
 - [X] [2018] The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks - [paper](https://arxiv.org/abs/1803.03635)
 - [ ] [2020] Efficient Transformers: A Survey — [paper](https://arxiv.org/abs/2009.06732)
 - [X] [2021] RASP: Thinking Like Transformers — [paper](https://arxiv.org/abs/2106.06981)
