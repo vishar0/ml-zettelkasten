@@ -169,6 +169,8 @@ TODO:
   - Show that the corruption process changes compute-optimal allocation: uniform diffusion prefers more parameters and less data than masked diffusion in data-limited regimes, with uniform models scaled to 10B parameters.
 - [ ] [2026] [Text] [ArashVahdat] RePlaid: Continuous Diffusion Scales Competitively with Discrete Diffusion for Language - [paper](https://arxiv.org/abs/2605.18530), [project](https://research.nvidia.com/labs/genair/replaid/)
   - Likelihood-based continuous diffusion over learned token embeddings; narrows Plaid's gap to roughly $20\times$ AR compute and scales with a slope comparable to modern discrete diffusion.
+- [ ] [2026] [Text] [Kuleshov] Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models - [paper](https://arxiv.org/abs/2610.17590), [project](https://www.guanghanwang.com/dlm-scaling/), [tweet](https://x.com/Guanghan__Wang/status/2110765399738605608)
+  - Revisits SMDM's IsoFLOP protocol with exact likelihood via DUEL instead of the ELBO, block diffusion with an encoder-decoder architecture, and a block-size sweep across about 1,700 models; the compute multiple over autoregression falls from roughly 18x to 3x at block size 4, with optimal decoder depth given by block size alone.
 - [ ] [2026] [Text] Scaling Beyond Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2602.15014)
   - Compare scaling across masked, uniform-state, and interpolating discrete diffusion; distinguish likelihood scaling from the practical speed-quality frontier.
 - [ ] [2025] [Text] [DeepakPathak] Diffusion Beats Autoregressive in Data-Constrained Settings - [paper](https://arxiv.org/abs/2507.15857), [project](https://diffusion-scaling.github.io/)
