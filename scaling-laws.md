@@ -1,13 +1,13 @@
 # Scaling Laws
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-10-13
+- **Last Updated**: 2026-10-16
 - **Status**: `In Progress`
 - **Description**: The empirical science of how loss scales with compute, data, and parameters, including transfer across distributions and training under a fixed data budget.
 - **Related**:
   - [[papers-foundation-models]] - Scaling laws guide how foundation models allocate parameters, data, and compute.
   - [[papers-data-centric-ml]] - Data selection can change or beat standard scaling curves.
-  - [[diffusion#6. Scaling Laws and Compute Allocation]] - Scaling laws for diffusion models.
+  - [[diffusion#8. Scaling Laws and Compute Allocation]] - Scaling laws for diffusion models.
 
 ---
 

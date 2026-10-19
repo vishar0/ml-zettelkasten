@@ -1,7 +1,7 @@
 # Diffusion
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-09-24
+- **Last Updated**: 2026-10-16
 - **Status**: `In Progress`
 - **Related**:
   - [[course-mit-diffusion-2026]] — Structured MIT course with lecture notes, slides, recordings, and labs on flow matching and diffusion models.
@@ -22,212 +22,206 @@ TODO:
 
 ---
 
+Titles link to detailed notes below when available; paper, post, code, and other source links remain alongside them.
+
 ## 0. Overview and Tutorials
 
-- [ ] [[course-mit-diffusion-2026]]
-- [ ] [2021] [YangSong] Generative Modeling by Estimating Gradients of the Data Distribution - [blog](https://yang-song.net/blog/2021/score/)
-- [ ] Sander Dieleman Diffusion Blog Posts - [posts](https://sander.ai/posts/)
-  - [ ] [2020] [Generative Models](#2020-sanderdieleman-generative-models) - [post](https://sander.ai/2020/03/24/audio-generation.html#generative-models)
-  - [ ] [2022] Diffusion Models Are Autoencoders - [post](https://sander.ai/2022/01/31/diffusion.html)
-  - [ ] [2022] Guidance: A Cheat Code for Diffusion Models - [post](https://sander.ai/2022/05/26/guidance.html)
-  - [ ] [2023] [Diffusion Language Models](#2023-sanderdieleman-diffusion-language-models) - [post](https://sander.ai/2023/01/09/diffusion-language.html)
-  - [ ] [2023] Perspectives on Diffusion - [post](https://sander.ai/2023/07/20/perspectives.html)
-  - [ ] [2023] The Geometry of Diffusion Guidance - [post](https://sander.ai/2023/08/28/geometry.html)
-  - [ ] [2024] The Paradox of Diffusion Distillation - [post](https://sander.ai/2024/02/28/paradox.html)
-  - [ ] [2024] Noise Schedules Considered Harmful - [post](https://sander.ai/2024/06/14/noise-schedules.html)
-  - [ ] [2024] Diffusion Is Spectral Autoregression - [post](https://sander.ai/2024/09/02/spectral-autoregression.html)
-  - [ ] [2025] Generative Modelling in Latent Space - [post](https://sander.ai/2025/04/15/latents.html)
-  - [ ] [2026] Learning the Integral of a Diffusion Model - [post](https://sander.ai/2026/05/06/flow-maps.html)
-  - [ ] [2026] [Greg-rec] Continuous Diffusion Language Models - [post](https://sander.ai/2026/08/24/continuous-dlms.html)
-- [ ] [2025] [3blue1brown] <https://www.3blue1brown.com/lessons/diffusion-models/>
-- [x] [2026] [Nando] [Diffusion and Flow Matching Tutorial](#2026-nando-diffusion-and-flow-matching-tutorial) - [blog](https://love4all.ai/blog/diffusion-and-flow-matching-tutorial/), [pdf](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.pdf), [notebook](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.ipynb)
-- [ ] [2026] [book] <https://the-principles-of-diffusion-models.github.io/>
-- [ ] [2025] Demystifying Variational Diffusion Models - [paper](https://arxiv.org/abs/2401.06281)
-  - Optional prerequisite if ELBOs, directed graphical models, or latent-variable models are rusty.
-- [ ] TODO something on twitter i bookmarked, jacob shared on slack as well (about diffusion tutorial)
-- [ ] TODO Alan's stuff
-  - [ ] [Flourish] Alan's diffusion tutorial slides - [slides](../../flourish/presentations/2026-05-21-diffusion/README.md)
-- [ ] Alan's paper list <https://docs.google.com/document/d/1dgvsHthnVjYMl0nqfFWeP0GITSMz6lopmQUNP3gDQ9M/edit?usp=sharing>
-  - [x] Alan's diffusion loss notebook <https://github.com/inductivebias/flourish/pull/1400>
-  - [ ] Alan's diffusion ELBO notebook <https://github.com/inductivebias/flourish/pull/1597>
-  - [ ] TODO Alan's variable-length diffusion PR <https://github.com/inductivebias/flourish/pull/1950>
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [[course-mit-diffusion-2026]] | Structured introduction to flow matching, score matching, guidance, latent spaces, and discrete diffusion, with lectures and labs. |
+| ☐ | [2021] [YangSong] Generative Modeling by Estimating Gradients of the Data Distribution - [blog](https://yang-song.net/blog/2021/score/) | Score-based generation, noise perturbations, Langevin sampling, and the SDE/ODE connection. |
+| ☐ | [2025] [3blue1brown] Diffusion Models - [video](https://www.3blue1brown.com/lessons/diffusion-models/) | Visual introduction to diffusion models. |
+| ☑ | [2026] [Nando] [Diffusion and Flow Matching Tutorial](#2026-nando-diffusion-and-flow-matching-tutorial) - [blog](https://love4all.ai/blog/diffusion-and-flow-matching-tutorial/), [pdf](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.pdf), [notebook](https://love4all.ai/files/diffusion-and-flow-matching-tutorial.ipynb) | Technical tutorial with derivations and code for score matching, diffusion, flow matching, and sampling. |
+| ☐ | [2026] [book] The Principles of Diffusion Models - [book](https://the-principles-of-diffusion-models.github.io/) | Book-length reference on diffusion models. |
+| ☐ | [2025] Demystifying Variational Diffusion Models - [paper](https://arxiv.org/abs/2401.06281) | Optional prerequisite if ELBOs, directed graphical models, or latent-variable models are rusty. |
+| ☐ | TODO something on twitter i bookmarked, jacob shared on slack as well (about diffusion tutorial) | TODO: identify the bookmarked tutorial shared by Jacob. |
+| ☐ | TODO Alan's stuff | TODO: review Alan's tutorial material. |
+| ☐ | [Flourish] Alan's diffusion tutorial slides - [slides](../../flourish/presentations/2026-05-21-diffusion/README.md) | Diffusion tutorial slides. |
+| ☐ | Alan's paper list <https://docs.google.com/document/d/1dgvsHthnVjYMl0nqfFWeP0GITSMz6lopmQUNP3gDQ9M/edit?usp=sharing> | Reading list and accompanying notebooks. |
+| ☑ | Alan's diffusion loss notebook <https://github.com/inductivebias/flourish/pull/1400> | Notebook exploring diffusion training losses. |
+| ☐ | Alan's diffusion ELBO notebook <https://github.com/inductivebias/flourish/pull/1597> | Notebook exploring diffusion's evidence lower bound. |
+
+## Sander Dieleman Blog Posts
+
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | Sander Dieleman Diffusion Blog Posts - [posts](https://sander.ai/posts/) | Collection of diffusion posts; individual readings are listed below. |
+| ☐ | [2020] [SanderDieleman] [Generative Models](#2020-sanderdieleman-generative-models) - [post](https://sander.ai/2020/03/24/audio-generation.html#generative-models) | Taxonomy of generative models, their objectives, likelihood evaluation, and sampling. |
+| ☐ | [2022] [SanderDieleman] Diffusion Models Are Autoencoders - [post](https://sander.ai/2022/01/31/diffusion.html) | Explain diffusion through an autoencoder perspective. |
+| ☐ | [2022] [SanderDieleman] Guidance: A Cheat Code for Diffusion Models - [post](https://sander.ai/2022/05/26/guidance.html) | Classifier and classifier-free guidance, and their effects on generation. |
+| ☐ | [2023] [SanderDieleman] [Diffusion Language Models](#2023-sanderdieleman-diffusion-language-models) - [post](https://sander.ai/2023/01/09/diffusion-language.html) | Compare image and language diffusion, including likelihood weighting and training/sampling efficiency. |
+| ☐ | [2023] [SanderDieleman] Perspectives on Diffusion - [post](https://sander.ai/2023/07/20/perspectives.html) | Complementary ways to understand diffusion models. |
+| ☐ | [2023] [SanderDieleman] The Geometry of Diffusion Guidance - [post](https://sander.ai/2023/08/28/geometry.html) | Geometric interpretation of diffusion guidance. |
+| ☐ | [2024] [SanderDieleman] The Paradox of Diffusion Distillation - [post](https://sander.ai/2024/02/28/paradox.html) | Examine what changes when iterative diffusion is distilled into fewer steps. |
+| ☐ | [2024] [SanderDieleman] Noise Schedules Considered Harmful - [post](https://sander.ai/2024/06/14/noise-schedules.html) | Reconsider the role of noise schedules in diffusion training. |
+| ☐ | [2024] [SanderDieleman] Diffusion Is Spectral Autoregression - [post](https://sander.ai/2024/09/02/spectral-autoregression.html) | Interpret diffusion as coarse-to-fine generation across frequency scales. |
+| ☐ | [2025] [SanderDieleman] Generative Modelling in Latent Space - [post](https://sander.ai/2025/04/15/latents.html) | Representation choices and generative modeling in latent space. |
+| ☐ | [2026] [SanderDieleman] Learning the Integral of a Diffusion Model - [post](https://sander.ai/2026/05/06/flow-maps.html) | Learning finite-time flow maps rather than only instantaneous velocities. |
+| ☐ | [2026] [SanderDieleman] [Greg-rec] Continuous Diffusion Language Models - [post](https://sander.ai/2026/08/24/continuous-dlms.html) | Continuous diffusion for language and the choice of token representations. |
 
 ## Talks, Workshops, etc
 
-- [x] [2025CVPR] [BillFreeman] After Diffusion Models - [workshop](https://vgm-cvpr.github.io/), [slides](https://drive.google.com/file/d/1kY4EW93nqBIhn90JT3dcCGzu1d5Y0HKJ/view?usp=sharing), [video](https://www.youtube.com/watch?v=0vnpvWqXd9M)
-- [ ] [2025CVPR] [KaimingHe] Towards End-to-End Generative Modeling - [workshop](https://vgm-cvpr.github.io/), [slides](https://drive.google.com/file/d/1T88z00PeSXvzoQKZbdpi3RG9c7A_LpGb/view?usp=sharing), [video](https://www.youtube.com/watch?v=4VwXBrMoC0E)
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☑ | [2025CVPR] [BillFreeman] After Diffusion Models - [workshop](https://vgm-cvpr.github.io/), [slides](https://drive.google.com/file/d/1kY4EW93nqBIhn90JT3dcCGzu1d5Y0HKJ/view?usp=sharing), [video](https://www.youtube.com/watch?v=0vnpvWqXd9M) | Talk on generative modeling beyond diffusion. |
+| ☐ | [2025CVPR] [KaimingHe] Towards End-to-End Generative Modeling - [workshop](https://vgm-cvpr.github.io/), [slides](https://drive.google.com/file/d/1T88z00PeSXvzoQKZbdpi3RG9c7A_LpGb/view?usp=sharing), [video](https://www.youtube.com/watch?v=4VwXBrMoC0E) | Talk on end-to-end generative modeling. |
 
 ## 1. Classical Diffusion and Likelihood
 
-- [ ] [2020] [JonathanHo] DDPM: Denoising Diffusion Probabilistic Models - [paper](https://arxiv.org/abs/2006.11239)
-  - Read closely. Be able to derive $q(x_t\mid x_0)$, the reverse posterior, and the simplified noise-prediction loss.
-- [ ] [2021] [AlexNichol,PrafullaDhariwal] Improved Denoising Diffusion Probabilistic Models - [paper](https://arxiv.org/abs/2102.09672), [code](https://github.com/openai/improved-diffusion)
-  - Practical sequel to DDPM: cosine noise schedule, learned reverse variances, hybrid loss, improved likelihood, and substantially fewer sampling steps through timestep respacing.
-- [ ] [2021] [PrafullaDhariwal,AlexNichol] ADM: Diffusion Models Beat GANs on Image Synthesis - [paper](https://arxiv.org/abs/2105.05233), [code](https://github.com/openai/guided-diffusion)
-- [ ] [2021] [JonathanHo,TimSalimans] CFG: Classifier-Free Diffusion Guidance - [paper](https://arxiv.org/abs/2207.12598)
-  - Learn conditional and unconditional scores jointly through condition dropout, then combine them at sampling time to trade diversity for condition adherence and fidelity—without a separate classifier.
-- [ ] [2024] [TeroKarras] Autoguidance: Guiding a Diffusion Model with a Bad Version of Itself - [paper](https://arxiv.org/abs/2406.02507)
-  - Replace CFG's unconditional model with a smaller or undertrained conditional model. Extrapolating away from this degraded model improves sample quality while better separating quality from condition alignment and diversity; it also works for unconditional generation.
-- [ ] [2015] [JaschaSohlDickstein] Deep Unsupervised Learning using Nonequilibrium Thermodynamics - [paper](https://arxiv.org/abs/1503.03585)
-  - Read after DDPM rather than before it. Focus on the fixed forward process and learned reversal; skim older implementation details.
-- [ ] [2021] [Greg-rec] [Kingma] Variational Diffusion Models - [paper](https://arxiv.org/abs/2107.00630), [code](https://github.com/google-research/vdm)
-  - Essential bridge among SNR, the variational bound, estimator variance, likelihood, and bits-back compression.
-- [ ] [2021] [YangSong,ConorDurkan,IainMurray,StefanoErmon] Maximum Likelihood Training of Score-Based Diffusion Models - [paper](https://arxiv.org/abs/2101.09258)
-  - Derive the likelihood weighting for denoising score matching and understand why the commonly used unweighted noise-prediction loss optimizes a different allocation across noise levels.
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2020] [JonathanHo] DDPM: Denoising Diffusion Probabilistic Models - [paper](https://arxiv.org/abs/2006.11239) | Read closely. Be able to derive $q(x_t\mid x_0)$, the reverse posterior, and the simplified noise-prediction loss. |
+| ☐ | [2021] [AlexNichol,PrafullaDhariwal] Improved Denoising Diffusion Probabilistic Models - [paper](https://arxiv.org/abs/2102.09672), [code](https://github.com/openai/improved-diffusion) | Practical sequel to DDPM: cosine noise schedule, learned reverse variances, hybrid loss, improved likelihood, and substantially fewer sampling steps through timestep respacing. |
+| ☐ | [2021] [PrafullaDhariwal,AlexNichol] ADM: Diffusion Models Beat GANs on Image Synthesis - [paper](https://arxiv.org/abs/2105.05233), [code](https://github.com/openai/guided-diffusion) | Improve image diffusion through denoiser architecture choices and classifier guidance; compare sample quality with GANs. |
+| ☐ | [2021] [JonathanHo,TimSalimans] CFG: Classifier-Free Diffusion Guidance - [paper](https://arxiv.org/abs/2207.12598) | Learn conditional and unconditional scores jointly through condition dropout, then combine them at sampling time to trade diversity for condition adherence and fidelity—without a separate classifier. |
+| ☐ | [2024] [TeroKarras] Autoguidance: Guiding a Diffusion Model with a Bad Version of Itself - [paper](https://arxiv.org/abs/2406.02507) | Replace CFG's unconditional model with a smaller or undertrained conditional model. Extrapolating away from this degraded model improves sample quality while better separating quality from condition alignment and diversity; it also works for unconditional generation. |
+| ☐ | [2015] [JaschaSohlDickstein] Deep Unsupervised Learning using Nonequilibrium Thermodynamics - [paper](https://arxiv.org/abs/1503.03585) | Read after DDPM rather than before it. Focus on the fixed forward process and learned reversal; skim older implementation details. |
+| ☐ | [2021] [Greg-rec] [Kingma] Variational Diffusion Models - [paper](https://arxiv.org/abs/2107.00630), [code](https://github.com/google-research/vdm) | Essential bridge among SNR, the variational bound, estimator variance, likelihood, and bits-back compression. |
+| ☐ | [2021] [YangSong,ConorDurkan,IainMurray,StefanoErmon] Maximum Likelihood Training of Score-Based Diffusion Models - [paper](https://arxiv.org/abs/2101.09258) | Derive the likelihood weighting for denoising score matching and understand why the commonly used unweighted noise-prediction loss optimizes a different allocation across noise levels. |
 
 ## 2. Score, SDE, ODE, and Flow Views
 
-- [ ] [2005] [AapoHyvarinen,PeterDayan] Estimation of Non-Normalized Statistical Models by Score Matching - [paper](https://jmlr.org/papers/v6/hyvarinen05a.html)
-  - Foundation of score matching: understand why the partition function disappears and how integration by parts replaces the inaccessible data score with a tractable objective.
-- [ ] [2019] [YangSong] NCSN: Generative Modeling by Estimating Gradients of the Data Distribution - [paper](https://arxiv.org/abs/1907.05600)
-  - Understand the score and why estimation at multiple noise levels makes sampling usable.
-- [ ] [2020] [YangSong,StefanoErmon] NCSNv2: Improved Techniques for Training Score-Based Generative Models - [paper](https://arxiv.org/abs/2006.09011)
-  - Practical refinement of NCSN: improved noise schedules, architecture, normalization, and annealed Langevin sampling for stable high-resolution generation.
-- [ ] [2021] [YangSong] Score-Based Generative Modeling through Stochastic Differential Equations - [paper](https://arxiv.org/abs/2011.13456)
-  - Understand the reverse-time SDE and probability-flow ODE.
-- [ ] [2023] [YaronLipman] Flow Matching for Generative Modeling - [paper](https://arxiv.org/abs/2210.02747)
-  - Learn conditional flow matching and why simulation-free training recovers a marginal vector field.
-- [ ] [2024] [YaronLipman] Flow Matching Guide and Code - [paper](https://arxiv.org/abs/2412.06264), [code](https://github.com/facebookresearch/flow_matching)
-  - Practical, self-contained treatment of continuous and discrete flow matching; read after the original Flow Matching paper for clearer derivations, design choices, and implementations.
-- [ ] [2022] Elucidating the Design Space of Diffusion-Based Generative Models - [paper](https://arxiv.org/abs/2206.00364)
-  - Separate parameterization, preconditioning, noise distribution, loss weighting, and sampler choice.
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2005] [AapoHyvarinen,PeterDayan] Estimation of Non-Normalized Statistical Models by Score Matching - [paper](https://jmlr.org/papers/v6/hyvarinen05a.html) | Foundation of score matching: understand why the partition function disappears and how integration by parts replaces the inaccessible data score with a tractable objective. |
+| ☐ | [2019] [YangSong] NCSN: Generative Modeling by Estimating Gradients of the Data Distribution - [paper](https://arxiv.org/abs/1907.05600) | Understand the score and why estimation at multiple noise levels makes sampling usable. |
+| ☐ | [2020] [YangSong,StefanoErmon] NCSNv2: Improved Techniques for Training Score-Based Generative Models - [paper](https://arxiv.org/abs/2006.09011) | Practical refinement of NCSN: improved noise schedules, architecture, normalization, and annealed Langevin sampling for stable high-resolution generation. |
+| ☐ | [2021] [YangSong] Score-Based Generative Modeling through Stochastic Differential Equations - [paper](https://arxiv.org/abs/2011.13456) | Understand the reverse-time SDE and probability-flow ODE. |
+| ☐ | [2023] [YaronLipman] Flow Matching for Generative Modeling - [paper](https://arxiv.org/abs/2210.02747) | Learn conditional flow matching and why simulation-free training recovers a marginal vector field. |
+| ☐ | [2024] [YaronLipman] Flow Matching Guide and Code - [paper](https://arxiv.org/abs/2412.06264), [code](https://github.com/facebookresearch/flow_matching) | Practical, self-contained treatment of continuous and discrete flow matching; read after the original Flow Matching paper for clearer derivations, design choices, and implementations. |
+| ☐ | [2022] Elucidating the Design Space of Diffusion-Based Generative Models - [paper](https://arxiv.org/abs/2206.00364) | Separate parameterization, preconditioning, noise distribution, loss weighting, and sampler choice. |
 
 **Checkpoint:** translate among $x$-prediction, $\epsilon$-prediction, $v$-prediction, score prediction, and velocity prediction. Distinguish pure reparameterizations from genuinely different paths, objectives, or loss weightings.
 
-## 3. Representation, Architecture, and Fast Sampling
+## 3. Representation and Architecture
 
-- [x] [2022] [BillPeebles,SainingXie] [DiT: Scalable Diffusion Models with Transformers](#2022-billpeeblessainingxie-dit-scalable-diffusion-models-with-transformers) - [paper](https://arxiv.org/abs/2212.09748)
-  - Standard DiT architecture and timestep / conditioning machinery.
-- [ ] [2021] [JonathanHo,ChitwanSaharia,TimSalimans] CDM: Cascaded Diffusion Models for High Fidelity Image Generation - [paper](https://arxiv.org/abs/2106.15282)
-  - Generate images through a low-resolution base model followed by diffusion super-resolution models; conditioning augmentation makes later stages robust to errors from earlier generated stages.
-- [ ] [2021] LDM: High-Resolution Image Synthesis with Latent Diffusion Models - [paper](https://arxiv.org/abs/2112.10752)
-- [ ] [2021] [AlexNichol,PrafullaDhariwal] GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models - [paper](https://arxiv.org/abs/2112.10741)
-  - Scale text-conditional diffusion and compare CLIP guidance with classifier-free guidance; an important bridge from guided image diffusion to modern text-to-image systems.
-- [ ] [2022] [AdityaRamesh] Hierarchical Text-Conditional Image Generation with CLIP Latents - [paper](https://arxiv.org/abs/2204.06125)
-  - DALL·E 2 / unCLIP: generate a CLIP image embedding from text, then condition a diffusion decoder on that semantic representation.
-- [ ] [2022] [JonathanHo] Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding - [paper](https://arxiv.org/abs/2205.11487)
-  - Imagen: frozen T5 text conditioning, cascaded pixel-space diffusion, and the finding that scaling the language encoder mattered more than scaling the image denoiser.
-- [ ] [2023] [TimSalimans] Simple Diffusion: End-to-End Diffusion for High Resolution Images - [paper](https://arxiv.org/abs/2301.11093)
-  - Pixel-space alternative to latent diffusion and cascades. Focus on the resolution-dependent log-SNR shift, selective low-resolution scaling and dropout, early downsampling, and the multiscale loss; the shifted cosine schedule is the part used in Nando §2.3.
-- [ ] [[state-space-models]] [2024] SSM Meets Video Diffusion Models: Efficient Long-Term Video Generation with Structured State Spaces - [paper](https://arxiv.org/abs/2403.07711)
-  - Replace quadratic temporal attention in a video-diffusion denoiser with bidirectional SSM layers for more memory-efficient long-video generation.
-- [ ] [2025] [Greg-rec] [KaimingHe] Back to Basics: Let Denoising Generative Models Denoise - [paper](https://arxiv.org/abs/2511.13720)
-  - "Just Image Transformers": clean-data $x$-prediction with simple large-patch transformers directly on pixels. Treat as a promising design lead, not settled doctrine.
-- [ ] [2022] [TimSalimans,JonathanHo] Progressive Distillation for Fast Sampling of Diffusion Models - [paper](https://arxiv.org/abs/2202.00512)
-  - Repeatedly distill two deterministic teacher sampling steps into one student step, halving the sampling budget each round. Read before Shortcut Models and MeanFlow for the foundational teacher-based route from many-step diffusion to few-step generation and for the motivation behind the $v$-parameterization.
-- [ ] [2024] [DanijarHafner,SergeyLevine,PieterAbbeel] One-Step Diffusion via Shortcut Models - [paper](https://arxiv.org/abs/2410.12557)
-- [ ] [2025] [KaimingHe] Mean Flows for One-Step Generative Modeling - [paper](https://arxiv.org/abs/2505.13447)
-  - Read Shortcut Models and MeanFlow after the basic flow view; compare instantaneous velocity, average velocity, and step-conditioned prediction.
-- [ ] [2025] [KaimingHe,JZicoKolter] iMF: Improved Mean Flows: On the Challenges of Fastforward Generative Models - [paper](https://arxiv.org/abs/2512.02012), [code](https://github.com/Lyy-iiis/imeanflow)
-  - Stabilize MeanFlow by expressing training as a conventional instantaneous-velocity regression while parameterizing the average velocity, and condition explicitly on guidance settings so CFG remains adjustable at inference. Achieves one-step generation from scratch without distillation.
-- [ ] [2024] Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction - [paper](https://arxiv.org/abs/2404.02905)
-  - Important foil: coarse-to-fine autoregression may retain global-to-local generation with lower-variance likelihood training.
-- [ ] [2025] [Greg-rec] DiffusionBlocks: Block-wise Neural Network Training via Diffusion Interpretation - [paper](https://arxiv.org/abs/2506.14202), [blog](https://sakana.ai/diffusion-blocks/), [code](https://github.com/SakanaAI/DiffusionBlocks)
-  - Use the diffusion interpretation of residual updates and score matching to train Transformer blocks independently, reducing activation memory. Read as an adjacent application of diffusion ideas to neural-network training, not as a core generative-model prerequisite.
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☑ | [2022] [BillPeebles,SainingXie] [DiT: Scalable Diffusion Models with Transformers](#2022-billpeeblessainingxie-dit-scalable-diffusion-models-with-transformers) - [paper](https://arxiv.org/abs/2212.09748) | Standard DiT architecture and timestep / conditioning machinery. |
+| ☐ | [2021] [JonathanHo,ChitwanSaharia,TimSalimans] CDM: Cascaded Diffusion Models for High Fidelity Image Generation - [paper](https://arxiv.org/abs/2106.15282) | Generate images through a low-resolution base model followed by diffusion super-resolution models; conditioning augmentation makes later stages robust to errors from earlier generated stages. |
+| ☐ | [2021] LDM: High-Resolution Image Synthesis with Latent Diffusion Models - [paper](https://arxiv.org/abs/2112.10752) | Train diffusion in an autoencoder's compressed latent space, then decode generated latents into images. |
+| ☐ | [2021] [AlexNichol,PrafullaDhariwal] GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models - [paper](https://arxiv.org/abs/2112.10741) | Scale text-conditional diffusion and compare CLIP guidance with classifier-free guidance; an important bridge from guided image diffusion to modern text-to-image systems. |
+| ☐ | [2022] [AdityaRamesh] Hierarchical Text-Conditional Image Generation with CLIP Latents - [paper](https://arxiv.org/abs/2204.06125) | DALL·E 2 / unCLIP: generate a CLIP image embedding from text, then condition a diffusion decoder on that semantic representation. |
+| ☐ | [2022] [JonathanHo] Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding - [paper](https://arxiv.org/abs/2205.11487) | Imagen: frozen T5 text conditioning, cascaded pixel-space diffusion, and the finding that scaling the language encoder mattered more than scaling the image denoiser. |
+| ☐ | [2023] [TimSalimans] Simple Diffusion: End-to-End Diffusion for High Resolution Images - [paper](https://arxiv.org/abs/2301.11093) | Pixel-space alternative to latent diffusion and cascades. Focus on the resolution-dependent log-SNR shift, selective low-resolution scaling and dropout, early downsampling, and the multiscale loss; the shifted cosine schedule is the part used in Nando §2.3. |
+| ☐ | [[state-space-models]] [2024] SSM Meets Video Diffusion Models: Efficient Long-Term Video Generation with Structured State Spaces - [paper](https://arxiv.org/abs/2403.07711) | Replace quadratic temporal attention in a video-diffusion denoiser with bidirectional SSM layers for more memory-efficient long-video generation. |
+| ☐ | [2025] [Greg-rec] [KaimingHe] Back to Basics: Let Denoising Generative Models Denoise - [paper](https://arxiv.org/abs/2511.13720) | "Just Image Transformers": clean-data $x$-prediction with simple large-patch transformers directly on pixels. Treat as a promising design lead, not settled doctrine. |
+| ☐ | [2024] Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction - [paper](https://arxiv.org/abs/2404.02905) | Important foil: coarse-to-fine autoregression may retain global-to-local generation with lower-variance likelihood training. |
+| ☐ | [2025] [Greg-rec] DiffusionBlocks: Block-wise Neural Network Training via Diffusion Interpretation - [paper](https://arxiv.org/abs/2506.14202), [blog](https://sakana.ai/diffusion-blocks/), [code](https://github.com/SakanaAI/DiffusionBlocks) | Use the diffusion interpretation of residual updates and score matching to train Transformer blocks independently, reducing activation memory. Read as an adjacent application of diffusion ideas to neural-network training, not as a core generative-model prerequisite. |
 
-## 4. Discrete and Block Diffusion
+## 4. Accelerated Sampling
 
-- [ ] [2021] Structured Denoising Diffusion Models in Discrete State-Spaces - [paper](https://arxiv.org/abs/2107.03006)
-  - Learn transition matrices, absorbing-mask corruption, and the discrete ELBO.
-- [ ] [2023] [StefanoErmon] SEDD: Discrete Diffusion Modeling by Estimating the Ratios of the Data Distribution - [paper](https://arxiv.org/abs/2310.16834), [code](https://github.com/louaaron/Score-Entropy-Discrete-Diffusion)
-  - Score entropy: learn ratios between the data distribution at neighbouring sequences (the discrete analogue of a score); first discrete diffusion LM to rival GPT-2 perplexity. ICML 2024 best paper.
-- [ ] [2024] Simple and Effective Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2406.07524)
-  - Bridge from D3PM theory to masked-token diffusion in practice.
-- [ ] [2024] RADD: Your Absorbing Discrete Diffusion Secretly Models the Conditional Distributions of Clean Data - [paper](https://arxiv.org/abs/2406.03736)
-  - Masked (absorbing) diffusion's objective equals an any-order autoregressive loss, and the optimal model needs no time input. Justifies the "chain" likelihood reading used to score diffusion LMs on CORE, and dropping time conditioning.
-- [ ] [2024] SMDM: Scaling up Masked Diffusion Models on Text - [paper](https://arxiv.org/abs/2410.18514)
-  - First scaling law for masked diffusion on text (about 16x AR compute for matched loss); reports both the NELBO and chain likelihood readings; unsupervised classifier-free guidance.
-- [ ] [2024] [YaronLipman] Discrete Flow Matching - [paper](https://arxiv.org/abs/2407.15595)
-  - Connect conditional flow matching to continuous-time Markov chains and discrete rate matrices.
-- [ ] [2025] Edit Flows: Variable Length Discrete Flow Matching with Sequence-Level Edit Operations - [paper](https://proceedings.neurips.cc/paper_files/paper/2025/file/cb43f46154e750746602faaffd65fbbb-Paper-Conference.pdf)
-  - Extend discrete flow matching from fixed-position token transitions to sequence-level insertions, deletions, and substitutions, enabling non-autoregressive variable-length generation through a CTMC over sequences.
-- [ ] [2025] Block Diffusion: Interpolating Between Autoregressive and Diffusion Language Models - [paper](https://arxiv.org/abs/2503.09573)
-  - Relevant to variable-length generation, KV caching, parallel token sampling, and controlling estimator variance.
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2022] [TimSalimans,JonathanHo] Progressive Distillation for Fast Sampling of Diffusion Models - [paper](https://arxiv.org/abs/2202.00512) | Repeatedly distill two deterministic teacher sampling steps into one student step, halving the sampling budget each round. Read before Shortcut Models and MeanFlow for the foundational teacher-based route from many-step diffusion to few-step generation and for the motivation behind the $v$-parameterization. |
+| ☐ | [2024] [DanijarHafner,SergeyLevine,PieterAbbeel] One-Step Diffusion via Shortcut Models - [paper](https://arxiv.org/abs/2410.12557) | Condition on step size and learn shortcuts that support generation with one or multiple sampling steps. |
+| ☐ | [2025] [KaimingHe] Mean Flows for One-Step Generative Modeling - [paper](https://arxiv.org/abs/2505.13447) | Read Shortcut Models and MeanFlow after the basic flow view; compare instantaneous velocity, average velocity, and step-conditioned prediction. |
+| ☐ | [2025] [KaimingHe,JZicoKolter] iMF: Improved Mean Flows: On the Challenges of Fastforward Generative Models - [paper](https://arxiv.org/abs/2512.02012), [code](https://github.com/Lyy-iiis/imeanflow) | Stabilize MeanFlow by expressing training as a conventional instantaneous-velocity regression while parameterizing the average velocity, and condition explicitly on guidance settings so CFG remains adjustable at inference. Achieves one-step generation from scratch without distillation. |
 
-## 5. Mixed-Modality and Sequence Models
+## 5. Discrete Diffusion
 
-- [ ] [2024] MAR: Autoregressive Image Generation without Vector Quantization - [paper](https://arxiv.org/abs/2406.11838)
-  - Autoregressively generates image patches without discrete tokenization, using diffusion to model each patch's continuous-valued conditional distribution.
-- [ ] [2024] Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model - [paper](https://arxiv.org/abs/2408.11039)
-  - Concrete single-transformer treatment of mixed discrete text and continuous images using modality-specific losses.
-- [ ] [2024] Diffusion Forcing: Next-Token Prediction Meets Full-Sequence Diffusion - [paper](https://arxiv.org/abs/2407.01392), [project](https://boyuan.space/diffusion-forcing)
-  - Independent noise levels per token unify causal next-step prediction, full-sequence diffusion, variable-horizon rollouts, planning, and guidance.
-- [ ] [2024] Rolling Diffusion Models - [paper](https://arxiv.org/abs/2402.09470)
-  - Sliding-window denoising assigns progressively more noise to later frames, committing to the near-term future while preserving greater uncertainty farther ahead. Focus on Figure 2's rolling noise schedule and how it differs from applying one shared noise level to an entire temporal sequence.
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2021] Structured Denoising Diffusion Models in Discrete State-Spaces - [paper](https://arxiv.org/abs/2107.03006) | Learn transition matrices, absorbing-mask corruption, and the discrete ELBO. |
+| ☐ | [2023] [StefanoErmon] SEDD: Discrete Diffusion Modeling by Estimating the Ratios of the Data Distribution - [paper](https://arxiv.org/abs/2310.16834), [code](https://github.com/louaaron/Score-Entropy-Discrete-Diffusion) | Score entropy: learn ratios between the data distribution at neighbouring sequences (the discrete analogue of a score); first discrete diffusion LM to rival GPT-2 perplexity. ICML 2024 best paper. |
+| ☐ | [2024] Simple and Effective Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2406.07524) | Bridge from D3PM theory to masked-token diffusion in practice. |
+| ☐ | [2024] RADD: Your Absorbing Discrete Diffusion Secretly Models the Conditional Distributions of Clean Data - [paper](https://arxiv.org/abs/2406.03736) | Masked (absorbing) diffusion's objective equals an any-order autoregressive loss, and the optimal model needs no time input. Justifies the "chain" likelihood reading used to score diffusion LMs on CORE, and dropping time conditioning. |
+| ☐ | [2024] [YaronLipman] Discrete Flow Matching - [paper](https://arxiv.org/abs/2407.15595) | Connect conditional flow matching to continuous-time Markov chains and discrete rate matrices. |
+
+## 6. Sequence Generation: Blocks, Causality, and Variable Length
+
+These methods cover both discrete and continuous sequences. Blockwise or causal generation extends a sequence through successive blocks or windows; edit-based generation changes its length through insertions and deletions.
+
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2025] [Block Diffusion: Interpolating Between Autoregressive and Diffusion Language Models](#2025-block-diffusion-interpolating-between-autoregressive-and-diffusion-language-models) - [paper](https://arxiv.org/abs/2503.09573) | Relevant to variable-length generation, KV caching, parallel token sampling, and controlling estimator variance. |
+| ☐ | [2024] Diffusion Forcing: Next-Token Prediction Meets Full-Sequence Diffusion - [paper](https://arxiv.org/abs/2407.01392), [project](https://boyuan.space/diffusion-forcing) | Independent noise levels per token unify causal next-step prediction, full-sequence diffusion, variable-horizon rollouts, planning, and guidance. |
+| ☐ | [2024] Rolling Diffusion Models - [paper](https://arxiv.org/abs/2402.09470) | Sliding-window denoising assigns progressively more noise to later frames, committing to the near-term future while preserving greater uncertainty farther ahead. Focus on Figure 2's rolling noise schedule and how it differs from applying one shared noise level to an entire temporal sequence. |
+| ☐ | [2025] Edit Flows: Variable Length Discrete Flow Matching with Sequence-Level Edit Operations - [paper](https://proceedings.neurips.cc/paper_files/paper/2025/file/cb43f46154e750746602faaffd65fbbb-Paper-Conference.pdf) | Extend discrete flow matching from fixed-position token transitions to sequence-level insertions, deletions, and substitutions, enabling non-autoregressive variable-length generation through a CTMC over sequences. |
+| ☐ | TODO Alan's variable-length diffusion slides <https://github.com/inductivebias/flourish/pull/1950> | TODO: read the variable-length diffusion slides. |
+
+## 7. Mixed-Modality and Hybrid Models
+
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2024] MAR: Autoregressive Image Generation without Vector Quantization - [paper](https://arxiv.org/abs/2406.11838) | Autoregressively generates image patches without discrete tokenization, using diffusion to model each patch's continuous-valued conditional distribution. |
+| ☐ | [2024] Transfusion: Predict the Next Token and Diffuse Images with One Multi-Modal Model - [paper](https://arxiv.org/abs/2408.11039) | Concrete single-transformer treatment of mixed discrete text and continuous images using modality-specific losses. |
 
 **Checkpoint:** design a corruption process for $(o_t,a_t,r_t)$ in which pixels use continuous noise, actions and rewards use a CTMC or mask process, and different frames may have different noise levels. Justify both its loss and sampling semantics.
 
-## 6. Scaling Laws and Compute Allocation
+## 8. Scaling Laws and Compute Allocation
 
-- [ ] [2024] [Image] Scaling Laws for Diffusion Transformers - [paper](https://arxiv.org/abs/2410.08184)
-  - Early IsoFLOP study showing power-law loss scaling for text-to-image DiTs and estimating compute-optimal model/data allocation. Read as the direct precursor and methodological foil to Abra's larger controlled study.
-- [ ] [2026] [Image] [JiamingSong] Abra: Scaling Diffusion Image Training - [paper](https://arxiv.org/abs/2608.17286)
-  - Compute-optimal scaling laws for text-to-image flow-matching Transformers, including model/data allocation, overtraining robustness, generative quality, CFG, and representation quality.
-- [ ] [2023] [Text] Plaid: Likelihood-Based Diffusion Language Models - [paper](https://arxiv.org/abs/2305.18619)
-  - First compute-optimal scaling study for likelihood-trained continuous diffusion language models: similar loss-scaling slope to autoregression, but an approximately $64\times$ compute gap and substantially smaller compute-optimal models.
-- [ ] [2025] [Text] Scaling Behavior of Discrete Diffusion Language Models - [paper](https://arxiv.org/abs/2512.10858)
-  - Show that the corruption process changes compute-optimal allocation: uniform diffusion prefers more parameters and less data than masked diffusion in data-limited regimes, with uniform models scaled to 10B parameters.
-- [ ] [2026] [Text] [ArashVahdat] RePlaid: Continuous Diffusion Scales Competitively with Discrete Diffusion for Language - [paper](https://arxiv.org/abs/2605.18530), [project](https://research.nvidia.com/labs/genair/replaid/)
-  - Likelihood-based continuous diffusion over learned token embeddings; narrows Plaid's gap to roughly $20\times$ AR compute and scales with a slope comparable to modern discrete diffusion.
-- [ ] [2026] [Text] [Kuleshov] Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models - [paper](https://arxiv.org/abs/2610.17590), [project](https://www.guanghanwang.com/dlm-scaling/), [tweet](https://x.com/Guanghan__Wang/status/2110765399738605608)
-  - Revisits SMDM's IsoFLOP protocol with exact likelihood via DUEL instead of the ELBO, block diffusion with an encoder-decoder architecture, and a block-size sweep across about 1,700 models; the compute multiple over autoregression falls from roughly 18x to 3x at block size 4, with optimal decoder depth given by block size alone.
-- [ ] [2026] [Text] Scaling Beyond Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2602.15014)
-  - Compare scaling across masked, uniform-state, and interpolating discrete diffusion; distinguish likelihood scaling from the practical speed-quality frontier.
-- [ ] [2025] [Text] [DeepakPathak] Diffusion Beats Autoregressive in Data-Constrained Settings - [paper](https://arxiv.org/abs/2507.15857), [project](https://diffusion-scaling.github.io/)
-  - Derive when masked diffusion overtakes autoregression as fixed data is reused with increasing compute; randomized masking acts as implicit augmentation over token orderings.
-- [ ] [2026] [Audio] [NavdeepJaitly] Scaling Properties of Continuous Diffusion Spoken Language Models - [paper](https://arxiv.org/abs/2604.24416), [project](https://machinelearning.apple.com/research/scaling-properties-continuous-diffusion), [code](https://github.com/apple/ml-diffuslm)
-  - Establish scaling laws for continuous speech diffusion through validation loss and phoneme JSD, scaling to 16B parameters. Finds increasingly flat compute-optimal model/data allocations—opening an inference-efficiency frontier—but persistent difficulty with long-form linguistic coherence.
-- [ ] [2025] [Test-Time] [SainingXie] Scaling Inference Time Compute for Diffusion Models - [paper](https://openaccess.thecvf.com/content/CVPR2025/html/Ma_Scaling_Inference_Time_Compute_for_Diffusion_Models_CVPR_2025_paper.html)
-  - Scale test-time compute through verifier-guided search over initial-noise candidates rather than merely increasing denoising steps.
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2024] [Image] Scaling Laws for Diffusion Transformers - [paper](https://arxiv.org/abs/2410.08184) | Early IsoFLOP study showing power-law loss scaling for text-to-image DiTs and estimating compute-optimal model/data allocation. Read as the direct precursor and methodological foil to Abra's larger controlled study. |
+| ☐ | [2026] [Image] [JiamingSong] Abra: Scaling Diffusion Image Training - [paper](https://arxiv.org/abs/2608.17286) | Compute-optimal scaling laws for text-to-image flow-matching Transformers, including model/data allocation, overtraining robustness, generative quality, CFG, and representation quality. |
+| ☐ | [2024] SMDM: Scaling up Masked Diffusion Models on Text - [paper](https://arxiv.org/abs/2410.18514) | First scaling law for masked diffusion on text (about 16x AR compute for matched loss); reports both the NELBO and chain likelihood readings; unsupervised classifier-free guidance. |
+| ☐ | [2023] [Text] Plaid: Likelihood-Based Diffusion Language Models - [paper](https://arxiv.org/abs/2305.18619) | First compute-optimal scaling study for likelihood-trained continuous diffusion language models: similar loss-scaling slope to autoregression, but an approximately $64\times$ compute gap and substantially smaller compute-optimal models. |
+| ☐ | [2025] [Text] Scaling Behavior of Discrete Diffusion Language Models - [paper](https://arxiv.org/abs/2512.10858) | Show that the corruption process changes compute-optimal allocation: uniform diffusion prefers more parameters and less data than masked diffusion in data-limited regimes, with uniform models scaled to 10B parameters. |
+| ☐ | [2026] [Text] [ArashVahdat] RePlaid: Continuous Diffusion Scales Competitively with Discrete Diffusion for Language - [paper](https://arxiv.org/abs/2605.18530), [project](https://research.nvidia.com/labs/genair/replaid/) | Likelihood-based continuous diffusion over learned token embeddings; narrows Plaid's gap to roughly $20\times$ AR compute and scales with a slope comparable to modern discrete diffusion. |
+| ☐ | [2026] [Text] [Kuleshov] Revisiting the 16x Pretraining Compute Gap between Diffusion and Autoregressive Language Models - [paper](https://arxiv.org/abs/2610.17590), [project](https://www.guanghanwang.com/dlm-scaling/), [tweet](https://x.com/Guanghan__Wang/status/2110765399738605608) | Revisits SMDM's IsoFLOP protocol with exact likelihood via DUEL instead of the ELBO, block diffusion with an encoder-decoder architecture, and a block-size sweep across about 1,700 models; the compute multiple over autoregression falls from roughly 18x to 3x at block size 4, with optimal decoder depth given by block size alone. |
+| ☐ | [2026] [Text] Scaling Beyond Masked Diffusion Language Models - [paper](https://arxiv.org/abs/2602.15014) | Compare scaling across masked, uniform-state, and interpolating discrete diffusion; distinguish likelihood scaling from the practical speed-quality frontier. |
+| ☐ | [2025] [Text] [DeepakPathak] Diffusion Beats Autoregressive in Data-Constrained Settings - [paper](https://arxiv.org/abs/2507.15857), [project](https://diffusion-scaling.github.io/) | Derive when masked diffusion overtakes autoregression as fixed data is reused with increasing compute; randomized masking acts as implicit augmentation over token orderings. |
+| ☐ | [2026] [Audio] [NavdeepJaitly] Scaling Properties of Continuous Diffusion Spoken Language Models - [paper](https://arxiv.org/abs/2604.24416), [project](https://machinelearning.apple.com/research/scaling-properties-continuous-diffusion), [code](https://github.com/apple/ml-diffuslm) | Establish scaling laws for continuous speech diffusion through validation loss and phoneme JSD, scaling to 16B parameters. Finds increasingly flat compute-optimal model/data allocations—opening an inference-efficiency frontier—but persistent difficulty with long-form linguistic coherence. |
+| ☐ | [2025] [Test-Time] [SainingXie] Scaling Inference Time Compute for Diffusion Models - [paper](https://openaccess.thecvf.com/content/CVPR2025/html/Ma_Scaling_Inference_Time_Compute_for_Diffusion_Models_CVPR_2025_paper.html) | Scale test-time compute through verifier-guided search over initial-noise candidates rather than merely increasing denoising steps. |
 
-## 7. Compression and Evaluation
+## 9. Compression and Evaluation
 
-- [ ] [2015] A Note on the Evaluation of Generative Models - [paper](https://arxiv.org/abs/1511.01844)
-  - Mandatory: strong likelihood / compression, perceptual samples, and downstream behavior can be largely independent in high dimensions.
-- [ ] [2019] Practical Lossless Compression with Latent Variables using Bits Back Coding - [paper](https://arxiv.org/abs/1901.04866), [code](https://github.com/bits-back/bits-back)
-  - Understand how a variational bound becomes a realizable code rather than only an evaluation number.
-- [ ] Revisit [[compression]], [[nncp]], and [Language Modeling is Compression](https://arxiv.org/abs/2309.10668)
-  - Distinguish offline likelihood from prequential adaptive coding: predict once, pay the code length, then learn from the datum.
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2015] A Note on the Evaluation of Generative Models - [paper](https://arxiv.org/abs/1511.01844) | Mandatory: strong likelihood / compression, perceptual samples, and downstream behavior can be largely independent in high dimensions. |
+| ☐ | [2019] Practical Lossless Compression with Latent Variables using Bits Back Coding - [paper](https://arxiv.org/abs/1901.04866), [code](https://github.com/bits-back/bits-back) | Understand how a variational bound becomes a realizable code rather than only an evaluation number. |
+| ☐ | Revisit [[compression]], [[nncp]], and [Language Modeling is Compression](https://arxiv.org/abs/2309.10668) | Distinguish offline likelihood from prequential adaptive coding: predict once, pay the code length, then learn from the datum. |
 
-## 8. Diffusion for Control
+## 10. Control and Reinforcement Learning
 
 Start this section only after the core generative-modeling path.
 
-- [ ] [2022] Decision Diffuser: Is Conditional Generative Modeling All You Need for Decision-Making? - [paper](https://arxiv.org/abs/2211.15657)
-  - Conditional trajectory generation and guidance.
-- [ ] [2025] [Bengio] Monte Carlo Tree Diffusion for System 2 Planning - [paper](https://arxiv.org/abs/2502.07202)
-  - Recast denoising as tree search over partially denoised plans: evaluate, branch, prune, and revisit candidates so planning quality can improve with inference-time compute. Read as an MCTS-style search extension to diffusion planning, not as a core diffusion prerequisite.
-- [ ] [2023] Diffusion Policy: Visuomotor Policy Learning via Action Diffusion - [paper](https://arxiv.org/abs/2303.04137), [project](https://diffusion-policy.cs.columbia.edu/)
-  - Action-sequence diffusion for visuomotor control.
-- [ ] [2023] [Greg-rec] [SergeyLevine] IDQL: Implicit Q-Learning as an Actor-Critic Method with Diffusion Policies - [paper](https://arxiv.org/abs/2304.10573)
-  - Interpret IQL as an actor-critic method, represent its potentially multimodal implicit actor with a diffusion behavior policy, and use critic-derived weights to extract the intended policy.
-- [ ] [2025] [Greg-rec] Efficient Online Reinforcement Learning for Diffusion Policy - [paper](https://arxiv.org/abs/2502.00361)
-  - Reweighted score matching for policy improvement without differentiating through the sampling chain.
-- [ ] [2024] [Greg-rec] Diffusion-Based Reinforcement Learning via Q-Weighted Variational Policy Optimization - [paper](https://arxiv.org/abs/2405.16173)
-  - Explicit $Q$-weighted variational objective discussed in the Universal Learner work.
-- [ ] [2023] [SergeyLevine] DDPO: Training Diffusion Models with Reinforcement Learning - [paper](https://arxiv.org/abs/2305.13301), [project](https://rl-diffusion.github.io/)
-  - Treat each reverse denoising transition as an RL action and optimize the terminal reward using policy gradients. Read before AWM, which interprets DDPO as noisy-target matching and replaces it with advantage-weighted pretraining loss.
-- [ ] [2025] [Greg-rec] Advantage Weighted Matching: Aligning RL with Pretraining in Diffusion Models - [paper](https://arxiv.org/abs/2509.25050)
-  - Recast diffusion policy gradients as noisy score / flow matching, then advantage-weight the original pretraining loss for a lower-variance RL objective. This is reward post-training of image generators rather than control, but directly complements the reweighted and $Q$-weighted objectives above.
-- [ ] Revisit [[papers-generative-decision-making]] and [Compress and Control](https://arxiv.org/abs/1411.5326)
-  - Conditional generation is not automatically causal control. Self-generated actions must be treated as interventions rather than evidence.
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2022] Decision Diffuser: Is Conditional Generative Modeling All You Need for Decision-Making? - [paper](https://arxiv.org/abs/2211.15657) | Conditional trajectory generation and guidance. |
+| ☐ | [2023] Diffusion Policy: Visuomotor Policy Learning via Action Diffusion - [paper](https://arxiv.org/abs/2303.04137), [project](https://diffusion-policy.cs.columbia.edu/) | Action-sequence diffusion for visuomotor control. |
+| ☐ | [2023] [Greg-rec] [SergeyLevine] IDQL: Implicit Q-Learning as an Actor-Critic Method with Diffusion Policies - [paper](https://arxiv.org/abs/2304.10573) | Interpret IQL as an actor-critic method, represent its potentially multimodal implicit actor with a diffusion behavior policy, and use critic-derived weights to extract the intended policy. |
+| ☐ | [2025] [Greg-rec] Efficient Online Reinforcement Learning for Diffusion Policy - [paper](https://arxiv.org/abs/2502.00361) | Reweighted score matching for policy improvement without differentiating through the sampling chain. |
+| ☐ | [2024] [Greg-rec] Diffusion-Based Reinforcement Learning via Q-Weighted Variational Policy Optimization - [paper](https://arxiv.org/abs/2405.16173) | Explicit $Q$-weighted variational objective discussed in the Universal Learner work. |
+| ☐ | [2023] [SergeyLevine] DDPO: Training Diffusion Models with Reinforcement Learning - [paper](https://arxiv.org/abs/2305.13301), [project](https://rl-diffusion.github.io/) | Treat each reverse denoising transition as an RL action and optimize the terminal reward using policy gradients. Read before AWM, which interprets DDPO as noisy-target matching and replaces it with advantage-weighted pretraining loss. |
+| ☐ | [2025] [Greg-rec] Advantage Weighted Matching: Aligning RL with Pretraining in Diffusion Models - [paper](https://arxiv.org/abs/2509.25050) | Recast diffusion policy gradients as noisy score / flow matching, then advantage-weight the original pretraining loss for a lower-variance RL objective. This is reward post-training of image generators rather than control, but directly complements the reweighted and $Q$-weighted objectives above. |
+| ☐ | Revisit [[papers-generative-decision-making]] and [Compress and Control](https://arxiv.org/abs/1411.5326) | Conditional generation is not automatically causal control. Self-generated actions must be treated as interventions rather than evidence. |
 
-## 9. Language Diffusion and Iterative Reasoning
+## 11. Language Diffusion Models
 
-- [ ] [2025] Large Language Diffusion Models - [paper](https://arxiv.org/abs/2502.09992), [project](https://ml-gsai.github.io/LLaDA-demo/), [code](https://github.com/ML-GSAI/LLaDA)
-- [ ] [2025] Dream 7B: Diffusion Large Language Models - [paper](https://arxiv.org/abs/2508.15487), [code](https://github.com/HKUNLP/Dream)
-  - 7B diffusion LM initialized from an AR model (Qwen2.5); scores benchmarks with the NELBO like LLaDA. Relevant to AR-to-diffusion weight transfer.
-- [ ] [2026] Improved Large Language Diffusion Models - [paper](https://arxiv.org/abs/2606.25331), [code](https://github.com/ML-GSAI/LLaDA)
-- [ ] [2026] An Intuitive Introduction to Flow-Based Language Generation - [blog](https://flow-based-llms.github.io/)
-  - Bridge from continuous flow matching to language: categorical endpoint distributions, cross-entropy-based Variational Flow Matching, simplex-valued denoisers, and flow-map distillation. Read before ELF.
-- [ ] [2026] [Greg-rec] [KaimingHe] [ELF: Embedded Language Flows](#2026-greg-rec-kaiminghe-elf-embedded-language-flows) - [paper](https://arxiv.org/abs/2605.10938)
-  - Continuous-time flow matching in token-embedding space, remaining continuous until a final shared-weight projection to discrete tokens. Use as the continuous-language foil to masked discrete diffusion models.
-- [ ] [2026] DiffusionGemma - [model card](https://ai.google.dev/gemma/docs/diffusiongemma/model_card), [project](https://deepmind.google/models/gemma/diffusiongemma/)
-  - Read these as system-level capstones for masked / block diffusion, bidirectional attention, and parallel text decoding.
-- [ ] [2026] [JunboZhao] Some Theoretical and Practical Thoughts on Diffusion Language Models - [blog](https://jzhao2024.github.io/notes/2026/08/08/diffusion-language-models.html)
-  - Critical systems and scaling perspective on masked and block dLLMs: per-position marginals versus joint consistency, the parallel-commitment tradeoff, token and infrastructure efficiency, and competition with AR plus speculative decoding. Read after LLaDA and DiffusionGemma; its analysis does not directly cover continuous approaches such as ELF.
-- [ ] [2024] IRED: Learning Iterative Reasoning through Energy Diffusion - [paper](https://arxiv.org/abs/2406.11179)
-  - Explore diffusion as an iterative refinement process over solutions rather than only as a data generator.
+### Discrete Language Models
+
+For the underlying methods, see [Discrete Diffusion](#5-discrete-diffusion).
+
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2025] Large Language Diffusion Models - [paper](https://arxiv.org/abs/2502.09992), [project](https://ml-gsai.github.io/LLaDA-demo/), [code](https://github.com/ML-GSAI/LLaDA) | LLaDA: large-scale masked diffusion language modeling. |
+| ☐ | [2025] Dream 7B: Diffusion Large Language Models - [paper](https://arxiv.org/abs/2508.15487), [code](https://github.com/HKUNLP/Dream) | 7B diffusion LM initialized from an AR model (Qwen2.5); scores benchmarks with the NELBO like LLaDA. Relevant to AR-to-diffusion weight transfer. |
+| ☐ | [2026] Improved Large Language Diffusion Models - [paper](https://arxiv.org/abs/2606.25331), [code](https://github.com/ML-GSAI/LLaDA) | Follow-up to LLaDA on improving large diffusion language models. |
+| ☐ | [2026] DiffusionGemma - [model card](https://ai.google.dev/gemma/docs/diffusiongemma/model_card), [project](https://deepmind.google/models/gemma/diffusiongemma/) | Read these as system-level capstones for masked / block diffusion, bidirectional attention, and parallel text decoding. |
+
+### Continuous Language Models
+
+For likelihood-trained continuous language models, see Plaid and RePlaid under [Scaling Laws and Compute Allocation](#8-scaling-laws-and-compute-allocation). See also Sander Dieleman's *Continuous Diffusion Language Models* under [Sander Dieleman Blog Posts](#sander-dieleman-blog-posts).
+
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2026] [Greg-rec] [KaimingHe] [ELF: Embedded Language Flows](#2026-greg-rec-kaiminghe-elf-embedded-language-flows) - [paper](https://arxiv.org/abs/2605.10938) | Continuous-time flow matching in token-embedding space, remaining continuous until a final shared-weight projection to discrete tokens. Use as the continuous-language foil to masked discrete diffusion models. |
+
+### Perspectives and Comparisons
+
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2026] An Intuitive Introduction to Flow-Based Language Generation - [blog](https://flow-based-llms.github.io/) | Bridge from continuous flow matching to language: categorical endpoint distributions, cross-entropy-based Variational Flow Matching, simplex-valued denoisers, and flow-map distillation. Read before ELF. |
+| ☐ | [2026] [JunboZhao] Some Theoretical and Practical Thoughts on Diffusion Language Models - [blog](https://jzhao2024.github.io/notes/2026/08/08/diffusion-language-models.html) | Critical systems and scaling perspective on masked and block dLLMs: per-position marginals versus joint consistency, the parallel-commitment tradeoff, token and infrastructure efficiency, and competition with AR plus speculative decoding. Read after LLaDA and DiffusionGemma; its analysis does not directly cover continuous approaches such as ELF. |
+
+## 12. Reasoning, Search, and Planning
+
+| Read | Paper / Resource | TL;DR |
+| :--: | --- | --- |
+| ☐ | [2024] IRED: Learning Iterative Reasoning through Energy Diffusion - [paper](https://arxiv.org/abs/2406.11179) | Explore diffusion as an iterative refinement process over solutions rather than only as a data generator. |
+| ☐ | [2025] [Bengio] Monte Carlo Tree Diffusion for System 2 Planning - [paper](https://arxiv.org/abs/2502.07202) | Recast denoising as tree search over partially denoised plans: evaluate, branch, prune, and revisit candidates so planning quality can improve with inference-time compute. Read as an MCTS-style search extension to diffusion planning, not as a core diffusion prerequisite. |
 
 ---
 
@@ -672,6 +666,15 @@ not merely $K<n$. For example, a 1,024-token autoregressive sample uses 1,024 se
   - A trajectory model can therefore be recognizably DiT-derived while using rotary embeddings, SwiGLU, packed observation/action/reward tokens, structured attention, and a flow/velocity target. Those are architectural descendants, not the exact ImageNet DiT described in this paper.
   - When reading code, separate three choices that are often bundled together: **representation** (pixels, VAE latents, or trajectory tokens), **backbone** (U-Net or Transformer), and **training target** ($x$, $\epsilon$, $v$, score, or flow velocity). DiT's central intervention is only the backbone choice.
 - **Core takeaway**: DiT made diffusion architecture look more like modern language-model architecture: a uniform Transformer whose quality improves as model and token compute increase. Its latent VAE, DDPM corruption process, noise target, covariance learning, and sampler remain conventional; the decisive replacement is U-Net $\rightarrow$ conditioned Transformer.
+
+## [2025] [Block Diffusion: Interpolating Between Autoregressive and Diffusion Language Models](https://arxiv.org/abs/2503.09573)
+
+- **Date**: 2026-10-16
+
+---
+
+- **Abstract**:
+  > Diffusion language models offer unique benefits over autoregressive models due to their potential for parallelized generation and controllability, yet they lag in likelihood modeling and are limited to fixed-length generation. In this work, we introduce a class of block diffusion language models that interpolate between discrete denoising diffusion and autoregressive models. Block diffusion overcomes key limitations of both approaches by supporting flexible-length generation and improving inference efficiency with KV caching and parallel token sampling. We propose a recipe for building effective block diffusion models that includes an efficient training algorithm, estimators of gradient variance, and data-driven noise schedules to minimize the variance. Block diffusion sets a new state-of-the-art performance among diffusion models on language modeling benchmarks and enables generation of arbitrary-length sequences. We provide the code, along with the model weights and blog post on the project page: https://m-arriola.com/bd3lms
 
 ## [2026] [Greg-rec] [KaimingHe] [ELF: Embedded Language Flows](https://arxiv.org/abs/2605.10938)
 
