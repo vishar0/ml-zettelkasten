@@ -1,7 +1,7 @@
 # Compression
 
 - **Created**: 2026-06-07
-- **Last Updated**: 2026-07-26
+- **Last Updated**: 2026-10-22
 - **Status**: `In Progress`
 - **Description**: The information-theoretic view of compression, including the compression–prediction duality, arithmetic coding, minimum description length (MDL), universal coding, and compression as an objective for learning and control.
 - **Related**:
@@ -24,6 +24,7 @@
 - [ ] [[papers-gln]]
 - [ ] [byronknoll] gmix: <https://github.com/byronknoll/gmix>
 - [x] [talk] [ilya] [2023] An Observation on Generalization (Simons Institute) - [video](https://www.youtube.com/live/AKMuA_TVz3A)
+- [ ] [2023] [MicahGoldblum,AndrewGordonWilson] The No Free Lunch Theorem, Kolmogorov Complexity, and the Role of Inductive Biases in Machine Learning - [paper](https://arxiv.org/abs/2304.05366)
 - [ ] [talk] [jackrae] [2023] Compression for AGI (Stanford MLSys) - [video](https://www.youtube.com/watch?v=dO4TPJkeaaU)
 - [ ] [3blue1brown] [2026] Reinventing Entropy: Compression is Intelligence Part 1 - [video](https://www.youtube.com/watch?v=l6DKRf-fAAM&t=824s)
 - [ ] [jveness] [2023] Language Modeling is Compression - [paper](https://arxiv.org/abs/2309.10668), [code](https://github.com/google-deepmind/language_modeling_is_compression)

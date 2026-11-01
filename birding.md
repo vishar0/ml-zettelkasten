@@ -3,7 +3,7 @@
 "Bird" in the sense of Freeman Dyson's "Birds and Frogs": <https://www.ams.org/notices/200902/rtx090200212p.pdf>.
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-02-19
+- **Last Updated**: 2026-10-23
 - **Status**: `In Progress`
 
 ---
@@ -30,6 +30,7 @@
 - [ ] [2025] [NeurIPS] [Melanie Mitchell, "On the Science of Alien Intelligences: Evaluating Cognitive Capabilities in Babies, Animals, and AI"](https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109607)
 - [ ] [2025] [NeurIPS] [Andrew Saxe, Demystifying depth: Principles of learning in deep neural networks](https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109602)
 - [ ] [2025] [NeurIPS] [Kyunghyun Cho, "From Benchmarks to Problems - A Perspective on Problem Finding in AI"](https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109605)
+- [ ] [2026] [Geoffrey Hinton, "Vienna Gödel Lecture 2026"](https://www.youtube.com/watch?v=KNAMnJAuPHo)
 
 ## Articles
 

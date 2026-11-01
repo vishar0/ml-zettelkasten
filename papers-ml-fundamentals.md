@@ -1,7 +1,7 @@
 # ML Fundamentals
 
 - **Created**: 2025-01-04
-- **Last Updated**: 2026-10-15
+- **Last Updated**: 2026-10-27
 - **Status**: `In Progress`
 
 ---
@@ -10,6 +10,7 @@
 - [ ] [2014] Neural Turing Machines - [paper](https://arxiv.org/abs/1410.5401)
 - [ ] [2015] Attention-Based Models for Speech Recognition — [paper](https://arxiv.org/abs/1506.07503)
 - [X] [2015] Neural Machine Translation of Rare Words with Subword Units — [paper](https://arxiv.org/abs/1508.07909)
+- [ ] [2015] [Hinton] Distilling the Knowledge in a Neural Network — [paper](https://arxiv.org/abs/1503.02531)
 - [ ] SentencePiece ([code](https://github.com/google/sentencepiece))
 - [ ] [2017] Faiss: Billion-scale similarity search with GPUs — [paper](https://arxiv.org/abs/1702.08734)
 - [ ] [2018] Subword Regularization: Improving Neural Network Translation Models with Multiple Subword Candidates — [paper](https://arxiv.org/abs/1804.10959)
