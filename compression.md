@@ -1,7 +1,7 @@
 # Compression
 
 - **Created**: 2026-06-07
-- **Last Updated**: 2026-10-22
+- **Last Updated**: 2026-11-10
 - **Status**: `In Progress`
 - **Description**: The information-theoretic view of compression, including the compression–prediction duality, arithmetic coding, minimum description length (MDL), universal coding, and compression as an objective for learning and control.
 - **Related**:
@@ -36,7 +36,7 @@
 - [ ] [[papers-small-language-models]] [2025] [jxmo,FAIR] How Much Do Language Models Memorize? - [paper](https://arxiv.org/abs/2505.24832)
 - [ ] [2022] Less is More: Parameter-Free Text Classification with Gzip - [paper](https://arxiv.org/abs/2212.09410)
 - [x] [2025] zip2zip: Inference-Time Adaptive Tokenization via Online Compression - [paper](https://arxiv.org/abs/2506.01084)
-- [ ] [schmidhuber] [2009] Driven by Compression Progress: A Simple Principle Explains Essential Aspects of Subjective Beauty, Novelty, Surprise, Interestingness, Attention, Curiosity, Creativity, Art, Science, Music, Jokes - [paper](https://arxiv.org/abs/0812.4360). cf. [[papers-open-ended-learning]]
+- [ ] [[schmidhuber]] [2009] Driven by Compression Progress: A Simple Principle Explains Essential Aspects of Subjective Beauty, Novelty, Surprise, Interestingness, Attention, Curiosity, Creativity, Art, Science, Music, Jokes - [paper](https://arxiv.org/abs/0812.4360). cf. [[papers-open-ended-learning]]
 - [ ] [2018] [FAIR] Description Length of Deep Learning Models — [papers](https://arxiv.org/abs/1802.07044)
 - [ ] [2019] BB-ANS: Practical Lossless Compression with Latent Variables using Bits Back Coding - [paper](https://arxiv.org/abs/1901.04866). orig. Hinton & van Camp 1993; bridges VAE/diffusion ELBO → real compression; cf. [[papers-vae]] [[diffusion]]
 - [ ] TODO <https://www.adaptiveagents.org/_media/universal-ai-as-imitation.pdf>

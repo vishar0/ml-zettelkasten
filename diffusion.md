@@ -1,10 +1,11 @@
 # Diffusion
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-10-16
+- **Last Updated**: 2026-11-04
 - **Status**: `In Progress`
 - **Related**:
   - [[course-mit-diffusion-2026]] — Structured MIT course with lecture notes, slides, recordings, and labs on flow matching and diffusion models.
+  - [[papers-optimizers#Weight Averaging]] — EMA, LAWA, and EDM2's power-function averaging and post-hoc reconstruction.
 
 ---
 
@@ -98,6 +99,7 @@ Titles link to detailed notes below when available; paper, post, code, and other
 | Read | Paper / Resource | TL;DR |
 | :--: | --- | --- |
 | ☑ | [2022] [BillPeebles,SainingXie] [DiT: Scalable Diffusion Models with Transformers](#2022-billpeeblessainingxie-dit-scalable-diffusion-models-with-transformers) - [paper](https://arxiv.org/abs/2212.09748) | Standard DiT architecture and timestep / conditioning machinery. |
+| ☐ | [2023] [TeroKarras] EDM2: Analyzing and Improving the Training Dynamics of Diffusion Models - [paper](https://arxiv.org/abs/2312.02696) | Redesign ADM layers to preserve activation, weight, and update magnitudes, improving training efficiency; independently introduces post-hoc tuning of weight-averaging profiles. See [[papers-optimizers#Weight Averaging]] for PFMA and reconstruction. |
 | ☐ | [2021] [JonathanHo,ChitwanSaharia,TimSalimans] CDM: Cascaded Diffusion Models for High Fidelity Image Generation - [paper](https://arxiv.org/abs/2106.15282) | Generate images through a low-resolution base model followed by diffusion super-resolution models; conditioning augmentation makes later stages robust to errors from earlier generated stages. |
 | ☐ | [2021] LDM: High-Resolution Image Synthesis with Latent Diffusion Models - [paper](https://arxiv.org/abs/2112.10752) | Train diffusion in an autoencoder's compressed latent space, then decode generated latents into images. |
 | ☐ | [2021] [AlexNichol,PrafullaDhariwal] GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models - [paper](https://arxiv.org/abs/2112.10741) | Scale text-conditional diffusion and compare CLIP guidance with classifier-free guidance; an important bridge from guided image diffusion to modern text-to-image systems. |

@@ -1,7 +1,7 @@
 # Generative Decision-Making
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-08-10
+- **Last Updated**: 2026-11-10
 - **Status**: `In Progress`
 - **Description**: Decision-making through conditional generation of actions and trajectories, including goal-, reward-, and return-conditioned models.
 - **Related**:
@@ -13,7 +13,7 @@
 
 ---
 
-- [ ] [2019] [Schmidhuber] Reinforcement Learning Upside Down: Don't Predict Rewards, Just Map Them to Actions - [paper](https://arxiv.org/abs/1912.02875), [training agents](https://arxiv.org/abs/1912.02877)
+- [ ] [[schmidhuber]] [2019] Reinforcement Learning Upside Down: Don't Predict Rewards, Just Map Them to Actions - [paper](https://arxiv.org/abs/1912.02875), [training agents](https://arxiv.org/abs/1912.02877)
 - [ ] [2019] [SergeyLevine] Reward Conditioned Policies - [paper](https://arxiv.org/abs/1912.13465)
 - [ ] [2019] [SergeyLevine] GCSL: Learning to Reach Goals via Iterated Supervised Learning - [paper](https://arxiv.org/abs/1912.06088)
 - [ ] [2021] [SergeyLevine] Trajectory Transformer: Offline RL as One Big Sequence Modeling Problem - [paper](https://arxiv.org/abs/2106.02039)

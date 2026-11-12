@@ -1,12 +1,12 @@
 # Open-Ended Learning
 
 - **Created**: 2026-05-05
-- **Last Updated**: 2026-08-14
+- **Last Updated**: 2026-11-04
 - **Status**: `In Progress`
 - **Description**: Agents that learn through open-ended environments, curricula, exploration, environment design, and long-horizon open-world interaction.
 - **Related**:
   - [[papers-rl]] — Open-ended learning extends RL beyond fixed tasks through exploration, automatic curricula, and environment design.
-  - [[papers-genie]] — Generated worlds can provide the expanding environment distribution that open-ended learning requires.
+  - [[papers-world-models#Genie]] — Generated worlds can provide the expanding environment distribution that open-ended learning requires.
   - [[papers-generalist-agents]] — Training over an expanding task distribution can produce broad, transferable competence.
 
 ---
@@ -41,6 +41,6 @@
 
 ## Generated Interactive Worlds
 
-- [2024] [[papers-genie]] Genie: Generative Interactive Environments - [paper](https://arxiv.org/abs/2402.15391), [website](https://sites.google.com/view/genie-2024/home)
-- [2024] [[papers-genie]] Genie 2: A large-scale foundation world model - [blog](https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/)
-- [2025] [[papers-genie]] Genie 3: A new frontier for world models - [blog](https://deepmind.google/discover/blog/genie-3-a-new-frontier-for-world-models/)
+- [2024] [[papers-world-models#Genie]] Genie: Generative Interactive Environments - [paper](https://arxiv.org/abs/2402.15391), [website](https://sites.google.com/view/genie-2024/home)
+- [2024] [[papers-world-models#Genie]] Genie 2: A large-scale foundation world model - [blog](https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/)
+- [2025] [[papers-world-models#Genie]] Genie 3: A new frontier for world models - [blog](https://deepmind.google/discover/blog/genie-3-a-new-frontier-for-world-models/)

@@ -1,14 +1,18 @@
-# Dreamer
+# World Models
 
 - **Created**: 2025-10-22
-- **Last Updated**: 2026-08-07
+- **Last Updated**: 2026-11-05
 - **Status**: `In Progress`
-- **Description**: The model-based reinforcement learning lineage from World Models and PlaNet through Dreamer, centered on learning latent dynamics and improving behavior through planning or imagination.
+- **Description**: Learned world models for planning, policy improvement through imagination, and generative interactive environments, including the Dreamer and Genie lineages.
 - **Related**:
   - [[papers-rl]]
-  - [[papers-genie]] — Interactive generative world models trained from video rather than the Dreamer control lineage.
+  - [[papers-robotics#Humanoid Motion Tracking and Differentiable Control]] — Humanoid control with learned dynamics and differentiable simulation.
+  - [[papers-open-ended-learning]] — Generated worlds can provide an expanding distribution of environments and tasks.
+  - [[papers-generalist-agents]] — World models can supply experience for training and evaluating broadly capable agents.
 
 ---
+
+## Dreamer
 
 - [x] [2018] [hardmaru] World Models - [paper](https://arxiv.org/abs/1803.10122)
 - [ ] [2018] [Dreamer0] PlaNet: Learning Latent Dynamics for Planning from Pixels - [paper](https://arxiv.org/abs/1811.04551)
@@ -21,7 +25,7 @@
 
 ---
 
-## [2018] [hardmaru] [World Models](https://arxiv.org/abs/1803.10122)
+### [2018] [hardmaru] [World Models](https://arxiv.org/abs/1803.10122)
 
 - **Date**: 2026-01-21
 - **Blog**: <https://worldmodels.github.io/>
@@ -129,7 +133,7 @@
   - Expect the policy to exploit every error in the learned model.
   - Dreamer's fundamental contribution is not inventing the dream; World Models already supplies that idea. Dreamer turns it into an integrated, differentiable actor–critic procedure.
 
-## [2018] [Dreamer0] [PlaNet: Learning Latent Dynamics for Planning from Pixels](https://arxiv.org/abs/1811.04551)
+### [2018] [Dreamer0] [PlaNet: Learning Latent Dynamics for Planning from Pixels](https://arxiv.org/abs/1811.04551)
 
 - **Date**: 2026-03-18
 - **Blog**: <https://research.google/blog/introducing-planet-a-deep-planning-network-for-reinforcement-learning/>
@@ -249,7 +253,7 @@
   - **Important nuance**: several tested dynamics models benefit from latent overshooting, but the paper explicitly reports that its final RSSM-based PlaNet agent does not require it. RSSM itself, joint latent learning, and MPC are the central pieces to carry into Dreamer.
 - **PlaNet in one sentence**: infer the current RSSM state with the posterior, search over action sequences by rolling the prior and reward model forward with CEM, execute one action, observe, and replan.
 
-## [2019] [Dreamer1] [Dream to Control: Learning Behaviors by Latent Imagination](https://arxiv.org/abs/1912.01603)
+### [2019] [Dreamer1] [Dream to Control: Learning Behaviors by Latent Imagination](https://arxiv.org/abs/1912.01603)
 
 - **Date**: 2026-03-18
 - **Code**: <https://github.com/google-research/dreamer>
@@ -448,3 +452,35 @@
     - It avoids pixel generation but solves only about half the tasks and underperforms reconstruction overall.
   - The paper also reports that latent overshooting did not improve Dreamer's model learning in these experiments.
 - **Dreamer 1 in one sentence**: infer RSSM states from replay, imagine short trajectories with the observation-free transition model, train a critic with $\lambda$-returns, and train the actor by differentiating those returns through the entire imagined trajectory.
+
+---
+
+## Differentiable Dynamics for Control
+
+- [2026] [[papers-robotics#Humanoid Motion Tracking and Differentiable Control]] SuperMimic: Scaling Humanoid Whole-Body Control with One Differentiable World Model - [paper](https://arxiv.org/abs/2610.28480) — one learned dynamics model supports policy optimization across a humanoid motion library; the primary reading entry is in robotics alongside SONIC and NablaMimic.
+
+---
+
+## Genie
+
+Generative interactive world models that learn controllable environments from video.
+
+- [ ] [2024] [rockt] Genie: Generative Interactive Environments - [paper](https://arxiv.org/abs/2402.15391)
+- [ ] [2024] [rockt] Genie 2: A large-scale foundation world model - [blog](https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/)
+- [ ] [2025] [rockt] Genie 3: A new frontier for world models - [blog](https://deepmind.google/discover/blog/genie-3-a-new-frontier-for-world-models/)
+
+---
+
+### [2024] [rockt] Genie: Generative Interactive Environments
+
+- **Date**: 2025-10-22
+- **Arxiv**: <https://arxiv.org/abs/2402.15391>
+- **Paperpile**: <https://app.paperpile.com/view/?id=d369b9a2-4115-4a93-b839-1617a20d31ec>
+- **Blog**: <https://sites.google.com/view/genie-2024/home>
+
+---
+
+- **Abstract**:
+  - > We introduce Genie, the first generative interactive environment trained in an unsupervised manner from unlabelled Internet videos. The model can be prompted to generate an endless variety of action- controllable virtual worlds described through text, synthetic images, photographs, and even sketches. At 11B parameters, Genie can be considered a foundation world model. It is comprised of a spatiotemporal video tokenizer, an autoregressive dynamics model, and a simple and scalable latent action model. **Genie enables users to act in the generated environments on a frame-by-frame basis despite training without any ground-truth action labels** or other domain-specific requirements typically found in the world model literature. Further the resulting learned latent action space facilitates training agents to imitate behaviors from unseen videos, opening the path for training generalist agents of the future.
+  - > **Learning to control without action labels**: What makes Genie unique is its ability to learn fine-grained controls exclusively from Internet videos. This is a challenge because Internet videos do not typically have labels regarding which action is being performed, or even which part of the image should be controlled. Remarkably, Genie learns not only which parts of an observation are generally controllable, but also infers diverse latent actions that are consistent across the generated environments.
+- TODO

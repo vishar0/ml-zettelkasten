@@ -1,13 +1,14 @@
 # Scaling Laws
 
 - **Created**: 2026-06-17
-- **Last Updated**: 2026-10-16
+- **Last Updated**: 2026-11-04
 - **Status**: `In Progress`
 - **Description**: The empirical science of how loss scales with compute, data, and parameters, including transfer across distributions and training under a fixed data budget.
 - **Related**:
   - [[papers-foundation-models]] - Scaling laws guide how foundation models allocate parameters, data, and compute.
   - [[papers-data-centric-ml]] - Data selection can change or beat standard scaling curves.
   - [[diffusion#8. Scaling Laws and Compute Allocation]] - Scaling laws for diffusion models.
+  - [[papers-optimizers#Learning-Rate Schedules and Horizon-Free Training]] - Learning-rate schedules and averaging for reusing training trajectories across budgets.
 
 ---
 
@@ -18,6 +19,7 @@
 - [ ] [2019] A Constructive Prediction of the Generalization Error Across Scales — [paper](https://arxiv.org/abs/1909.12673)
 - [ ] [2020] [Kaplan] Scaling Laws for Neural Language Models — [paper](https://arxiv.org/abs/2001.08361)
 - [ ] [2022] Chincilla: Training Compute-Optimal Large Language Models — [paper](https://arxiv.org/abs/2203.15556)
+- [ ] [2024] [AlexanderHägele] Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations — [paper](https://arxiv.org/abs/2405.18392) — reuse training runs across budgets through constant learning rates, cooldowns, and weight averaging, reducing scaling-study compute; see [[papers-optimizers#Learning-Rate Schedules and Horizon-Free Training]] for the scheduling methods.
 - [ ] [2025] [Cerebras] Power Lines: Scaling Laws for Weight Decay and Batch Size in LLM Pre-training — [paper](https://arxiv.org/abs/2505.13738)
 - [ ] [2022] muP: Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer — [paper](https://arxiv.org/abs/2203.03466)
 - [ ] [2021] Scaling Laws for Transfer — [paper](https://arxiv.org/abs/2102.01293)

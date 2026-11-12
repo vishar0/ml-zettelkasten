@@ -1,13 +1,14 @@
 # Optimization Algorithms
 
 - **Created**: 2022-04
-- **Last Updated**: 2026-10-26
+- **Last Updated**: 2026-11-04
 - **Status**: `In Progress`
-- **Description**: First-order optimizers for deep nets, from SGD with momentum and the adaptive family through decoupled weight decay to Muon's orthogonalized updates.
+- **Description**: First-order optimizers for deep nets, weight decay, weight averaging, and learning-rate schedules, including horizon-free training and Muon's orthogonalized updates.
 - **Related**:
   - [[scaling-laws]] — batch-size and weight-decay scaling rules.
   - [[karpathy-repos]] — nanochat's Muon + AdamW.
   - [[papers-distributed-optimization]]
+  - [[diffusion]] — EDM2's diffusion architecture and training contributions.
 
 ---
 
@@ -47,9 +48,23 @@
 
 ## Weight Averaging
 
-Averaging points along one training trajectory, EMA, SWA and sparse checkpoint averaging. DiLoCo with a single outer step reduces to model souping, see [[papers-distributed-optimization]].
+Averaging weights along one training trajectory: uniform stochastic weight averaging (SWA), exponential moving average (EMA), latest-window averaging (LAWA), and power-function moving average (PFMA). For their interaction with learning-rate decay and stopping budgets, see [[papers-optimizers#Learning-Rate Schedules and Horizon-Free Training]]. DiLoCo with a single outer step reduces to model souping, see [[papers-distributed-optimization]].
 
-- [ ] [2023] [SunnySanyal] LAWA: Early Weight Averaging meets High Learning Rates for LLM Pre-training — [paper](https://arxiv.org/abs/2306.03241)
+- [ ] [2018] [PavelIzmailov,AndrewGordonWilson] SWA: Averaging Weights Leads to Wider Optima and Better Generalization — [paper](https://arxiv.org/abs/1803.05407) — average iterates collected under constant or cyclical learning rates to obtain flatter solutions and better generalization with one model.
+- [ ] [2022] [JeanKaddour] Stop Wasting My Time! Saving Days of ImageNet and BERT Training with Latest Weight Averaging — [paper](https://arxiv.org/abs/2209.14981) — original LAWA: average the latest checkpoints in a sliding window to improve intermediate models and reach a target quality earlier.
+- [ ] [2023] [SunnySanyal] LAWA: Early Weight Averaging meets High Learning Rates for LLM Pre-training — [paper](https://arxiv.org/abs/2306.03241) — LLM follow-up to Kaddour: checkpoint averaging helps early in pretraining, with larger gains at high learning rates and with wider checkpoint spacing.
+- [ ] [2023] [TeroKarras] EDM2: Analyzing and Improving the Training Dynamics of Diffusion Models — [paper](https://arxiv.org/abs/2312.02696) — power-function averaging profiles and post-hoc reconstruction let averaging length be tuned from saved averages without retraining; the method behind Alan's PFMA experiments. See [[diffusion#3. Representation and Architecture]] for the magnitude-preserving diffusion architecture.
+
+## Learning-Rate Schedules and Horizon-Free Training
+
+Horizon-free training rules do not require the total number of steps in advance; anytime training aims to make useful checkpoints available at arbitrary stopping points. A horizon-free schedule can still have explicit learning-rate decay, while schedule-free optimizers change the update and averaging dynamics. WSD and WSqD retain endpoint-specific cooldowns even though their main training trajectory can continue without a fixed endpoint. See [[papers-optimizers#Weight Averaging]] for averaging methods and [[scaling-laws]] for reusing training runs across compute budgets.
+
+- [ ] [2024] [AaronDefazio] The Road Less Scheduled — [paper](https://arxiv.org/abs/2405.15682) — schedule-free optimization couples iterate averaging with the optimizer's update, avoiding a prescribed stopping time; an alternative to explicit decay plus evaluation-only averaging.
+- [ ] [2024] [AlexanderHägele] Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations — [paper](https://arxiv.org/abs/2405.18392) — constant learning rates with cooldowns and weight averaging allow training trajectories to be reused across budgets, reducing the cost of scaling experiments; also indexed in [[scaling-laws]].
+- [ ] [2024] [KaiyueWen] Understanding Warmup-Stable-Decay Learning Rates: A River Valley Loss Landscape Perspective — [paper](https://arxiv.org/abs/2410.05192) — the stable phase makes progress along a valley while cooldown suppresses oscillations across it; motivates WSD-S, which reuses decay phases for multiple training budgets.
+- [ ] [2026] [AlexandruMeterez,PranavAjitNair] Anytime Pretraining: Horizon-Free Learning-Rate Schedules with Weight Averaging — [paper](https://arxiv.org/abs/2602.03702) — combines constant or inverse-square-root learning rates with weight averaging to obtain competitive checkpoints across training horizons; direct motivation for Alan's horizon-free pretraining notebook. See [[papers-optimizers#Weight Averaging]].
+- [ ] [2026] [AnujApte] Anytime Training with Schedule-Free Spectral Optimization — [paper](https://arxiv.org/abs/2605.23061) — SF-NorMuon brings schedule-free updates to spectral optimization and studies weight-decay placement for long-horizon stability; a comparator for Muon-based anytime training.
+- [ ] [2026] [JianhaoMa,YuxinChen] WSqD: A Horizon-Free Learning Rate Schedule for Large Model Training — [paper](https://arxiv.org/abs/2607.10959) — replaces WSD's constant base with shifted inverse-square-root decay while retaining a final linear cooldown; only the cooldown requires choosing an endpoint.
 
 ## Muon
 

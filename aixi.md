@@ -1,7 +1,7 @@
 # Universal AI (AIXI)
 
 - **Created**: 2026-07-02
-- **Last Updated**: 2026-07-25
+- **Last Updated**: 2026-11-10
 - **Status**: `In Progress`
 - **Description**: AIXI = **Solomonoff induction (prediction) + expectimax (control)**: the formal, incomputable upper bound of machine intelligence (the "universal AI" framework). Intelligence is measured by the **Legg-Hutter score** (expected cumulative reward over all computable environments, weighted by the universal prior), and AIXI is by definition its maximizer. Incomputable, so it can only be **approximated from below**.
 - **Related**:
@@ -21,7 +21,7 @@
 
 - [ ] TODO <https://www.lesswrong.com/posts/TtYuY2QBug3dn2wuo/the-problem-with-aixi>
 - [ ] [2010] [jveness] MC-AIXI-CTW: Reinforcement Learning via AIXI Approximation - [paper](https://arxiv.org/abs/1007.2049)
-- [ ] [2002] [Schmidhuber] The Speed Prior — computable prior restoring tractability - [paper](TODO link), <https://www.alignmentforum.org/posts/bC5xd7wQCnTDw7Kyx/getting-up-to-speed-on-the-speed-prior-in-2022>
+- [ ] [[schmidhuber]] [2002] The Speed Prior — computable prior restoring tractability - [paper](TODO link), <https://www.alignmentforum.org/posts/bC5xd7wQCnTDw7Kyx/getting-up-to-speed-on-the-speed-prior-in-2022>
 - [ ] [2024] [Grau-Moya et al.] Learning Universal Predictors - [paper](https://arxiv.org/abs/2401.14953). Amortized Bayesian predictor via log-loss → universal limit in principle. Key "pretraining ≈ resource-bounded universal compression" citation.
 - [ ] [2023/2026] [Catt et al.; Kim & Lee] Pushing the heavy lifting of AIXI into the predictor - [paper](TODO link)
 - [ ] [2025] [Meulemans et al.] Embedded / multi-agent extension of AIXI (agent inside the environment class) - [paper](TODO link)

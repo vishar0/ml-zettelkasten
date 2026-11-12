@@ -1,7 +1,7 @@
 # Linear Attention
 
 - **Created**: 2026-08-11
-- **Last Updated**: 2026-10-15
+- **Last Updated**: 2026-11-10
 - **Status**: `Not Started`
 - **Description**: Attention-like sequence models whose recurrent form updates a fixed-size memory, with emphasis on fast weights, gating, delta-rule updates, and hardware-efficient parallel training.
 - **Related**:
@@ -9,9 +9,9 @@
 
 ---
 
-- [ ] [1991] [Schmidhuber] The 1991 Unnormalized Linear Transformer (ULTRA) — [blog](https://people.idsia.ch/~juergen/1991-unnormalized-linear-transformer.html)
+- [ ] [[schmidhuber]] [1991] The 1991 Unnormalized Linear Transformer (ULTRA) — [blog](https://people.idsia.ch/~juergen/1991-unnormalized-linear-transformer.html)
 - [ ] [2020] Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention — [paper](https://arxiv.org/abs/2006.16236)
-- [ ] [2021] [Schmidhuber] Linear Transformers Are Secretly Fast Weight Programmers — [paper](https://arxiv.org/abs/2102.11174)
+- [ ] [[schmidhuber]] [2021] Linear Transformers Are Secretly Fast Weight Programmers — [paper](https://arxiv.org/abs/2102.11174)
 - [ ] [2023] RWKV: Reinventing RNNs for the Transformer Era — [paper](https://arxiv.org/abs/2305.13048)
 - [ ] [2023] Retentive Network: A Successor to Transformer for Large Language Models — [paper](https://arxiv.org/abs/2307.08621)
 - [ ] [2023] [ChrisRe] Zoology: Measuring and Improving Recall in Efficient Language Models — [paper](https://arxiv.org/abs/2312.04927)

@@ -1,8 +1,11 @@
 # Robotics
 
 - **Created**: 2025-11-10
-- **Last Updated**: 2026-05-09
+- **Last Updated**: 2026-11-05
 - **Status**: `In Progress`
+- **Related**:
+  - [[papers-rl]] — Policy learning from rewards and interaction.
+  - [[papers-world-models]] — Learned dynamics for planning and policy improvement.
 
 ---
 
@@ -26,6 +29,20 @@
 - [ ] [2026] [PI] VLAs with Long and Short-Term Memory - [post](https://www.pi.website/research/memory), [paper](https://www.pi.website/download/Mem.pdf)
 - [ ] [2026] [PI] Precise Manipulation with Efficient Online RL - [post](https://www.pi.website/research/rlt), [paper](https://www.pi.website/download/rlt.pdf)
 - [ ] [2026] [PI] $\pi_{0.7}$: a Steerable Model with Emergent Capabilities - [post](https://www.pi.website/blog/pi07), [paper](https://www.pi.website/download/pi07.pdf)
+
+### Humanoid Motion Tracking and Differentiable Control
+
+Train whole-body controllers to follow reference motions while obeying physical dynamics. These papers compare scaling model-free RL with learning through a differentiable dynamics model or the simulator itself.
+
+- [ ] [2025] [NVIDIA] SONIC: Supersizing Motion Tracking for Natural Humanoid Whole-Body Control - [paper](https://arxiv.org/abs/2511.07820), [project](https://nvlabs.github.io/GEAR-SONIC/) — scale PPO-based motion tracking across model capacity, motion data, and compute to learn one generalist humanoid controller with shared interfaces for downstream control.
+- [ ] [2026] [QiayuanLiao] SuperMimic: Scaling Humanoid Whole-Body Control with One Differentiable World Model - [paper](https://arxiv.org/abs/2610.28480), [project](https://supermimic.github.io/) — fit shared robot dynamics from simulator transitions and train the tracking policy by backpropagating through short imagined rollouts, with a critic estimating longer-term rewards. See [[papers-world-models#Differentiable Dynamics for Control]] for the methodological connection.
+- [ ] [2026] [WeylLu,YubeiChen] NablaMimic (∇Mimic): Ultra-Efficient Humanoid Control with Differentiable Simulation - [paper](https://sailab.ai/nablamimic/assets/nablamimic.pdf), [project](https://sailab.ai/nablamimic/) — train directly through simulator gradients using NablaEngine; median-relative per-sample clipping stabilizes contact gradients, and regression onto gradient-derived action targets improves the policy without a learned world model.
+
+### RL Post-Training and Fleet Learning
+
+Improve pretrained robot policies using deployment experience, combining offline data with autonomous trials and human interventions.
+
+- [ ] [2026] [YiWang,JianlanLuo] Learning While Deploying: Fleet-Scale Reinforcement Learning for Generalist Robot Policies - [paper](https://arxiv.org/abs/2605.00416), [project](https://learning-while-deploying.github.io/) — offline-to-online RL post-training of a flow-based VLA policy from shared fleet experience; distributional implicit value learning estimates returns, and Q-learning via Adjoint Matching turns critic gradients into policy updates.
 
 ---
 
