@@ -3,7 +3,7 @@
 "Bird" in the sense of Freeman Dyson's "Birds and Frogs": <https://www.ams.org/notices/200902/rtx090200212p.pdf>.
 
 - **Created**: 2025-08-19
-- **Last Updated**: 2026-10-23
+- **Last Updated**: 2026-11-12
 - **Status**: `In Progress`
 
 ---
@@ -32,10 +32,16 @@
 - [ ] [2025] [NeurIPS] [Kyunghyun Cho, "From Benchmarks to Problems - A Perspective on Problem Finding in AI"](https://neurips.cc/virtual/2025/loc/san-diego/invited-talk/109605)
 - [ ] [2026] [Geoffrey Hinton, "Vienna Gödel Lecture 2026"](https://www.youtube.com/watch?v=KNAMnJAuPHo)
 
-## Articles
+## Blogs
 
 - [ ] [2017] ["Open-endedness: The last grand challenge you’ve never heard of"](https://www.oreilly.com/radar/open-endedness-the-last-grand-challenge-youve-never-heard-of)
 - [ ] [2026] [Sara Hooker, "On the Slow Death of Scaling"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5877662)
 - [x] [2026] [Jim Fan, "The Second Pre-training Paradigm"](https://x.com/DrJimFan/status/2018754323141054786)
 - [x] [2026] [Maithra Raghu, "The Post-Scaling Era of Frontier AI"](https://x.com/maithra_raghu/status/2024154498961420509)
 - [x] [2026] [a16z, "Why We Need Continual Learning"](https://a16z.com/why-we-need-continual-learning/)
+- [ ] [2024] [Felix Hill, "The Bittersweet Lesson: The strange case of inductive bias in Transformers"](https://medium.com/@felixhill/the-agreeable-lesson-9766382c6d83)
+  - > A known ‘universal’ fact about languages is that local dependencies are much more common than long distance dependencies. [..] If you apply a dependency parser across many languages, the results are unequivocal: the modal dependency distance is 1, the median distance is either 1 or 2. In short, in language, the distribution of dependencies is massively skewed towards the lower end.
+  - > But here’s where things get strange. Recurrent networks (RNNs) have a clear and very widely studied inductive bias toward representing local (short) dependencies. Further inductive biases like Long Short Term Memory (LSTM) are really just attempts to mitigate the underlying short-termism of the RNN. In contrast, Transformers have precisely zero bias when it comes to dependency length. Yet transformers outperform RNNs consistently across language tasks. So — language data is almost all short-term dependencies. RNNs have a short term bias and Transformers don’t. Yet Transformers win. Strange indeed.
+  - > TODO
+- [ ] [2025] [Kyle Cranmer, "The Bittersweet Lesson"](https://theoryandpractice.org/2025/09/The%20Bittersweet%20Lesson/)
+- [ ] [2026] [Tim Dettmers, "dlab Open Source Week: Frontier AI on Your Own Hardware"](https://timdettmers.com/2026/09/21/dlab-open-source-week/)

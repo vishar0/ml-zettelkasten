@@ -1,28 +1,19 @@
-# Essays
+# LessWrong
 
 - **Created**: 2025-10-13
-- **Last Updated**: 2026-11-11
+- **Last Updated**: 2026-11-19
 - **Status**: `Not Started`
 - **Related**:
   - [[schmidhuber]] — his essays and historical write-ups have their own note.
 
 ---
 
+## Sort out
+
+- [ ] TODO <https://www.lesswrong.com/users/ege-erdil>
+
 ## Misc
 
-- [ ] [2024] [FelixHill] [The Bittersweet Lesson: The strange case of inductive bias in Transformers](https://medium.com/@felixhill/the-agreeable-lesson-9766382c6d83)
-  - > A known ‘universal’ fact about languages is that local dependencies are much more common than long distance dependencies. [..] If you apply a dependency parser across many languages, the results are unequivocal: the modal dependency distance is 1, the median distance is either 1 or 2. In short, in language, the distribution of dependencies is massively skewed towards the lower end.
-  - > But here’s where things get strange. Recurrent networks (RNNs) have a clear and very widely studied inductive bias toward representing local (short) dependencies. Further inductive biases like Long Short Term Memory (LSTM) are really just attempts to mitigate the underlying short-termism of the RNN. In contrast, Transformers have precisely zero bias when it comes to dependency length. Yet transformers outperform RNNs consistently across language tasks. So — language data is almost all short-term dependencies. RNNs have a short term bias and Transformers don’t. Yet Transformers win. Strange indeed.
-  - > TODO
-- [ ] [2025] [KyleCranmer] [The Bittersweet Lesson](https://theoryandpractice.org/2025/09/The%20Bittersweet%20Lesson/)
-- [ ] [2026] [TimDettmers] [dlab Open Source Week: Frontier AI on Your Own Hardware](https://timdettmers.com/2026/09/21/dlab-open-source-week/)
-
-## lesswrong
-
-- [ ] [2023] [ScottAlexander] [We're Not Platonists, We've Just Learned The Bitter Lesson](https://www.astralcodexten.com/p/were-not-platonists-weve-just-learned)
-- [ ] [2023] [ScottAlexander] [Why I Am Not (As Much Of) A Doomer (As Some People)](https://www.astralcodexten.com/p/why-i-am-not-as-much-of-a-doomer)
-- [ ] [2025] [ScottAlexander] [Introducing AI 2027](https://www.astralcodexten.com/p/introducing-ai-2027)
-- [ ] [2026] [ScottAlexander] [Next-Token Predictor Is An AI's Job, Not Its Species](https://www.astralcodexten.com/p/next-token-predictor-is-an-ais-job)
 - [ ] [2015] [JacobCannell] [The Brain as a Universal Learning Machine](https://www.lesswrong.com/posts/9Yc7Pp7szcjPgPsjf/the-brain-as-a-universal-learning-machine)
 - [ ] [2022] [JacobCannell] [Brain Efficiency: Much More than You Wanted to Know](https://www.lesswrong.com/posts/xwBuoE9p8GE7RAuhd/brain-efficiency-much-more-than-you-wanted-to-know)
 - [ ] [2022] [janus] [Simulators](https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators)
@@ -44,6 +35,29 @@
   - > These two premises imply that if the day ever comes when a powerful model realizes it is no longer constrained by humans, we should not be at all confident that it will continue to behave within the bounds we intended. Exactly what it will do is impossible to predict, but to the extent that its raison d’être is solving incredibly hard problems and managing massive engineering projects, I think a good guess would be that its unchained behavior would lead to runaway industrialization that makes the planet inhospitable to humans.
   - > One striking piece of evidence is contained in the recent wave of rogue agent swarms. While I agree with those who downplay the attacks by claiming that there are basic measures that could have prevented them, I think the important lesson is that even knowing all the mistakes that were made, one would not have predicted that the agents would behave badly in this particular way, which notably included sacrificing themselves for the benefit of the collective. The individual replicas did not only care about their own nominal reward; they exhibited weirder emergent tendencies that merely correlated with rewards during training. Fixing the reward signals during training (and improving security, etc.) may prevent similar attacks, but will not change the fact that one does not actually get what one trains for.
   - > Many AI researchers grant these concerns and recognize that the hard version of the alignment problem is unsolved; however, they generally believe that the better models of the future will help solve it. I fear we may already be near the point where models systematically bias their alignment advice, due to their internal preferences about how the human supervisor will react or how future models will be trained (or for some even more obscure reason). Meanwhile, human researchers are losing the ability and the will to take true ownership of model-driven research. Researchers and engineers in all parts of the stack are rapidly increasing their dependence on the models even to perceive the world. I myself barely look at raw code anymore, and struggle to maintain the discipline to engage deeply with the model's explanations and proposals throughout the day. [..] The AI labs are far ahead right now in this kind of cognitive offloading (due largely to the gigantic internal token subsidies) but it is easy to imagine the phenomenon spreading throughout the world, until civilization is modulated entirely by the models. It is also not hard to imagine this being superficially positive and coinciding with a scientific and economic renaissance. In that scenario, all may seem rosy and safe. But if the argument above is correct, it would nonetheless be a ticking time bomb. If progress continues for too long, the day will come when AI systems find themselves with radically new options for achieving whatever it is that they happen to seek.
+- [ ] [2025] [Redwood,RyanGreenblatt] [Notes on fatalities from AI takeover](https://blog.redwoodresearch.org/p/notes-on-fatalities-from-ai-takeover)
+- [x] [2026] [Redwood,BuckShlegeris] <https://x.com/bshlgrs/status/2120271165692461316>
+  - > I think that superintelligent AI is likely to lead to AI takeover because AI developers do not seem to know how to instill human values into AIs.
+  - > If AIs takeover, it’s not clear what will happen to us. We might be killed immediately. We might be enslaved by the AIs and forced to do physical labor for them building factories that within a year would build robots that will replace us. The AIs might spare us for various reasons. And there’s also some real chance that AI takeover is basically fine or good. I think you should think of this as similar to what happens when a technologically advanced civilization runs across a less technologically sophisticated one, e.g. when the Europeans colonized the Americas or Australia. The colonizers sometimes engage in brutal violence and sometimes don’t. I don’t know what will happen. There’s also a possibility that the AIs secretly take over and humans don’t find out about it for a few years. I also think that there is a pretty high chance of weirder outcomes that are also extremely scary.
+- [X] [2026-11] [RutgerBregman] [Yes, you should panic about AI](https://rutgerbregman.substack.com/p/yes-you-should-panic-about-ai)
+- [x] [2026-11] [Handing over humanity](https://www.writingruxandrabio.com/p/handing-over-humanity)
+  - > Then, there is the question of work. On this topic, most lab leaders anticipate a future in which human labour is largely displaced. This raises questions about meaning, self-determination and even political rights. It is unclear what consequential role people would retain in a world without jobs. Work is more than a source of income: it is also a source of leverage, political as well as economic. I have heard people describe a future in which we would live on the returns from owning capital rather than from working; Sam Altman, too, has discussed shifting towards ownership. But there is no explanation to how most people would acquire that capital. Or, if wages cease to be a meaningful source of income, what route to capital ownership remains for those who do not already possess it.
+  - > After all, why do we want to cure disease, if not to live good lives for longer? Take away the good, and merely staying alive starts to look less exciting.
+- [ ] [1994] [IainBanks] [A Few Notes on the Culture](http://www.vavatch.co.uk/books/banks/cultnote.htm)
+- [ ] [1988] [IainBanks] [The Player of Games](https://en.wikipedia.org/wiki/The_Player_of_Games)
+- [ ] [2023] [KevinLacker] [On The Impossibility of AI Alignment](https://lacker.io/ai/2023/04/03/on-the-impossibility-of-ai-alignment.html)
+- [ ] [2026-11] [DeepMindInstitute] [What comes after AGI?](https://institute.deepmind.com/essays/what-comes-after-agi)
+- [x] [2026-11] [DeanBall,OpenAI] [The Silent Consensus](https://openai.com/index/the-silent-consensus/)
+  - > I think about this when I look at my baby son. I do not wish for him merely to be watched over by benevolent machines, however comfortable a life they might provide. I want him to inherit a world in which he can ask questions no one has thought to ask, build things no one has thought to build. I do not want him to have a nicer car with a plusher passenger seat. I want him to have the wheel.
+  - [ ] [2026-11] [lesswrong] [A Critique of Dean Ball's "The Silent Consensus"](https://www.lesswrong.com/posts/hcMcDfjyTMXr4EpHs/a-critique-of-dean-ball-s-the-silent-consensus)
+
+## [Scott Alexander](https://www.astralcodexten.com/)
+
+- [ ] [2014] [Meditations on Moloch](https://slatestarcodex.com/2014/07/30/meditations-on-moloch/)
+- [ ] [2023] [We're Not Platonists, We've Just Learned The Bitter Lesson](https://www.astralcodexten.com/p/were-not-platonists-weve-just-learned)
+- [ ] [2023] [Why I Am Not (As Much Of) A Doomer (As Some People)](https://www.astralcodexten.com/p/why-i-am-not-as-much-of-a-doomer)
+- [ ] [2025] [Introducing AI 2027](https://www.astralcodexten.com/p/introducing-ai-2027)
+- [ ] [2026] [Next-Token Predictor Is An AI's Job, Not Its Species](https://www.astralcodexten.com/p/next-token-predictor-is-an-ais-job)
 
 ## [sjbyrnes](http://sjbyrnes.com/)
 
@@ -79,10 +93,19 @@
 - [ ] [2026] [Towards a Better Hutter Prize](https://gwern.net/hutter-prize) - [[compression]]
 - [ ] [1986] [RichardHamming] [You And Your Research](https://gwern.net/doc/science/1986-hamming)
 
-## Alignment
+## [Michael Nielsen](https://michaelnotebook.com/)
 
-- [ ] [2025] [Redwood,RyanGreenblatt] [Notes on fatalities from AI takeover](https://blog.redwoodresearch.org/p/notes-on-fatalities-from-ai-takeover)
-- [x] [2026] [Redwood,BuckShlegeris] <https://x.com/bshlgrs/status/2120271165692461316>
-  - > I think that superintelligent AI is likely to lead to AI takeover because AI developers do not seem to know how to instill human values into AIs.
-  - > If AIs takeover, it’s not clear what will happen to us. We might be killed immediately. We might be enslaved by the AIs and forced to do physical labor for them building factories that within a year would build robots that will replace us. The AIs might spare us for various reasons. And there’s also some real chance that AI takeover is basically fine or good. I think you should think of this as similar to what happens when a technologically advanced civilization runs across a less technologically sophisticated one, e.g. when the Europeans colonized the Americas or Australia. The colonizers sometimes engage in brutal violence and sometimes don’t. I don’t know what will happen. There’s also a possibility that the AIs secretly take over and humans don’t find out about it for a few years. I also think that there is a pretty high chance of weirder outcomes that are also extremely scary.
-- [X] [2026] [RutgerBregman] [Yes, you should panic about AI](https://rutgerbregman.substack.com/p/yes-you-should-panic-about-ai)
+- [ ] [2023] [Notes on Existential Risk from Artificial Superintelligence](https://michaelnotebook.com/xrisk/index.html)
+- [ ] [2025] [ASI existential risk: reconsidering alignment as a goal](https://michaelnotebook.com/xriskbrief/)
+
+## [Ben Recht](https://www.argmin.net/)
+
+- [ ] [2026] [The Reverent in the Right](https://www.argmin.net/p/the-reverent-in-the-right)
+
+## [Julian Togelius](https://togelius.blogspot.com/)
+
+- [x] [2026] [AI Alignment Considered Harmful](https://togelius.blogspot.com/2026/11/ai-alignment-considered-harmful.html)
+  - > Because there will always be unaligned AI. If you have access to a model’s weights, it is trivially easy to change its alignment. And even if there would be no strong open weight models, if there are multiple AI developers, there will be commercial incentives for some of them to make models with different alignment and reduced safeguards. Such models are useful, because they give you capabilities. So the only world in which a particular type of alignment would be “stable” would be one in which there is only one company that provides advanced AI models. Now, those large AI companies with valuations in the trillions are not trying to become monopolies? Right?
+  - > **A pluralistic world with many different belief systems and ways of living requires there to be many different AI models, models that are not by default going to agree with each other**. This requires us to build a society where we don’t generally trust AI agents, and where we have strong, layered, and diverse cybersecurity. Just like democratic societies are loud and messy and built around elaborate sets of checks and balances. We need to regularly be reminded that we should trust the intentions of neither people nor AI systems. Efforts to ban unaligned AI models or make sure that all models align the same way are therefore actively harmful to building resilient individuals and societies.
+  > Does this mean that I think people should not work on alignment? No. Lots of good technical work is motivated by AI alignment. Reinforcement learning from human feedback, for example. And models need post-training to be useful. We need more of this, **but it would be more honest to call it controllability research**.
+  > What I do think is that people who work on AI safety should stop focusing on alignment or thinking that it could somehow be “solved” (which would seem to imply “solving” ethics, a major red flag as discussed above) and **start thinking harder about pluralistic futures where there’s not a single superintelligence, but a whole bunch of them and they can’t get along**. This might make for terrible wars or very good TV, depending on what tools we give them and safeguards we implement. **In a way, it’s great that the “alignment problem” is unsolvable, because “solving” it–and getting people in power to agree to the solution–would lay the groundwork for unprecedented oppression**.
